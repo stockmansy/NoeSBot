@@ -1,0 +1,7 @@
+{
+  "owners": "",
+  "prefix": "~",
+  "token": "tokenhere",
+  "punishedrole":  "silenced",
+  "connectionstring": "Server=localhost; Port=3306; Database=noesbot; Uid=noesbot; Pwd=123;"
+}

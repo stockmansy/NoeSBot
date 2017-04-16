@@ -1,0 +1,11 @@
+﻿dotnet ef migrations add MyFirstMigration
+dotnet ef database update
+
+I personally have to do this with powershell 
+
+
+
+- 0.9 -> 1.0 Migration Guide: https://discord.foxbot.me/docs/migrating.html
+- 1.0 Docs: https://discord.foxbot.me/docs/
+- Example Bot (C#): https://github.com/420foxbot/DiscordExampleBot
+- Example Bot (VB.Net): https://github.com/420foxbot/DiscordExampleBot.VB

@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Discord.Net" Version="1.0.0-rc" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="1.1.1" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.1" PrivateAssets="All" />
+	<PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
+    <PackageReference Include="MySqlConnector" Version="0.17.0" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="1.1.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="Database\DatabaseContext.cs" />
+    <None Include="Modules\PunishModule.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+    <Folder Include="Migrations\" />
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+</Project>
