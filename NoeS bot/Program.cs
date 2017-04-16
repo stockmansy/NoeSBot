@@ -25,6 +25,7 @@ namespace NoeSbot
         public async Task Start()
         {
             Configuration.EnsureExists();
+            Globals.LoadGlobals();
 
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
@@ -48,7 +49,7 @@ namespace NoeSbot
             _map.Add(serviceProvider.GetService<IMemoryCache>());
             _map.Add(serviceProvider.GetService<IPunishedService>());
 
-            var commandHandler = new CommandHandler(_commands, _client, _map);
+            var commandHandler = new CommandHandler(_commands, _client, _map, serviceProvider.GetService<ILoggerFactory>());
 
             await commandHandler.InstallCommands();
             await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token);

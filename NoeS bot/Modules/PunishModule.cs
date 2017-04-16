@@ -57,33 +57,37 @@ namespace NoeSbot.Modules
         #region Commands
 
         [Command("punish")]
+        [Alias("silence")]
         [Summary("Punish people")]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task Punish([Summary("The person to be punished")] SocketGuildUser user,
                                  [Summary("The punish time")]string time,
                                  [Remainder, Summary("The punish reason")]string reason)
         {
-            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
-            var success = await _database.SavePunishedAsync((long)user.Id, DateTime.UtcNow, durationInSecs, reason);
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook) { 
+                var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+                var success = await _database.SavePunishedAsync((long)user.Id, DateTime.UtcNow, durationInSecs, reason);
 
-            var punishedRoles = GetPunishRoles();
-            if (success && punishedRoles != null)
-            {
-                foreach (var role in punishedRoles)
-                    await user.AddRoleAsync(role);
+                var punishedRoles = GetPunishRoles();
+                if (success && punishedRoles != null)
+                {
+                    foreach (var role in punishedRoles)
+                        await user.AddRoleAsync(role);
 
-                ClearCache();
+                    ClearCache();
 
-                if (!_runPunishedCheck)
-                    StartPunishedCheck();
+                    if (!_runPunishedCheck)
+                        StartPunishedCheck();
 
-                await ReplyAsync($"Successfully punished {user.Mention} ({user.Username})");
+                    await Context.Channel.SendFileAsync(Globals.RandomPunishedImage.FullName, $"Successfully punished {user.Mention} ({user.Username})");
+                }
+                else
+                    await ReplyAsync($"Failed to punish {user.Username}");
             }
-            else
-                await ReplyAsync($"Failed to punish {user.Username}");
         }
 
         [Command("punish")]
+        [Alias("silence")]
         [Summary("Punish people")]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task Punish([Summary("The person to be punished")] SocketGuildUser user)
@@ -92,6 +96,7 @@ namespace NoeSbot.Modules
         }
 
         [Command("punish")]
+        [Alias("silence")]
         [Summary("Punish people")]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task Punish([Summary("The person to be punished")] SocketGuildUser user,
@@ -101,6 +106,7 @@ namespace NoeSbot.Modules
         }
 
         [Command("punished")]
+        [Alias("silenced")]
         [Summary("List of the punished people")]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task Punished()
@@ -123,7 +129,13 @@ namespace NoeSbot.Modules
                     count--;
                 }
                 else
-                    builder.AppendLine($"{user.Nickname} ({user.Username}) is punished for: {punishTime}.");
+                {
+                    if (!string.IsNullOrWhiteSpace(user.Nickname))
+                        builder.AppendLine($"{user.Nickname} ({user.Username}) is punished for: {punishTime}.");
+                    else
+                        builder.AppendLine($"{user.Username} is punished for: {punishTime}.");
+                }
+                    
             }
             
             if (count <= 0)
@@ -135,67 +147,75 @@ namespace NoeSbot.Modules
         }
 
         [Command("unpunish")]
+        [Alias("unsilence")]
         [Summary("Unpunish people")]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task UnPunish([Summary("The person to be punished")] SocketGuildUser user)
         {
-            var all = await GetAllPunishedAsync();
-            if (all.Where(x => x.UserId == (long)Context.User.Id).Any())
-                return;
-
-            var success = await _database.RemovePunishedAsync((long)user.Id);
-            var punishedRoles = GetPunishRoles();
-
-            if (success && punishedRoles != null && user.Id != 106079994945536000)
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
-                foreach (var role in punishedRoles)
-                    await user.RemoveRoleAsync(role);
-
-                ClearCache();
-
-                await StopPunishedCheckAsync();
-
-                await ReplyAsync($"Successfully unpunished {user.Mention} ({user.Username})");
-            }
-            else
-                await ReplyAsync($"Failed to unpunish {user.Username}");
-        }
-
-        [Command("unpunish")]
-        [Summary("Unpunish all people")]
-        [MinPermissions(AccessLevel.ServerMod)]
-        public async Task UnPunish([Remainder, Summary("The punish input")]string input)
-        {
-            if (input.Trim().Equals("all", StringComparison.OrdinalIgnoreCase))
-            {               
                 var all = await GetAllPunishedAsync();
                 if (all.Where(x => x.UserId == (long)Context.User.Id).Any())
                     return;
 
-                var success = await _database.RemovePunishedAsync();
+                var success = await _database.RemovePunishedAsync((long)user.Id);
                 var punishedRoles = GetPunishRoles();
 
-                if (success && punishedRoles != null)
+                if (success && punishedRoles != null && user.Id != 106079994945536000)
                 {
-                    foreach (var pun in all)
-                    {
-                        var iuser = await Context.Guild.GetUserAsync((ulong)pun.UserId);
-                        var user = (SocketGuildUser)iuser;
-
-                        foreach (var role in punishedRoles)
-                        {
-                            await user.RemoveRoleAsync(role);
-                        }
-                    }
+                    foreach (var role in punishedRoles)
+                        await user.RemoveRoleAsync(role);
 
                     ClearCache();
 
                     await StopPunishedCheckAsync();
 
-                    await ReplyAsync($"Successfully unpunished everybody");
+                    await ReplyAsync($"Successfully unpunished {user.Mention} ({user.Username})");
                 }
                 else
-                    await ReplyAsync($"Failed to unpunish everybody");
+                    await ReplyAsync($"Failed to unpunish {user.Username}");
+            }
+        }
+
+        [Command("unpunish")]
+        [Alias("unsilence")]
+        [Summary("Unpunish all people")]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task UnPunish([Remainder, Summary("The punish input")]string input)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                if (input.Trim().Equals("all", StringComparison.OrdinalIgnoreCase))
+                {
+                    var all = await GetAllPunishedAsync();
+                    if (all.Where(x => x.UserId == (long)Context.User.Id).Any())
+                        return;
+
+                    var success = await _database.RemovePunishedAsync();
+                    var punishedRoles = GetPunishRoles();
+
+                    if (success && punishedRoles != null)
+                    {
+                        foreach (var pun in all)
+                        {
+                            var iuser = await Context.Guild.GetUserAsync((ulong)pun.UserId);
+                            var user = (SocketGuildUser)iuser;
+
+                            foreach (var role in punishedRoles)
+                            {
+                                await user.RemoveRoleAsync(role);
+                            }
+                        }
+
+                        ClearCache();
+
+                        await StopPunishedCheckAsync();
+
+                        await ReplyAsync($"Successfully unpunished everybody");
+                    }
+                    else
+                        await ReplyAsync($"Failed to unpunish everybody");
+                }
             }
         }
 
