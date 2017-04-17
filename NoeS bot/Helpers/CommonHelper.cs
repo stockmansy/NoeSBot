@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Discord;
+using Discord.WebSocket;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace NoeSbot.Helpers
 {
-    public class CommonHelper
+    public static class CommonHelper
     {
         public static int GetTimeInSeconds(string input)
         {
@@ -86,6 +88,19 @@ namespace NoeSbot.Helpers
             if (string.IsNullOrEmpty(formatted)) formatted = "0 seconds";
 
             return formatted;
+        }
+
+        public static Color GetColor(this SocketGuildUser user)
+        {
+            return user.Roles.Last().Color;
+        }
+
+        public static string GetAliases(this IReadOnlyList<string> aliases)
+        {
+            var result = aliases.First();
+            for (var i = 1; i < aliases.Count(); i++)
+                result += $" ({aliases[i]})";
+            return result;
         }
     }
 }

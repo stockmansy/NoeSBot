@@ -26,7 +26,7 @@ namespace NoeSbot.Modules
 
         [Command("say")]
         [Alias("echo")]
-        [Summary("Echos the provided input")]
+        [Summary("Make the bot say ...")]
         public async Task Say([Remainder] string input)
         {
 
@@ -34,22 +34,14 @@ namespace NoeSbot.Modules
         }
 
         [Command("iswiklasapussy")]
-        [Summary("Echos the provided input")]
+        [Summary("Check if Wiklas is a pussy")]
         public async Task Wiklas([Remainder] string input)
         {
             await ReplyAsync("Yes wiklas is a pussy.");
         }
 
-        [Command("testtime")]
-        [Summary("Testing the time input")]
-        public async Task TestTime([Remainder] string input)
-        {
-            var seconds = CommonHelper.GetTimeInSeconds(input);
-            
-            await ReplyAsync(CommonHelper.GetTimeString(seconds));
-        }
-
         [Command("info")]
+        [Summary("Get info about the bot")]
         public async Task Info()
         {
             var application = await Context.Client.GetApplicationInfoAsync();

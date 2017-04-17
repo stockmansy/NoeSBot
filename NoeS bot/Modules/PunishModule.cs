@@ -58,9 +58,28 @@ namespace NoeSbot.Modules
 
         [Command("punish")]
         [Alias("silence")]
-        [Summary("Punish people")]
+        [Summary("Punish people (param user) (Defaults to 5m No reason given)")]
         [MinPermissions(AccessLevel.ServerMod)]
-        public async Task Punish([Summary("The person to be punished")] SocketGuildUser user,
+        public async Task Punish([Summary("The user to be punished")] SocketGuildUser user)
+        {
+            await Punish(user, "5m", "No reason given");
+        }
+
+        [Command("punish")]
+        [Alias("silence")]
+        [Summary("Punish people (param user, time) (Defaults to No reason given)")]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task Punish([Summary("The user to be punished")] SocketGuildUser user,
+                                 [Summary("The punish time")]string time)
+        {
+            await Punish(user, time, "No reason given");
+        }
+
+        [Command("punish")]
+        [Alias("silence")]
+        [Summary("Punish people (param user time reason)")]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task Punish([Summary("The user to be punished")] SocketGuildUser user,
                                  [Summary("The punish time")]string time,
                                  [Remainder, Summary("The punish reason")]string reason)
         {
@@ -86,28 +105,9 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("punish")]
-        [Alias("silence")]
-        [Summary("Punish people")]
-        [MinPermissions(AccessLevel.ServerMod)]
-        public async Task Punish([Summary("The person to be punished")] SocketGuildUser user)
-        {
-            await Punish(user, "5m", "No reason given");
-        }
-
-        [Command("punish")]
-        [Alias("silence")]
-        [Summary("Punish people")]
-        [MinPermissions(AccessLevel.ServerMod)]
-        public async Task Punish([Summary("The person to be punished")] SocketGuildUser user,
-                                 [Summary("The punish time")]string time)
-        {
-            await Punish(user, time, "No reason given");
-        }
-
         [Command("punished")]
         [Alias("silenced")]
-        [Summary("List of the punished people")]
+        [Summary("List of the punished users")]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task Punished()
         {
@@ -148,9 +148,9 @@ namespace NoeSbot.Modules
 
         [Command("unpunish")]
         [Alias("unsilence")]
-        [Summary("Unpunish people")]
+        [Summary("Unpunish specific user")]
         [MinPermissions(AccessLevel.ServerMod)]
-        public async Task UnPunish([Summary("The person to be punished")] SocketGuildUser user)
+        public async Task UnPunish([Summary("The user to be unpunished")] SocketGuildUser user)
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
@@ -179,7 +179,7 @@ namespace NoeSbot.Modules
 
         [Command("unpunish")]
         [Alias("unsilence")]
-        [Summary("Unpunish all people")]
+        [Summary("Unpunish all users")]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task UnPunish([Remainder, Summary("The punish input")]string input)
         {

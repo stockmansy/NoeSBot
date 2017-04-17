@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using NoeSbot.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace NoeSbot.Modules
         }
 
         [Command("help")]
+        [Summary("Retrieve a list of all commands")]
         public async Task HelpAsync()
         {
             var user = Context.User as SocketGuildUser;
@@ -27,7 +29,7 @@ namespace NoeSbot.Modules
             var builder = new EmbedBuilder()
             {
 
-                Color = user.Roles.First().Color,
+                Color = user.GetColor(),
                 Description = "You can use the following commands:"
             };
 
@@ -37,8 +39,10 @@ namespace NoeSbot.Modules
                 foreach (var cmd in module.Commands)
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
-                    if (result.IsSuccess)
-                        description += $"{prefix}{cmd.Summary}\n";
+                    if (result.IsSuccess) { 
+                        description += $"{prefix}{cmd.Aliases.GetAliases()}";
+                        description += $" -> {cmd.Summary}\n";
+                    }
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))
@@ -56,6 +60,7 @@ namespace NoeSbot.Modules
         }
 
         [Command("help")]
+        [Summary("Get info about a specific command")]
         public async Task HelpAsync(string command)
         {
             var user = Context.User as SocketGuildUser;
@@ -70,19 +75,23 @@ namespace NoeSbot.Modules
             string prefix = Configuration.Load().Prefix.ToString();
             var builder = new EmbedBuilder()
             {
-                Color = user.Roles.First().Color,
+                Color = user.GetColor(),
                 Description = $"Commands like {command}:"
             };
 
             foreach (var match in result.Commands)
             {
                 var cmd = match.Command;
+                var value = $"Parameters: {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n";
+                if (!string.IsNullOrWhiteSpace(cmd.Summary))
+                    value += $"Summary: {cmd.Summary}\n";
+                if (!string.IsNullOrWhiteSpace(cmd.Remarks))
+                    value += $"Remarks: {cmd.Remarks}";
 
                 builder.AddField(x =>
                 {
                     x.Name = string.Join(", ", cmd.Aliases);
-                    x.Value = $"Parameters: {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n" +
-                              $"Remarks: {cmd.Remarks}";
+                    x.Value = value;
                     x.IsInline = false;
                 });
             }
