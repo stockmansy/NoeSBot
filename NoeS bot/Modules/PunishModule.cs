@@ -83,7 +83,7 @@ namespace NoeSbot.Modules
                                  [Summary("The punish time")]string time,
                                  [Remainder, Summary("The punish reason")]string reason)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook) { 
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook && !user.IsBot) { 
                 var durationInSecs = CommonHelper.GetTimeInSeconds(time);
                 var success = await _database.SavePunishedAsync((long)user.Id, DateTime.UtcNow, durationInSecs, reason);
 
