@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using NoeSbot.Services;
 using System;
 using System.Collections.Generic;
@@ -22,11 +23,26 @@ namespace NoeSbot.Database
 
         public DbSet<Punished> PunishedEntities { get; set; }
 
+        public DbSet<CustomPunished> CustomPunishedEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Punished>();
+            modelBuilder.Entity<CustomPunished>();
+        }
+    }
+
+    public class DatabaseContextFactory : IDbContextFactory<DatabaseContext>
+    {
+        // Generate migrations fix ><
+        public DatabaseContext Create(DbContextFactoryOptions options)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
+            optionsBuilder.UseMySql(Configuration.Load().ConnectionString);
+
+            return new DatabaseContext(optionsBuilder.Options);
         }
     }
 }

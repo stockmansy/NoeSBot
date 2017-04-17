@@ -102,5 +102,10 @@ namespace NoeSbot.Helpers
                 result += $" ({aliases[i]})";
             return result;
         }
+
+        public static string GetProcessedString(this string input)
+        {
+            return input.Replace("{br}", Environment.NewLine).Trim();
+        }
     }
 }

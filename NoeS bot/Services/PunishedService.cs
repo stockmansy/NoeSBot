@@ -21,6 +21,8 @@ namespace NoeSbot.Services
             _logger = loggerFactory.CreateLogger<PunishedService>();
         }
 
+        #region Punished
+
         public async Task<bool> SavePunishedAsync(long userId, DateTime timeOfPunishment, int durationInSec, string reason)
         {
             try
@@ -97,5 +99,88 @@ namespace NoeSbot.Services
                 return new List<Punished>();
             }
         }
+
+        #endregion
+
+        #region Custom Punished
+
+        public async Task<bool> SaveCustomPunishedAsync(long userId, string reason, string delayreason)
+        {
+            try
+            {
+                _context.CustomPunishedEntities.Add(new CustomPunished
+                {
+                    UserId = userId,
+                    Reason = reason,
+                    DelayMessage = delayreason
+                });
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Save Custom Punished: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveCustomPunishedAsync(long userId, int index)
+        {
+            try
+            {
+                var existing = await _context.CustomPunishedEntities.Where(x => x.UserId == userId).ToListAsync();
+                if (existing == null)
+                    throw new Exception("The existing custom rule was not found");
+
+                var item = existing[index];
+
+                if (item != null)
+                    _context.CustomPunishedEntities.Remove(item);
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Remove Custom Punished: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveCustomPunishedAsync(long userId)
+        {
+            try
+            {
+                _context.CustomPunishedEntities.RemoveRange(_context.CustomPunishedEntities.Where(x => x.UserId == userId));
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Remove All Custom Punished: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<List<CustomPunished>> RetrieveAllCustomPunishedAsync(long userId)
+        {
+            try
+            {
+                var existing = await _context.CustomPunishedEntities.Where(x => x.UserId == userId).ToListAsync();
+                if (existing == null)
+                    return new List<CustomPunished>();
+
+                return existing;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Retrieve All Custom Punished: {ex.Message}");
+                return new List<CustomPunished>();
+            }
+        }
+
+        #endregion
     }
 }

@@ -5,13 +5,12 @@ using System.Text;
 
 namespace NoeSbot.Database
 {
-    public class Punished
+    public class CustomPunished
     {
         [Key]
-        public int PunishedId { get; set; }
+        public int CustomPunishedId { get; set; }
         public long UserId { get; set; }
-        public DateTime TimeOfPunishment { get; set; }
-        public int Duration { get; set; }
         public string Reason { get; set; }
+        public string DelayMessage { get; set; }
     }
 }

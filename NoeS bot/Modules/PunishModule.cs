@@ -98,7 +98,24 @@ namespace NoeSbot.Modules
                     if (!_runPunishedCheck)
                         StartPunishedCheck();
 
-                    await Context.Channel.SendFileAsync(Globals.RandomPunishedImage.FullName, $"Successfully punished {user.Mention} ({user.Username})");
+                    var customMsgs = await _database.RetrieveAllCustomPunishedAsync((long)user.Id);
+                    if (customMsgs == null || customMsgs.Count() == 0)
+                        await Context.Channel.SendFileAsync(Globals.RandomPunishedImage.FullName, $"Successfully punished {user.Mention} ({user.Username})");
+                    else
+                    {
+                        var rnd = new Random();
+                        int r = rnd.Next(customMsgs.Count());
+                        var randomCustomMsg = customMsgs[r];
+                        if (randomCustomMsg == null)
+                            await ReplyAsync($"Failed to punish {user.Username}");
+
+                        if (!string.IsNullOrWhiteSpace(randomCustomMsg.DelayMessage)) {
+                            await ReplyAsync(randomCustomMsg.DelayMessage.GetProcessedString());
+                            await Task.Delay(3000);
+                        }
+
+                        await ReplyAsync(randomCustomMsg.Reason.GetProcessedString());
+                    }
                 }
                 else
                     await ReplyAsync($"Failed to punish {user.Username}");

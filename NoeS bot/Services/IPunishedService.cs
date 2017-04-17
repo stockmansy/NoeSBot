@@ -18,5 +18,13 @@ namespace NoeSbot.Services
         Task<bool> RemovePunishedAsync();
 
         Task<List<Punished>> RetrieveAllPunishedAsync();
+
+        Task<bool> SaveCustomPunishedAsync(long userId, string reason, string delayreason);
+
+        Task<bool> RemoveCustomPunishedAsync(long userId, int index);
+
+        Task<bool> RemoveCustomPunishedAsync(long userId);
+
+        Task<List<CustomPunished>> RetrieveAllCustomPunishedAsync(long userId);
     }
 }

@@ -28,13 +28,15 @@ namespace NoeSbot.Modules
             string prefix = Configuration.Load().Prefix.ToString();
             var builder = new EmbedBuilder()
             {
-
                 Color = user.GetColor(),
                 Description = "You can use the following commands:"
             };
 
             foreach (var module in _service.Modules)
             {
+                if (module.Name.Equals("ignore", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
                 string description = null;
                 foreach (var cmd in module.Commands)
                 {

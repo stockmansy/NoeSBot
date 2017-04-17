@@ -29,7 +29,6 @@ namespace NoeSbot.Modules
         [Summary("Make the bot say ...")]
         public async Task Say([Remainder] string input)
         {
-
             await ReplyAsync(input);
         }
 
