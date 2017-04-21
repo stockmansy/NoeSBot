@@ -34,6 +34,7 @@ namespace NoeSbot.Database
         }
     }
 
+    // Shouldn't really be here, is a stupid powershell .net core fix
     public class DatabaseContextFactory : IDbContextFactory<DatabaseContext>
     {
         // Generate migrations fix ><

@@ -1,7 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using NoeSbot.Preconditions;
+using NoeSbot.Attributes;
 using NoeSbot.Services;
 using System;
 using System.Collections.Generic;
@@ -17,6 +17,7 @@ using System.Threading;
 namespace NoeSbot.Modules
 {
     [Name("Ignore")]
+    [ModuleName(ModuleEnum.Customize)]
     public class CustomizeModule : ModuleBase
     {
         private readonly DiscordSocketClient _client;

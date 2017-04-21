@@ -13,7 +13,7 @@ namespace NoeSbot.Migrations
                 columns: table => new
                 {
                     PunishedId = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     Duration = table.Column<int>(nullable: false),
                     Reason = table.Column<string>(nullable: true),
                     TimeOfPunishment = table.Column<DateTime>(nullable: false),

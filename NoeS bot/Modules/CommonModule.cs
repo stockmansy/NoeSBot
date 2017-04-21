@@ -2,7 +2,9 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Caching.Memory;
+using NoeSbot.Enums;
 using NoeSbot.Helpers;
+using NoeSbot.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace NoeSbot.Modules
 {
+    [ModuleName(ModuleEnum.Common)]
     public class CommonModule : ModuleBase
     {
         private readonly DiscordSocketClient _client;
@@ -29,6 +32,7 @@ namespace NoeSbot.Modules
         [Summary("Make the bot say ...")]
         public async Task Say([Remainder] string input)
         {
+            await Context.Message.DeleteAsync();
             await ReplyAsync(input);
         }
 

@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using NoeSbot.Attributes;
+using NoeSbot.Enums;
 using NoeSbot.Helpers;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace NoeSbot.Modules
 {
+    [ModuleName(ModuleEnum.Help)]
     public class HelpModule : ModuleBase
     {
         private CommandService _service;
@@ -17,6 +20,12 @@ namespace NoeSbot.Modules
         public HelpModule(CommandService service)
         {
             _service = service;
+        }
+
+        [Command("marco")]
+        public async Task MarcoPoloAsync()
+        {
+            await ReplyAsync("Polo");
         }
 
         [Command("help")]

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NoeSbot.Preconditions
+namespace NoeSbot.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class MinPermissionsAttribute : PreconditionAttribute

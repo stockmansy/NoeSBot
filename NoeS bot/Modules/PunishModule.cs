@@ -1,7 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using NoeSbot.Preconditions;
+using NoeSbot.Attributes;
 using NoeSbot.Services;
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ using System.Threading;
 
 namespace NoeSbot.Modules
 {
+    [ModuleName(ModuleEnum.Punish)]
     public class PunishModule : ModuleBase
     {
         private readonly IPunishedService _database;
@@ -83,7 +84,8 @@ namespace NoeSbot.Modules
                                  [Summary("The punish time")]string time,
                                  [Remainder, Summary("The punish reason")]string reason)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook && !user.IsBot) { 
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook && !user.IsBot)
+            {
                 var durationInSecs = CommonHelper.GetTimeInSeconds(time);
                 var success = await _database.SavePunishedAsync((long)user.Id, DateTime.UtcNow, durationInSecs, reason);
 
@@ -109,7 +111,8 @@ namespace NoeSbot.Modules
                         if (randomCustomMsg == null)
                             await ReplyAsync($"Failed to punish {user.Username}");
 
-                        if (!string.IsNullOrWhiteSpace(randomCustomMsg.DelayMessage)) {
+                        if (!string.IsNullOrWhiteSpace(randomCustomMsg.DelayMessage))
+                        {
                             await ReplyAsync(randomCustomMsg.DelayMessage.GetProcessedString());
                             await Task.Delay(3000);
                         }
@@ -120,6 +123,8 @@ namespace NoeSbot.Modules
                 else
                     await ReplyAsync($"Failed to punish {user.Username}");
             }
+            else
+                await Task.CompletedTask;
         }
 
         [Command("punished")]
