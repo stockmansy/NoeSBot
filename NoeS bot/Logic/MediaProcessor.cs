@@ -53,11 +53,10 @@ namespace NoeSbot.Logic
                         if (flattenMsg.Count <= 0)
                             continue;
 
-                        var userId = f.MentionedUserIds.FirstOrDefault();
-                        var mentionedUser = f.Author.Mention;
-                        var menUser = await _context.Guild.GetUserAsync(userId);
-                        if (menUser != null)
-                            mentionedUser = menUser.Mention;
+                        var mentionedUser = f.Author.Username;
+                        var indexOf = f.Content.IndexOf("posted new");
+                        if (indexOf > -1)
+                            mentionedUser = f.Content.Substring(0, indexOf).Trim();
 
                         foreach (Match fm in flattenMsg)
                             if (fm.Value.Equals(match.Value, StringComparison.OrdinalIgnoreCase)){ 
@@ -67,14 +66,17 @@ namespace NoeSbot.Logic
 
                         if (isRepost) {
                             builder.AppendLine("Repost!");
-                            builder.AppendLine($"{mentionedUser} posted this media on {f.CreatedAt.ToString("dd-MM-yyyy hh:mm")}");
+                            builder.AppendLine($"{mentionedUser} posted the following media on {f.CreatedAt.ToString("dd-MM-yyyy hh:mm")}");
+                            builder.AppendLine("```");
+                            builder.AppendLine($"{match.Value}");
+                            builder.AppendLine("```");
                             break;
                         }
                     }
 
                     if (!isRepost)
                     {
-                        builder.AppendLine($"{user. Mention} posted new media:");
+                        builder.AppendLine($"{user.Username} posted new media:");
                         builder.AppendLine($"{match.Value}");
                     }
 
