@@ -1,6 +1,4 @@
 # NoeSBot
-Discord bot
+A Discord bot based on Discord.NET (https://github.com/RogueException/Discord.Net) .NET core version.
 
-Trying to make my own discord bot.
-
-The initial checkin has a bug regarding punished etc..
+It's currently fully in development still.
