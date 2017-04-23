@@ -10,6 +10,7 @@ namespace NoeSbot.Enums
         Help = 2,
         Punish = 3,
         Customize = 4,
-        Game = 5
+        Game = 5,
+        Media = 6
     }
 }

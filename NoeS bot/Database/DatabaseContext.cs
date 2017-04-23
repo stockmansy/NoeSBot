@@ -23,6 +23,8 @@ namespace NoeSbot.Database
 
         public DbSet<Punished> PunishedEntities { get; set; }
 
+        public DbSet<Config> ConfigurationEntities { get; set; }
+
         public DbSet<CustomPunished> CustomPunishedEntities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

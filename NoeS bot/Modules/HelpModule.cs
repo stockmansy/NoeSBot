@@ -34,7 +34,7 @@ namespace NoeSbot.Modules
         {
             var user = Context.User as SocketGuildUser;
 
-            string prefix = Configuration.Load().Prefix.ToString();
+            string prefix = Configuration.Load(Context.Guild.Id).Prefix.ToString();
             var builder = new EmbedBuilder()
             {
                 Color = user.GetColor(),
@@ -83,7 +83,7 @@ namespace NoeSbot.Modules
                 return;
             }
 
-            string prefix = Configuration.Load().Prefix.ToString();
+            string prefix = Configuration.Load(Context.Guild.Id).Prefix.ToString();
             var builder = new EmbedBuilder()
             {
                 Color = user.GetColor(),

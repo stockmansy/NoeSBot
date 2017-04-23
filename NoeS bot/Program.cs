@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NoeSbot.Database;
+using NoeSbot.Handlers;
 using NoeSbot.Modules;
 using NoeSbot.Services;
 using System;
@@ -24,7 +25,7 @@ namespace NoeSbot
         
         public async Task Start()
         {
-            Configuration.EnsureExists();
+            Configuration.EnsureExists();            
             Globals.LoadGlobals();
 
             var serviceCollection = new ServiceCollection();
@@ -41,18 +42,26 @@ namespace NoeSbot
             });
 
             _client.Log += Log;
-
+            
             _commands = new CommandService();
                         
             _map = new DependencyMap();
             _map.Add(_client);
             _map.Add(serviceProvider.GetService<IMemoryCache>());
             _map.Add(serviceProvider.GetService<IPunishedService>());
+            _map.Add(serviceProvider.GetService<IConfigurationService>());
+
+            await Configuration.LoadAsync(serviceProvider.GetService<IConfigurationService>());
 
             var commandHandler = new CommandHandler(_commands, _client, _map, serviceProvider.GetService<ILoggerFactory>());
-
             await commandHandler.InstallCommands();
+
+            var messageHandler = new MessageHandler(_commands, _client, _map, serviceProvider.GetService<ILoggerFactory>());
+            await messageHandler.InstallHandlers();
+
             await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token);
+
+            
 
             Console.WriteLine("Starting the bot");
             await _client.StartAsync();
@@ -72,6 +81,7 @@ namespace NoeSbot
             serviceCollection.AddDbContext<DatabaseContext>(options =>
                     options.UseMySql(Configuration.Load().ConnectionString));
             serviceCollection.AddSingleton<IPunishedService, PunishedService>();
+            serviceCollection.AddSingleton<IConfigurationService, ConfigurationService>();
         }
     }
 }

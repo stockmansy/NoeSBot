@@ -4,8 +4,9 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
-namespace NoeSbot
+namespace NoeSbot.Handlers
 {
     public class CommandHandler
     {
@@ -37,8 +38,9 @@ namespace NoeSbot
             if (message == null) return;
             // Create a number to track where the prefix ends and the command begins
             int argPos = 0;
+            var guild = (message.Channel as Discord.IGuildChannel)?.Guild;
             // Determine if the message is a command, based on if it starts with '!' or a mention prefix
-            if (!(message.HasCharPrefix(Configuration.Load().Prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
+            if (!(message.HasCharPrefix(Configuration.Load(guild.Id).Prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
             // Create a Command Context
             var context = new CommandContext(_client, message);
             // Execute the command. (result does not indicate a return value, 

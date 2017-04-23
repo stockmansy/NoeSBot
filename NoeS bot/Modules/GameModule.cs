@@ -51,7 +51,7 @@ namespace NoeSbot.Modules
 
             var botChooses = _random.Next(3);
 
-            var playerChoice = 3;
+            var playerChoice = -1;
             bool? playerWins = null;
 
             switch (input.ToLowerInvariant())
@@ -141,7 +141,7 @@ namespace NoeSbot.Modules
                     break;
             }
 
-            if (playerWins == null)
+            if (playerWins == null && playerChoice >= 0)
             {
                 builder.AppendLine("We are:");
                 builder.AppendLine("```");
@@ -165,7 +165,7 @@ namespace NoeSbot.Modules
                 builder.AppendLine(" \\__,_|\\___|_| \\___|\\__,_|\\__| ");
                 builder.AppendLine("```");
             }
-            else
+            else if (playerWins == false)
             {
                 builder.AppendLine("I attained:");
                 builder.AppendLine("```");
@@ -180,7 +180,10 @@ namespace NoeSbot.Modules
                 builder.AppendLine("```");
             }
 
-            await ReplyAsync(builder.ToString());
+            if (playerChoice < 0)
+                await ReplyAsync("Please choose something valid (rock,rocks,r; paper,papers,p; scissor, scissors,s)");
+            else
+                await ReplyAsync(builder.ToString());
         }
     }
 }

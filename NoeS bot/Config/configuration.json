@@ -2,6 +2,7 @@
   "owners": "",
   "prefix": "~",
   "token": "tokenhere",
-  "punishedrole":  "silenced",
+  "punishedrole": "silenced",
+  "mediachannel": "media_room",
   "connectionstring": "Server=localhost; Port=3306; Database=noesbot; Uid=noesbot; Pwd=123;"
 }

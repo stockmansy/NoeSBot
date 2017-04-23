@@ -123,8 +123,6 @@ namespace NoeSbot.Modules
                 else
                     await ReplyAsync($"Failed to punish {user.Username}");
             }
-            else
-                await Task.CompletedTask;
         }
 
         [Command("punished")]
@@ -294,7 +292,7 @@ namespace NoeSbot.Modules
         {
             if (!_cache.TryGetValue(CacheEnum.PunishedRoles, out IEnumerable<IRole> cacheEntry))
             {
-                cacheEntry = Context.Guild.Roles.Where(x => x.Name.IndexOf(Configuration.Load().PunishedRole, StringComparison.OrdinalIgnoreCase) >= 0);
+                cacheEntry = Context.Guild.Roles.Where(x => x.Name.IndexOf(Configuration.Load(Context.Guild.Id).PunishedRole, StringComparison.OrdinalIgnoreCase) >= 0);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5));
@@ -353,7 +351,8 @@ namespace NoeSbot.Modules
         {
             foreach (var role in roles)
             {
-                await user.RemoveRoleAsync(role);
+                if (user.Roles.Contains(role))
+                    await user.RemoveRoleAsync(role);
             }
 
             await _database.RemovePunishedAsync((long)user.Id);
