@@ -23,8 +23,6 @@ namespace NoeSbot.Logic
 
         public async Task Process()
         {
-            await _context.Channel.SendMessageAsync("here");
-
             var matches = Regex.Matches(_context.Message.Content, @"(www.+|http.+)([\s]|$)");
             if (matches.Count <= 0)
                 await Task.CompletedTask;
