@@ -4,5 +4,6 @@
   "token": "tokenhere",
   "punishedrole": "silenced",
   "mediachannel": "media_room",
+  "generalchannel": "general",
   "connectionstring": "Server=localhost; Port=3306; Database=noesbot; Uid=noesbot; Pwd=123;"
 }

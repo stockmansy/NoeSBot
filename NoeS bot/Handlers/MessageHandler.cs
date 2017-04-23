@@ -31,6 +31,7 @@ namespace NoeSbot.Handlers
 
         public async Task InstallHandlers()
         {
+            _client.MessageUpdated += MessageUpdatedHandler;
             _client.MessageReceived += MessageReceivedHandler;
             await Task.CompletedTask;
         }
@@ -43,11 +44,37 @@ namespace NoeSbot.Handlers
                 {
                     var message = messageParam as SocketUserMessage;
                     if (message == null) return;
-
+                    
                     var context = new CommandContext(_client, message);
-
                     var mediaProcessor = new MediaProcessor(context, _map);
                     await mediaProcessor.Process();
+                }
+            }
+            catch (Exception ex)
+            {
+                await messageParam.Channel.SendMessageAsync(ex.Message);
+            }
+        }
+
+        private async Task MessageUpdatedHandler(Cacheable<IMessage, ulong> cachedmessage, SocketMessage messageParam, ISocketMessageChannel channel)
+        {
+            try
+            {
+                if (!messageParam.Author.IsBot && !messageParam.Author.IsWebhook)
+                {
+                    var message = messageParam as SocketUserMessage;
+                    if (message == null) return;
+
+                    var hasCachedEmbeds = cachedmessage.HasValue && cachedmessage.Value.Embeds.Any();
+                    var hasEmbeds = message.Embeds.Any();
+
+                    if (!hasCachedEmbeds && hasEmbeds)
+                    {
+                        var context = new CommandContext(_client, message);
+
+                        var mediaProcessor = new MediaProcessor(context, _map);
+                        await mediaProcessor.Process();
+                    }
                 }
             }
             catch (Exception ex)

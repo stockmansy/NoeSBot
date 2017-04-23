@@ -38,7 +38,8 @@ namespace NoeSbot
 
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
-                LogLevel = LogSeverity.Verbose
+                LogLevel = LogSeverity.Verbose,
+                MessageCacheSize = 1000
             });
 
             _client.Log += Log;

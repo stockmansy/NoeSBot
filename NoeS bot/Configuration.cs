@@ -21,6 +21,7 @@ namespace NoeSbot
         public string Token { get; set; } = "";
         public string PunishedRole { get; set; } = "silenced";
         public string MediaChannel { get; set; } = "media_room";
+        public string GeneralChannel { get; set; } = "general";
         public string ConnectionString { get; set; }
 
         public static void EnsureExists()
