@@ -9,3 +9,6 @@ I personally have to do this with powershell
 - 1.0 Docs: https://discord.foxbot.me/docs/
 - Example Bot (C#): https://github.com/420foxbot/DiscordExampleBot
 - Example Bot (VB.Net): https://github.com/420foxbot/DiscordExampleBot.VB
+
+
+Hello
