@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NoeSbot.Enums;
+using NoeSbot.Helpers;
 using NoeSbot.Services;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,28 @@ namespace NoeSbot
         public string PunishedRole { get; set; } = "silenced";
         public string MediaChannel { get; set; } = "media_room";
         public string GeneralChannel { get; set; } = "general";
-        public int[] LoadedModules { get; set; }
+
+        private int[] _loadedModules;
+        public int[] LoadedModules {
+            get {
+
+                if (_loadedModules == null)
+                {
+                    var loadedModules = Enum.GetValues(typeof(ModuleEnum));
+                    var allLoadedModules = new List<int>();
+                    foreach (ModuleEnum lModule in loadedModules)
+                    {
+                        allLoadedModules.Add((int)lModule);
+                    }
+                    _loadedModules = allLoadedModules.ToArray();
+                }                
+
+                return _loadedModules;
+            }
+            set {
+                _loadedModules = value;
+            }
+        }
         public string ConnectionString { get; set; }
 
         public static void EnsureExists()
