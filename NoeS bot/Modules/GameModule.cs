@@ -28,6 +28,25 @@ namespace NoeSbot.Modules
             _cache = memoryCache;
         }
 
+        #region Help text
+
+        [Command("rockpaperscissors")]
+        [Alias("rps")]
+        [Summary("Play rock paper scissors")]
+        public async Task RockPaperScissors()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("1 required parameter: input");
+            builder.AppendLine("Provide a rock paper scissors input");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        #endregion
+
+        #region Commands
+
         [Command("flipcoin")]
         [Alias("flip")]
         [Summary("Flip a coin")]
@@ -185,5 +204,7 @@ namespace NoeSbot.Modules
             else
                 await ReplyAsync(builder.ToString());
         }
+
+        #endregion
     }
 }

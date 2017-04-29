@@ -55,6 +55,53 @@ namespace NoeSbot.Modules
 
         #endregion
 
+        #region Help text
+
+        [Command("punish")]
+        [Alias("silence")]
+        [Summary("Punish people (param user) (Defaults to 5m No reason given)")]
+        public async Task AddCustomPunish()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("1 required parameter: user");
+            builder.AppendLine("2 optional parameters: time (eg 10m), reason");
+            builder.AppendLine("Punish a certain user");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        [Command("unpunish")]
+        [Alias("unsilence")]
+        [Summary("Unpunish specific user")]
+        public async Task UnPunish()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("1 required parameter: user");
+            builder.AppendLine("Unpunish a certain user");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        [Command("punish")]
+        [Alias("silence")]
+        [Summary("Punish people (param user) (Defaults to 5m No reason given)")]
+        public async Task UnPunishAll()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("1 required parameter: input");
+            builder.AppendLine("Unpunish all users if the text is 'all'");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        #endregion
+
         #region Commands
 
         [Command("punish")]

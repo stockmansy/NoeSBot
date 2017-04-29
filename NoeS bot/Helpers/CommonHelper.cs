@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using NoeSbot.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,6 +107,20 @@ namespace NoeSbot.Helpers
         public static string GetProcessedString(this string input)
         {
             return input.Replace("{br}", Environment.NewLine).Trim();
+        }
+
+        public static IEnumerable<ModuleEnum> GetModuleEnums(int[] ids = null)
+        {
+            if (ids == null || ids.Length <= 0)
+                return Enum.GetValues(typeof(ModuleEnum)).Cast<ModuleEnum>();
+            
+            var result = new List<ModuleEnum>();
+            for (var i = 0; i < ids.Length; i++)
+            {                
+                result.Add((ModuleEnum)Enum.Parse(typeof(ModuleEnum), ids[i].ToString()));
+            }
+
+            return result;
         }
     }
 }

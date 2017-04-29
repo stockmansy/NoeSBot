@@ -11,8 +11,9 @@ namespace NoeSbot.Services
 {
     public interface IConfigurationService
     {
+        Task<bool> AddConfigurationItem(long guildId, int configTypeId, string value);
+        Task<bool> RemoveConfigurationItem(long guildId, int configTypeId, string value);
         Task<bool> SaveConfigurationItem(long guildId, int configTypeId, string value);
-
         Task<List<Config>> RetrieveAllConfigurationsAsync();
     }
 }

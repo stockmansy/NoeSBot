@@ -27,6 +27,7 @@ namespace NoeSbot.Handlers
         {
             // Hook the MessageReceived Event into our Command Handler
             _client.MessageReceived += HandleCommand;
+
             // Discover all of the commands in this assembly and load them.
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
         }

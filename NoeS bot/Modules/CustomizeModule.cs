@@ -31,6 +31,118 @@ namespace NoeSbot.Modules
             _cache = memoryCache;
         }
 
+        #region Help text
+
+        [Command("addcustompunish")]
+        [Summary("Add a custom punish rule")]
+        public async Task AddCustomPunish()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("2 required parameters: user and the punish reason");
+            builder.AppendLine("1 optional parameter: delay message (the punish reason must be surrounded by \"'s");
+            builder.AppendLine("This command will add a custom punish message for a user");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        [Command("addcustom")]
+        [Summary("Add a custom rule")]
+        public async Task AddCustom()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("3 required parameters: module name, user and the punish reason");
+            builder.AppendLine("1 optional parameter: Module specific (eg. punish => delaymessage");
+            builder.AppendLine("This command will add a custom rule for a user");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        [Command("getcustompunish")]
+        [Summary("Get a custom punish rule")]
+        public async Task GetCustomPunish()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("1 required parameter: user");
+            builder.AppendLine("This command will get the custom rules for a user");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        [Command("getcustom")]
+        [Summary("Get a custom punish rule")]
+        public async Task GetCustom()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("2 required parameters: module name, user");
+            builder.AppendLine("This command will get the custom rules for a user");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        [Command("removeallcustompunish")]
+        [Summary("Removes all custom punish rules for a user")]
+        public async Task RemoveAllCustomPunish()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("1 required parameter: user");
+            builder.AppendLine("This command will remove all the custom rules for a user");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        [Command("removeallcustom")]
+        [Summary("Removes all custom rules for a user")]
+        public async Task RemoveCustom()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("2 required parameters: module name, user");
+            builder.AppendLine("This command will remove all the custom rules for a user");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        [Command("removecustompunish")]
+        [Summary("Removes a specific custom rules for a user")]
+        public async Task RemoveCustomPunish()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("2 required parameters: user, index");
+            builder.AppendLine("This command will remove a specific custom rule for a user");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        [Command("removecustompunish")]
+        [Summary("Removes a specific custom rules for a user")]
+        public async Task RemoveSpecificCustomPunish()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("3 required parameters: module name, user and index");
+            builder.AppendLine("This command will remove a specific custom rule for a user");
+            builder.AppendLine("Permissions: Mod minimum");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        #endregion
+
+        #region Commands
+
         [Command("addcustompunish")]
         [Summary("Add a custom punish rule")]
         [MinPermissions(AccessLevel.ServerMod)]
@@ -209,5 +321,7 @@ namespace NoeSbot.Modules
                 await ReplyAsync("https://cdn.discordapp.com/attachments/285808114052104193/289916801502937089/img.png");
             }
         }
+
+        #endregion
     }
 }

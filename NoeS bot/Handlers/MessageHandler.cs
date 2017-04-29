@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text.RegularExpressions;
 using NoeSbot.Logic;
+using NoeSbot.Enums;
 
 namespace NoeSbot.Handlers
 {
@@ -19,7 +20,7 @@ namespace NoeSbot.Handlers
         private CommandService _commands;
         private DiscordSocketClient _client;
         private IDependencyMap _map;
-        private readonly ILogger<MessageHandler> _logger;        
+        private readonly ILogger<MessageHandler> _logger;
 
         public MessageHandler(CommandService commands, DiscordSocketClient client, IDependencyMap map, ILoggerFactory loggerFactory)
         {
@@ -44,10 +45,15 @@ namespace NoeSbot.Handlers
                 {
                     var message = messageParam as SocketUserMessage;
                     if (message == null) return;
-                    
+
                     var context = new CommandContext(_client, message);
-                    var mediaProcessor = new MediaProcessor(context, _map);
-                    await mediaProcessor.Process();
+
+                    var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
+                    if (loadedModules.Contains((int)ModuleEnum.Media))
+                    {
+                        var mediaProcessor = new MediaProcessor(context, _map);
+                        await mediaProcessor.Process();
+                    }
                 }
             }
             catch (Exception ex)
@@ -72,8 +78,12 @@ namespace NoeSbot.Handlers
                     {
                         var context = new CommandContext(_client, message);
 
-                        var mediaProcessor = new MediaProcessor(context, _map);
-                        await mediaProcessor.Process();
+                        var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
+                        if (loadedModules.Contains((int)ModuleEnum.Media))
+                        {
+                            var mediaProcessor = new MediaProcessor(context, _map);
+                            await mediaProcessor.Process();
+                        }
                     }
                 }
             }

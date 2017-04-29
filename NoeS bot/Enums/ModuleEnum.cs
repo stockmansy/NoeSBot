@@ -11,6 +11,7 @@ namespace NoeSbot.Enums
         Punish = 3,
         Customize = 4,
         Game = 5,
-        Media = 6
+        Media = 6,
+        Configure = 7
     }
 }

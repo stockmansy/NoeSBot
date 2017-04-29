@@ -27,6 +27,23 @@ namespace NoeSbot.Modules
             _cache = memoryCache;
         }
 
+        #region Help text
+
+        [Command("say")]
+        [Alias("echo")]
+        [Summary("Make the bot say ...")]
+        public async Task Say()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("1 parameter: Text");
+            builder.AppendLine("This command will replace your message by a message by the bot");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        #endregion
+
         [Command("say")]
         [Alias("echo")]
         [Summary("Make the bot say ...")]
@@ -34,13 +51,6 @@ namespace NoeSbot.Modules
         {
             await Context.Message.DeleteAsync();
             await ReplyAsync(input);
-        }
-
-        [Command("iswiklasapussy")]
-        [Summary("Check if Wiklas is a pussy")]
-        public async Task Wiklas([Remainder] string input)
-        {
-            await ReplyAsync("Yes wiklas is a pussy.");
         }
 
         [Command("info")]

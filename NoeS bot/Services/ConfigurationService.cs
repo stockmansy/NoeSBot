@@ -23,11 +23,54 @@ namespace NoeSbot.Services
 
         #region Config
 
+        public async Task<bool> AddConfigurationItem(long guildId, int configTypeId, string value)
+        {
+            try
+            {
+                var existing = await _context.ConfigurationEntities.Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId && x.Value.Equals(value, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
+                if (existing != null)
+                    _context.ConfigurationEntities.Remove(existing);
+
+                _context.ConfigurationEntities.Add(new Config
+                {
+                    GuildId = guildId,
+                    ConfigurationTypeId = configTypeId,
+                    Value = value
+                });
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Save Configuration Item: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveConfigurationItem(long guildId, int configTypeId, string value)
+        {
+            try
+            {
+                var existing = await _context.ConfigurationEntities.Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId && x.Value.Equals(value, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
+                if (existing != null)
+                    _context.ConfigurationEntities.Remove(existing);
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Save Configuration Item: {ex.Message}");
+                return false;
+            }
+        }
+
         public async Task<bool> SaveConfigurationItem(long guildId, int configTypeId, string value)
         {
             try
             {
-                var existing = await _context.ConfigurationEntities.Where(x => x.GuildId == guildId).SingleOrDefaultAsync();
+                var existing = await _context.ConfigurationEntities.Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId).SingleOrDefaultAsync();
                 if (existing != null)
                     _context.ConfigurationEntities.Remove(existing);
 

@@ -22,6 +22,24 @@ namespace NoeSbot.Modules
             _service = service;
         }
 
+        #region Help text
+
+        [Command("help")]
+        [Summary("Get info about a specific command")]
+        public async Task HelpCommandAsync()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("```");
+            builder.AppendLine("1 required parameter: commandname");
+            builder.AppendLine("Provide info about a certain command");
+            builder.AppendLine("```");
+            await ReplyAsync(builder.ToString());
+        }
+
+        #endregion
+
+        #region Commands
+
         [Command("marco")]
         public async Task MarcoPoloAsync()
         {
@@ -50,7 +68,8 @@ namespace NoeSbot.Modules
                 foreach (var cmd in module.Commands)
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
-                    if (result.IsSuccess) { 
+                    if (result.IsSuccess)
+                    {
                         description += $"{prefix}{cmd.Aliases.GetAliases()}";
                         description += $" -> {cmd.Summary}\n";
                     }
@@ -109,5 +128,7 @@ namespace NoeSbot.Modules
 
             await ReplyAsync("", false, builder.Build());
         }
+
+        #endregion
     }
 }

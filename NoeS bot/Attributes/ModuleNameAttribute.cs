@@ -10,13 +10,22 @@ using System.Threading.Tasks;
 namespace NoeSbot.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class ModuleNameAttribute : Attribute
+    public class ModuleNameAttribute : PreconditionAttribute
     {
-        private ModuleEnum Name;
+        private ModuleEnum _module;
 
-        public ModuleNameAttribute(ModuleEnum name)
+        public ModuleNameAttribute(ModuleEnum module)
         {
-            Name = name;
+            _module = module;
+        }
+
+        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
+        {
+            var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
+            if (loadedModules.Contains((int)_module))
+                return Task.FromResult(PreconditionResult.FromSuccess());
+            else
+                return Task.FromResult(PreconditionResult.FromError("Module not loaded."));
         }
     }
 }
