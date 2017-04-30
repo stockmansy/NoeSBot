@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,15 +55,30 @@ namespace NoeSbot
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
+                Directory.CreateDirectory(path);
 
-                var config = new Configuration();
+                var config = Configuration.LoadEmbedded();
 
                 Console.WriteLine("Please enter your token: ");
                 string token = Console.ReadLine();
 
+                Console.WriteLine("Please enter your database host (localhost):");
+                string dbHost = Console.ReadLine();
+
+                Console.WriteLine("Please enter your database post (3306):");
+                string dbPort = Console.ReadLine();
+
+                Console.WriteLine("Please enter your database name (noesbot):");
+                string dbName = Console.ReadLine();
+
+                Console.WriteLine("Please enter your database user (noesbot):");
+                string dbUser = Console.ReadLine();
+
+                Console.WriteLine("Please enter your database password (123456):");
+                string dbPassword = Console.ReadLine();
+
                 config.Token = token;
+                config.ConnectionString = String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};", dbHost, dbPort, dbName, dbUser, dbPassword);
                 config.SaveJson();
             }
             Console.WriteLine("Configuration Loaded");
@@ -72,6 +88,18 @@ namespace NoeSbot
         {
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
             File.WriteAllText(file, ToJson());
+        }
+
+        public static Configuration LoadEmbedded()
+        {
+            
+            var assembly = typeof(Configuration).GetTypeInfo().Assembly;
+            Stream resource = assembly.GetManifestResourceStream("NoeSbot.Config.configuration.example.json");
+            using (StreamReader reader = new StreamReader(resource))
+            {
+                string result = reader.ReadToEnd();
+                return JsonConvert.DeserializeObject<Configuration>(result);
+            }
         }
 
         public static Configuration Load()
