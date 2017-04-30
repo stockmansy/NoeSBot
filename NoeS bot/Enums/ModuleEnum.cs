@@ -12,6 +12,7 @@ namespace NoeSbot.Enums
         Customize = 4,
         Game = 5,
         Media = 6,
-        Configure = 7
+        Configure = 7,
+        Poll = 8
     }
 }
