@@ -12,6 +12,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using NoeSbot.Models;
+using System.IO;
 
 namespace NoeSbot.Modules
 {
@@ -205,6 +207,65 @@ namespace NoeSbot.Modules
                 await ReplyAsync(builder.ToString());
         }
 
+        [Command("8ball")]
+        [Alias("8b")]
+        [Summary("Play rock paper scissors")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task MagicBall([Remainder] string input)
+        {
+            var result = "";
+
+            var options = new List<EightBallModel>() {
+                new EightBallModel
+                {
+                    Text = "Wiklas is a pussy",
+                    ImageName = "8Ballwiklaspussy.jpg"
+                },
+                new EightBallModel
+                {
+                    Text = "Yes",
+                    ImageName = "8BallYes.jpg"
+                },
+                new EightBallModel
+                {
+                    Text = "No",
+                    ImageName = "8ballNo.jpg"
+                },
+                new EightBallModel
+                {
+                    Text = "Maybe",
+                    ImageName = "8BallMaybe.jpg"
+                },
+                new EightBallModel
+                {
+                    Text = "Ask Mango",
+                    ImageName = "8ballaskmango.jpg"
+                },
+                new EightBallModel
+                {
+                    Text = "How the fuck should I know?",
+                    ImageName = "8Ballhtfsik.jpg"
+                },
+                 new EightBallModel
+                {
+                    Text = "I AM Err0r",
+                    ImageName = "8Ballerror.jpg"
+                }
+            };
+
+            var rndNr = _random.Next(options.Count);
+            var randomElement = options.ElementAt(rndNr);
+            result = randomElement?.Text;
+            var imageName = randomElement?.ImageName;
+
+            var fileExists = File.Exists(@"Images\MagicBall\" + imageName);
+
+            //Check if the image exsits!!! then send it
+            if (fileExists)
+                await Context.Channel.SendFileAsync(@"Images\MagicBall\" + imageName, result);
+            else
+                await ReplyAsync(result);
+        }
         #endregion
     }
 }

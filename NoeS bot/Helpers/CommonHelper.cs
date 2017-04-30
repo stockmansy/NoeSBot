@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using NoeSbot.Enums;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -113,14 +114,20 @@ namespace NoeSbot.Helpers
         {
             if (ids == null || ids.Length <= 0)
                 return Enum.GetValues(typeof(ModuleEnum)).Cast<ModuleEnum>();
-            
+
             var result = new List<ModuleEnum>();
             for (var i = 0; i < ids.Length; i++)
-            {                
+            {
                 result.Add((ModuleEnum)Enum.Parse(typeof(ModuleEnum), ids[i].ToString()));
             }
 
             return result;
+        }
+
+        public static FileInfo[] GetImagesFromDirectory(string directory)
+        {
+            var d = new DirectoryInfo(directory);
+            return d.GetFiles();
         }
     }
 }
