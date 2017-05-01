@@ -149,7 +149,7 @@ namespace NoeSbot.Modules
 
                     var customMsgs = await _database.RetrieveAllCustomPunishedAsync((long)user.Id);
                     if (customMsgs == null || customMsgs.Count() == 0)
-                        await Context.Channel.SendFileAsync(Globals.RandomPunishedImage.FullName, $"Successfully punished {user.Mention} ({user.Username})");
+                        await Context.Channel.SendFileAsync(Globals.RandomPunishedImage.FullName, $"Successfully punished {user.Mention} ({user.Username}) for {CommonHelper.ToReadableString(TimeSpan.FromSeconds(durationInSecs))}");
                     else
                     {
                         var rnd = new Random();
