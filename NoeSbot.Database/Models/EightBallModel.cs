@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NoeSbot.Models
+namespace NoeSbot.Database.Models
 {
     public class EightBallModel
     {

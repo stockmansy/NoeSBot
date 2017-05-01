@@ -1,13 +1,8 @@
-﻿using Discord.Commands;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using NoeSbot.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using NoeSbot.Database;
 
-namespace NoeSbot.Database
+namespace NoeSbot
 {
     public class DatabaseContext : DbContext
     {
@@ -43,7 +38,7 @@ namespace NoeSbot.Database
         public DatabaseContext Create(DbContextFactoryOptions options)
         {
             var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
-            optionsBuilder.UseMySql(Configuration.Load().ConnectionString);
+            optionsBuilder.UseMySql("Server=localhost; Port=3306; Database=noesbot; Uid=root; Pwd=;");
 
             return new DatabaseContext(optionsBuilder.Options);
         }

@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using NoeSbot.Models;
+using NoeSbot.Database.Models;
 using NoeSbot.Extensions;
 
 namespace NoeSbot.Modules

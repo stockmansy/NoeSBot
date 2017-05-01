@@ -12,7 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using NoeSbot.Models;
+using NoeSbot.Database.Models;
 using System.IO;
 
 namespace NoeSbot.Modules

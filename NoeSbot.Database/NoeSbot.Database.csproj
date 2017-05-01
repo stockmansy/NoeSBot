@@ -1,19 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Config\configuration.example.json" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.0-rc" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="1.1.1" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.1" PrivateAssets="All" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.0" />
 	<PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
     <PackageReference Include="MySqlConnector" Version="0.17.0" />
@@ -24,18 +17,4 @@
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />
   </ItemGroup>
   
-  <ItemGroup>
-    <EmbeddedResource Include="Config\configuration.example.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Include="Modules\PunishModule.cs" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\NoeSbot.Database\NoeSbot.Database.csproj" />
-  </ItemGroup>
-
 </Project>
