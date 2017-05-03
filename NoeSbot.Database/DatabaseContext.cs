@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using NoeSbot.Database;
+using NoeSbot.Database.Models;
 
-namespace NoeSbot
+namespace NoeSbot.Database
 {
     public class DatabaseContext : DbContext
     {
@@ -31,14 +31,13 @@ namespace NoeSbot
         }
     }
 
-    // Shouldn't really be here, is a stupid powershell .net core fix
+    // DbContextFactory => It's to generate the migrations
     public class DatabaseContextFactory : IDbContextFactory<DatabaseContext>
     {
-        // Generate migrations fix ><
         public DatabaseContext Create(DbContextFactoryOptions options)
         {
             var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
-            optionsBuilder.UseMySql("Server=localhost; Port=3306; Database=noesbot; Uid=root; Pwd=;");
+            optionsBuilder.UseMySql("Server=localhost; Port=3306; Database=noesbot; Uid=root; Pwd=example;");
 
             return new DatabaseContext(optionsBuilder.Options);
         }

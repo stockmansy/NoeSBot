@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace NoeSbot.Migrations
+namespace NoeSbot.Database.Migrations
 {
     public partial class CustomPunished : Migration
     {

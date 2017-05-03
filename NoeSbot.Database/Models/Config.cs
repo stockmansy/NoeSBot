@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace NoeSbot.Database
+namespace NoeSbot.Database.Models
 {
     public class Config
     {

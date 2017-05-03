@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NoeSbot.Database;
 
-namespace NoeSbot.Migrations
+namespace NoeSbot.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
     [Migration("20170423093831_Configuration")]

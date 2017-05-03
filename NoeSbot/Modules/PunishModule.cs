@@ -2,7 +2,6 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using NoeSbot.Attributes;
-using NoeSbot.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +12,8 @@ using Microsoft.Extensions.Caching.Memory;
 using NoeSbot.Enums;
 using NoeSbot.Database;
 using System.Threading;
+using NoeSbot.Database.Services;
+using NoeSbot.Database.Models;
 
 namespace NoeSbot.Modules
 {

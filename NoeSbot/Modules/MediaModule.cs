@@ -2,7 +2,6 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using NoeSbot.Attributes;
-using NoeSbot.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;

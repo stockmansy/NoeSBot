@@ -6,8 +6,9 @@ using System.Linq;
 using Discord.Commands;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using NoeSbot.Database.Models;
 
-namespace NoeSbot.Services
+namespace NoeSbot.Database.Services
 {
     public interface IPunishedService
     {
