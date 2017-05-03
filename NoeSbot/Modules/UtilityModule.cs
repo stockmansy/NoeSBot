@@ -2,18 +2,12 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using NoeSbot.Attributes;
-using NoeSbot.Services;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using NoeSbot.Helpers;
 using Microsoft.Extensions.Caching.Memory;
 using NoeSbot.Enums;
-using NoeSbot.Database;
-using System.Threading;
-using System.Net;
 
 namespace NoeSbot.Modules
 {
@@ -22,7 +16,6 @@ namespace NoeSbot.Modules
     {
         private readonly DiscordSocketClient _client;
         private IMemoryCache _cache;
-        private static IEnumerable<IMessage> _recentMediaMessages = null;
 
         #region Constructor
 
@@ -35,7 +28,6 @@ namespace NoeSbot.Modules
         #endregion
 
         #region Help text
-
 
         [Command("userinfo")]
         [Summary("Get info regarding a certain user")]
