@@ -22,7 +22,7 @@ namespace NoeSbot.Logic
         private IAudioClient _currentAudioChannel;
         private CancellationTokenSource _disposeToken;
         private Queue<AudioInfo> _queue;
-        private bool _internalSkip;
+        private bool _skip;
         private ulong _guildId;
 
         public AudioPlayer (IVoiceChannel voiceChannel, ITextChannel textChannel, ulong guildId)
@@ -31,22 +31,11 @@ namespace NoeSbot.Logic
             _textChannel = textChannel ?? throw new ArgumentNullException(nameof(textChannel));
             _disposeToken = new CancellationTokenSource();
             _queue = new Queue<AudioInfo>();
-            _internalSkip = false;
+            _skip = false;
             _guildId = guildId;
         }
 
-        public ulong CurrentVoiceChannel => _voiceChannel.Id;
-
-        private bool Skip
-        {
-            get
-            {
-                var result = _internalSkip;
-                _internalSkip = false;
-                return result;
-            }
-            set => _internalSkip = value;
-        }        
+        public ulong CurrentVoiceChannel => _voiceChannel.Id;   
 
         public async Task Start(string url)
         {
@@ -69,6 +58,7 @@ namespace NoeSbot.Logic
                         {
                             await SendAudio(audioItem.File);
                             File.Delete(audioItem.File);
+                            _skip = false;
                         }
                         catch { }
                         finally
@@ -108,7 +98,7 @@ namespace NoeSbot.Logic
 
         public void SkipAudio()
         {
-            Skip = true;
+            _skip = true;
         }
 
         #region Private
@@ -134,7 +124,7 @@ namespace NoeSbot.Logic
                     var exit = false;
                     var buffer = new byte[bufferSize];
 
-                    while (!Skip &&
+                    while (!_skip &&
                            !_disposeToken.IsCancellationRequested &&
                            !exit)
                     {
