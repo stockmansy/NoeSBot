@@ -54,6 +54,9 @@ namespace NoeSbot.Handlers
                         var mediaProcessor = new MediaProcessor(context, _map);
                         await mediaProcessor.Process();
                     }
+
+                    var messageProcessor = new MessageTriggers(context, _map);
+                    await messageProcessor.Process();
                 }
             }
             catch (Exception ex)
