@@ -14,6 +14,7 @@ namespace NoeSbot.Enums
         Media = 6,
         Configure = 7,
         Poll = 8,
-        Utility = 9
+        Utility = 9,
+        MessageTrigger = 10
     }
 }
