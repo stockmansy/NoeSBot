@@ -22,7 +22,7 @@ namespace NoeSbot.Logic
         private ITextChannel _textChannel;
         private IAudioClient _currentAudioChannel;
         private CancellationTokenSource _disposeToken;
-        private Queue<AudioInfo> _queue;
+        private ConcurrentQueue<AudioInfo> _queue;
         private bool _skip;
         private ulong _guildId;
         private float _volume;
@@ -35,13 +35,13 @@ namespace NoeSbot.Logic
             _voiceChannel = voiceChannel ?? throw new ArgumentNullException(nameof(voiceChannel));
             _textChannel = textChannel ?? throw new ArgumentNullException(nameof(textChannel));
             _disposeToken = new CancellationTokenSource();
-            _queue = new Queue<AudioInfo>();
+            _queue = new ConcurrentQueue<AudioInfo>();
             _skip = false;
             _guildId = guildId;
             _volume = 1.0f;
             _status = AudioStatusEnum.Created;
 
-            SetVolume(5);
+            SetVolume(defaultVolume);
         }
 
         private string FileName => $"botsong_{_guildId}_{_count}";
@@ -77,13 +77,10 @@ namespace NoeSbot.Logic
                 {
                     try
                     {
-                        // Safeguard
-                        Thread.Sleep(2000);
-
                         if (_queue.Any()) { 
-                            var audioItem = _queue.Peek();
+                            var success = _queue.TryPeek(out AudioInfo audioItem);
 
-                            if (!string.IsNullOrWhiteSpace(audioItem.File))
+                            if (!string.IsNullOrWhiteSpace(audioItem.File) && success)
                             {
                                 await SendAudio(audioItem.File);
                                 File.Delete(audioItem.File);
@@ -95,7 +92,7 @@ namespace NoeSbot.Logic
                     finally
                     {
                         if (_queue.Any())
-                            _queue.Dequeue();
+                            _queue.TryDequeue(out AudioInfo audioItem);
                     }
                 }
                 
@@ -150,7 +147,7 @@ namespace NoeSbot.Logic
 
         #region Private
 
-        // Used the same way to stream the audio as:  mrousavy https://github.com/mrousavy/DiscordMusicBot
+        // Initial send audio was based on: mrousavy https://github.com/mrousavy/DiscordMusicBot
         private async Task SendAudio(string filePath)
         {
             var startInfo = new ProcessStartInfo
@@ -202,8 +199,7 @@ namespace NoeSbot.Logic
                 }
             }
         }
-
-        // Improve this
+        
         private void Dispose()
         {
             _disposeToken.Cancel();
@@ -218,8 +214,6 @@ namespace NoeSbot.Logic
                     }
                     catch { }
                 }
-
-                _queue.Clear();
 
                 while (_count > 0)
                 {

@@ -138,7 +138,7 @@ namespace NoeSbot.Modules
                         var audioThread = new Thread(async () =>
                         {
                             var items = await DownloadHelper.GetItems(url);
-                            if (items.Count < 1) throw new Exception("No items found");
+                            if (items.Count < 1) return;
 
                             var textChannel = await Context.Guild.GetDefaultChannelAsync();
                             
