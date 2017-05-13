@@ -25,6 +25,7 @@ namespace NoeSbot
         public string PunishedRole { get; set; } = "silenced";
         public string MediaChannel { get; set; } = "media_room";
         public string GeneralChannel { get; set; } = "general";
+        public int AudioVolume { get; set; } = 5;
 
         private int[] _loadedModules;
         public int[] LoadedModules {
@@ -92,7 +93,6 @@ namespace NoeSbot
 
         public static Configuration LoadEmbedded()
         {
-            
             var assembly = typeof(Configuration).GetTypeInfo().Assembly;
             Stream resource = assembly.GetManifestResourceStream("NoeSbot.Config.configuration.example.json");
             using (StreamReader reader = new StreamReader(resource))
@@ -157,6 +157,10 @@ namespace NoeSbot
                     var loadedModules = guildConfigs.Where(x => x.ConfigurationTypeId == (int)ConfigurationEnum.LoadedModules).Select(x => int.Parse(x.Value)).ToArray();
                     if (loadedModules.Length > 0)
                         exConfig.LoadedModules = loadedModules;
+
+                    var audioVolume = guildConfigs.Where(x => x.ConfigurationTypeId == (int)ConfigurationEnum.AudioVolume).Select(x => int.Parse(x.Value)).FirstOrDefault();
+                    if (audioVolume > 0)
+                        exConfig.AudioVolume = audioVolume;
 
                     _guildSpecificConfig.Add((ulong)guildId, exConfig);
                 }

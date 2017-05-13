@@ -7,6 +7,7 @@
         PunishedRole = 3,
         MediaChannel = 4,
         GeneralChannel = 5,
-        LoadedModules = 6
+        LoadedModules = 6,
+        AudioVolume = 7
     }
 }

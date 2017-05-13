@@ -10,6 +10,10 @@ using Discord.Audio;
 using System;
 using NoeSbot.Logic;
 using System.Collections.Generic;
+using NoeSbot.Database.Services;
+using System.Linq;
+using System.Threading;
+using System.Collections.Concurrent;
 
 namespace NoeSbot.Modules
 {
@@ -17,15 +21,17 @@ namespace NoeSbot.Modules
     public class AudioModule : ModuleBase
     {
         private readonly DiscordSocketClient _client;
+        private IConfigurationService _service;
         private IMemoryCache _cache;
-        private static Dictionary<ulong, AudioPlayer> _currentAudioClients = new Dictionary<ulong, AudioPlayer>();
+        private static ConcurrentDictionary<ulong, AudioPlayer> _currentAudioClients = new ConcurrentDictionary<ulong, AudioPlayer>();
         private IVoiceChannel _currentChannel;
 
         #region Constructor
 
-        public AudioModule(DiscordSocketClient client, IMemoryCache memoryCache)
+        public AudioModule(DiscordSocketClient client, IConfigurationService service, IMemoryCache memoryCache)
         {
             _client = client;
+            _service = service;
             _cache = memoryCache;
         }
 
@@ -90,6 +96,30 @@ namespace NoeSbot.Modules
             }
         }
 
+        [Command("volume")]
+        [Alias("v")]
+        [Summary("Set the audio level")]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task SetAudio(int volume)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                if (_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
+                {
+                    audioplayer.SetVolume(volume);
+                }
+
+                var success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.GeneralChannel, volume.ToString());
+
+                await Configuration.LoadAsync(_service);
+
+                if (success)
+                    await ReplyAsync($"Changed the audio level to: {volume}");
+                else
+                    await ReplyAsync("Failed to change the volume level");
+            }
+        }
+
         [Command("play")]
         [Alias("p")]
         [Summary("Start playing audio")]
@@ -105,24 +135,40 @@ namespace NoeSbot.Modules
 
                     if (_currentChannel != null)
                     {
-                        var textChannel = await Context.Guild.GetDefaultChannelAsync();
+                        var audioThread = new Thread(async () =>
+                        {
+                            var items = await DownloadHelper.GetItems(url);
+                            if (items.Count < 1) throw new Exception("No items found");
 
-                        if (!_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
-                        {
-                            audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id);
-                            _currentAudioClients.Add(Context.Guild.Id, audioplayer);
-                            await audioplayer.Start(url);
-                        } else if (audioplayer.CurrentVoiceChannel != _currentChannel.Id)
-                        {
-                            await audioplayer.Stop();
-                            _currentAudioClients.Remove(Context.Guild.Id);
-                            audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id);
-                            _currentAudioClients.Add(Context.Guild.Id, audioplayer);
-                            await audioplayer.Start(url);
-                        } else
-                        {
-                            await audioplayer.Add(url);
-                        }
+                            var textChannel = await Context.Guild.GetDefaultChannelAsync();
+                            
+                            if (!_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
+                            {
+                                // Create new audioplayer
+                                audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, Configuration.Load(Context.Guild.Id).AudioVolume);
+                                _currentAudioClients.TryAdd(Context.Guild.Id, audioplayer);
+                                await audioplayer.Start(items);
+                            }
+                            else if (audioplayer.CurrentVoiceChannel != _currentChannel.Id || audioplayer.Status == AudioStatusEnum.Stopped)
+                            {
+                                // Stop existing player
+                                if (audioplayer.Status != AudioStatusEnum.Stopped)
+                                    await audioplayer.Stop();
+                                _currentAudioClients.TryRemove(Context.Guild.Id, out AudioPlayer removedPlayer);
+
+                                // Create new audioplayer
+                                audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, Configuration.Load(Context.Guild.Id).AudioVolume);
+                                _currentAudioClients.TryAdd(Context.Guild.Id, audioplayer);
+                                await audioplayer.Start(items);
+                            }
+                            else
+                            {
+                                // Add audio items to the queue
+                                await audioplayer.Add(items);
+                            }
+                        });
+
+                        audioThread.Start();
                     }
 
                     var builder = new EmbedBuilder()
@@ -139,6 +185,8 @@ namespace NoeSbot.Modules
                     });
 
                     await ReplyAsync("", false, builder.Build());
+
+
                 }
                 catch (Exception ex)
                 {
@@ -158,7 +206,7 @@ namespace NoeSbot.Modules
                 if (_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
                 {
                     await audioplayer.Stop();
-                    _currentAudioClients.Remove(Context.Guild.Id);
+                    _currentAudioClients.TryRemove(Context.Guild.Id, out AudioPlayer removedPlayer);
                 }
 
                 await ReplyAsync("Stopped playing the audio");
@@ -184,16 +232,6 @@ namespace NoeSbot.Modules
         #endregion
 
         #region Private
-
-        // Should probably do this in a better different way
-        internal static async Task AudioDoneAsync(ulong guildId)
-        {
-            if (_currentAudioClients.TryGetValue(guildId, out AudioPlayer audioplayer))
-            {
-                await audioplayer.Stop();
-                _currentAudioClients.Remove(guildId);
-            }
-        }
 
         #endregion
     }

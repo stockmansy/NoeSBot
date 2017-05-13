@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Audio;
+using NoeSbot.Enums;
 using NoeSbot.Helpers;
 using NoeSbot.Models;
 using NoeSbot.Modules;
@@ -24,8 +25,12 @@ namespace NoeSbot.Logic
         private Queue<AudioInfo> _queue;
         private bool _skip;
         private ulong _guildId;
+        private float _volume;
+        private int _count;
+        private AudioStatusEnum _status;
+        private bool _adding;
 
-        public AudioPlayer (IVoiceChannel voiceChannel, ITextChannel textChannel, ulong guildId)
+        public AudioPlayer(IVoiceChannel voiceChannel, ITextChannel textChannel, ulong guildId, int defaultVolume = 5)
         {
             _voiceChannel = voiceChannel ?? throw new ArgumentNullException(nameof(voiceChannel));
             _textChannel = textChannel ?? throw new ArgumentNullException(nameof(textChannel));
@@ -33,67 +38,109 @@ namespace NoeSbot.Logic
             _queue = new Queue<AudioInfo>();
             _skip = false;
             _guildId = guildId;
+            _volume = 1.0f;
+            _status = AudioStatusEnum.Created;
+
+            SetVolume(5);
         }
 
-        public ulong CurrentVoiceChannel => _voiceChannel.Id;   
+        private string FileName => $"botsong_{_guildId}_{_count}";
 
-        public async Task Start(string url)
+        public ulong CurrentVoiceChannel => _voiceChannel.Id;
+
+        public AudioStatusEnum Status { get => _status; }
+
+        public void SetVolume(int volumeLevel)
         {
-            var audioThread = new Thread(async () =>
-            {
-                _currentAudioChannel = await _voiceChannel.ConnectAsync();
+            if (volumeLevel < 0) volumeLevel = 0;
+            if (volumeLevel > 10) volumeLevel = 10;
 
-                var info = await DownloadHelper.GetInfo(url);
-                var file = await DownloadHelper.Download(url);
-
-                info.File = file;
-
-                _queue.Enqueue(info);
-
-                while (_queue.Any()) {
-                    var audioItem = _queue.Peek();
-
-                    if (!string.IsNullOrWhiteSpace(audioItem.File)) {                         
-                        try
-                        {
-                            await SendAudio(audioItem.File);
-                            File.Delete(audioItem.File);
-                            _skip = false;
-                        }
-                        catch { }
-                        finally
-                        {
-                            if (_queue.Any())
-                                _queue.Dequeue();
-                        }
-                    }
-                    else { 
-                        if (_queue.Any())
-                            _queue.Dequeue();
-                    }
-                }
-
-                await AudioModule.AudioDoneAsync(_guildId);
-            });
-
-            audioThread.Start();
-            await Task.CompletedTask;
+            _volume = (volumeLevel * 10) / 100.0f;
         }
 
-        public async Task Add(string url)
+        public async Task Start(List<string> items)
         {
+            _currentAudioChannel = await _voiceChannel.ConnectAsync();
+
+            var url = items.First();
             var info = await DownloadHelper.GetInfo(url);
-            var file = await DownloadHelper.Download(url);
+            var file = await DownloadHelper.Download(url, FileName);
+            _count++;
 
             info.File = file;
 
             _queue.Enqueue(info);
+
+            var audioThread = new Thread(async () =>
+            {
+                while (_queue.Any() || _adding)
+                {
+                    try
+                    {
+                        // Safeguard
+                        Thread.Sleep(2000);
+
+                        if (_queue.Any()) { 
+                            var audioItem = _queue.Peek();
+
+                            if (!string.IsNullOrWhiteSpace(audioItem.File))
+                            {
+                                await SendAudio(audioItem.File);
+                                File.Delete(audioItem.File);
+                                _skip = false;
+                            }
+                        }
+                    }
+                    catch { }
+                    finally
+                    {
+                        if (_queue.Any())
+                            _queue.Dequeue();
+                    }
+                }
+                
+                await Stop();
+            });
+
+            _status = AudioStatusEnum.Playing;
+            audioThread.Start();
+
+            if (items.Count > 1)
+            {
+                var otheritems = items.GetRange(1, items.Count - 1);
+                await Add(otheritems);
+            }
+        }
+
+        public async Task Add(List<string> items)
+        {
+            _adding = true;
+
+            foreach (var url in items)
+            {
+                if (_status != AudioStatusEnum.Playing) {
+                    _adding = false;
+                    Dispose();
+                    return;
+                }
+
+                var info = await DownloadHelper.GetInfo(url);
+                var file = await DownloadHelper.Download(url, FileName);
+                _count++;
+
+                info.File = file;
+
+                _queue.Enqueue(info);
+            }
+
+            _adding = false;
         }
 
         public async Task Stop()
         {
             Dispose();
             await _currentAudioChannel.StopAsync();
+            _status = AudioStatusEnum.Stopped;
         }
 
         public void SkipAudio()
@@ -138,6 +185,9 @@ namespace NoeSbot.Logic
                                 break;
                             }
 
+                            // Adjust audio levels
+                            buffer = ScaleVolumeSafeAllocateBuffers(buffer, _volume);
+
                             await audioOutput.WriteAsync(buffer, 0, read, _disposeToken.Token);
 
                             bytesSent += read;
@@ -158,7 +208,8 @@ namespace NoeSbot.Logic
         {
             _disposeToken.Cancel();
 
-            var disposeThread = new Thread(() => {
+            var disposeThread = new Thread(() =>
+            {
                 foreach (var song in _queue)
                 {
                     try
@@ -169,9 +220,50 @@ namespace NoeSbot.Logic
                 }
 
                 _queue.Clear();
+
+                while (_count > 0)
+                {
+                    try
+                    {
+                        File.Delete(FileName);
+                    }
+                    catch { }
+
+                    _count--;
+                }
             });
 
-            disposeThread.Start();        
+            disposeThread.Start();
+        }
+
+        // Source: https://github.com/RogueException/Discord.Net/issues/293
+        private byte[] ScaleVolumeSafeAllocateBuffers(byte[] audioSamples, float volume)
+        {
+            if (audioSamples == null) throw new ArgumentException(nameof(audioSamples));
+            if (audioSamples.Length % 2 != 0) throw new Exception("Not devisable by 2 (bit)");
+            if (volume < 0f || volume > 1f) throw new Exception("Invalid volume");
+
+            var output = new byte[audioSamples.Length];
+            if (Math.Abs(volume - 1f) < 0.0001f)
+            {
+                Buffer.BlockCopy(audioSamples, 0, output, 0, audioSamples.Length);
+                return output;
+            }
+
+            // 16-bit precision for the multiplication
+            int volumeFixed = (int)Math.Round(volume * 65536d);
+
+            for (var i = 0; i < output.Length; i += 2)
+            {
+                // The cast to short is necessary to get a sign-extending conversion
+                int sample = (short)((audioSamples[i + 1] << 8) | audioSamples[i]);
+                int processed = (sample * volumeFixed) >> 16;
+
+                output[i] = (byte)processed;
+                output[i + 1] = (byte)(processed >> 8);
+            }
+
+            return output;
         }
 
         #endregion
