@@ -55,8 +55,11 @@ namespace NoeSbot.Handlers
                         await mediaProcessor.Process();
                     }
 
-                    var messageProcessor = new MessageTriggers(context, _map);
-                    await messageProcessor.Process();
+                    if (loadedModules.Contains((int)ModuleEnum.MessageTrigger))
+                    {
+                        var messageProcessor = new MessageTriggers(context, _map);
+                        await messageProcessor.Process();
+                    }
                 }
             }
             catch (Exception ex)
