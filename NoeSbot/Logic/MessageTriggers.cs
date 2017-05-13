@@ -40,7 +40,7 @@ namespace NoeSbot.Logic
             {
                 if (Regex.Matches(_context.Message.Content.ToLower(), @"(\s|^)" + trig.Trigger + @"(\s|$)").Count > 0)
                 {
-                    await _context.Message.Channel.SendMessageAsync(trig.Message);
+                    await _context.Message.Channel.SendMessageAsync(trig.Message, trig.Tts);
                 }
             }
         }
