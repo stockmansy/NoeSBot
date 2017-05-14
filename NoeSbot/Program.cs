@@ -51,6 +51,7 @@ namespace NoeSbot
             _map.Add(serviceProvider.GetService<IMemoryCache>());
             _map.Add(serviceProvider.GetService<IPunishedService>());
             _map.Add(serviceProvider.GetService<IConfigurationService>());
+            _map.Add(serviceProvider.GetService<IMessageTriggerService>());
 
             await Configuration.LoadAsync(serviceProvider.GetService<IConfigurationService>());
 
@@ -83,6 +84,7 @@ namespace NoeSbot
                     options.UseMySql(Configuration.Load().ConnectionString));
             serviceCollection.AddSingleton<IPunishedService, PunishedService>();
             serviceCollection.AddSingleton<IConfigurationService, ConfigurationService>();
+            serviceCollection.AddSingleton<IMessageTriggerService, MessageTriggerService>();
         }
     }
 }

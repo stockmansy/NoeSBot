@@ -22,12 +22,15 @@ namespace NoeSbot.Database
 
         public DbSet<CustomPunished> CustomPunishedEntities { get; set; }
 
+        public DbSet<MessageTrigger> MessageTriggerEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Punished>();
             modelBuilder.Entity<CustomPunished>();
+            modelBuilder.Entity<MessageTrigger>();
         }
     }
 
@@ -37,7 +40,7 @@ namespace NoeSbot.Database
         public DatabaseContext Create(DbContextFactoryOptions options)
         {
             var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
-            optionsBuilder.UseMySql("Server=localhost; Port=3306; Database=noesbot; Uid=root; Pwd=example;");
+            optionsBuilder.UseMySql("Server=localhost; Port=; Database=noesbot; Uid=noesbot; Pwd=123456;");
 
             return new DatabaseContext(optionsBuilder.Options);
         }

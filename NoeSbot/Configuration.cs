@@ -126,12 +126,13 @@ namespace NoeSbot
             if (configs != null && configs.Count > 0)
             {
                 _guildSpecificConfig = new Dictionary<ulong, Configuration>();
-
-                var exConfig = Load();
+                
                 var guildIds = configs.Select(x => x.GuildId).Distinct();
 
                 foreach(var guildId in guildIds)
                 {
+                    var exConfig = CloneJson(Load());
+
                     var guildConfigs = configs.Where(x => x.GuildId == guildId).Distinct();
 
                     var owners = guildConfigs.Where(x => x.ConfigurationTypeId == (int)ConfigurationEnum.Owners).Select(x => ulong.Parse(x.Value)).ToArray();
@@ -168,5 +169,14 @@ namespace NoeSbot
         }
 
         public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented);
+
+        public static Configuration CloneJson(Configuration source)
+        {
+            if (Object.ReferenceEquals(source, null))
+                return default(Configuration);
+            
+            var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
+            return JsonConvert.DeserializeObject<Configuration>(JsonConvert.SerializeObject(source), deserializeSettings);
+        }
     }
 }
