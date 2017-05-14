@@ -9,6 +9,7 @@
     <None Remove="Config\configuration.example.json" />
     <None Remove="ffmpeg.exe" />
     <None Remove="libsodium.dll" />
+    <None Remove="opus.dll" />
     <None Remove="youtube-dl.exe" />
   </ItemGroup>
 
@@ -39,6 +40,10 @@
   
   <ItemGroup>
     <ProjectReference Include="..\NoeSbot.Database\NoeSbot.Database.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Libs\LibSodium\" />
   </ItemGroup>
 
 </Project>
