@@ -16,6 +16,6 @@ namespace NoeSbot.Enums
         Poll = 8,
         Utility = 9,
         MessageTrigger = 10,
-        Music = 11
+        Audio = 11
     }
 }

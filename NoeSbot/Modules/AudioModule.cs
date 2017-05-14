@@ -18,7 +18,7 @@ using NoeSbot.Models;
 
 namespace NoeSbot.Modules
 {
-    [ModuleName(ModuleEnum.Music)]
+    [ModuleName(ModuleEnum.Audio)]
     public class AudioModule : ModuleBase
     {
         private readonly DiscordSocketClient _client;
@@ -50,7 +50,7 @@ namespace NoeSbot.Modules
         [Alias("musicinfo")]
         [Summary("Get info about an audio item")]
         [MinPermissions(AccessLevel.User)]
-        public async Task GetInfo()
+        public async Task GetInfoHelp()
         {
             var user = Context.User as SocketGuildUser;
             var builder = new EmbedBuilder()
@@ -73,7 +73,7 @@ namespace NoeSbot.Modules
         [Alias("v")]
         [Summary("Set the audio level")]
         [MinPermissions(AccessLevel.ServerMod)]
-        public async Task SetAudio()
+        public async Task SetAudioHelp()
         {
             var user = Context.User as SocketGuildUser;
             var builder = new EmbedBuilder()
@@ -96,7 +96,7 @@ namespace NoeSbot.Modules
         [Alias("p", "playaudio", "playsong")]
         [Summary("Start playing audio")]
         [MinPermissions(AccessLevel.User)]
-        public async Task Play()
+        public async Task PlayHelp()
         {
             var user = Context.User as SocketGuildUser;
             var builder = new EmbedBuilder()
@@ -198,7 +198,7 @@ namespace NoeSbot.Modules
         [Alias("p", "playaudio", "playsong")]
         [Summary("Start playing audio")]
         [MinPermissions(AccessLevel.User)]
-        public async Task Play(string url)
+        public async Task Play([Remainder] string url)
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
