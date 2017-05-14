@@ -15,3 +15,5 @@ Update-Database -Project NoeSbot.Database -Context NoeSbot.Database.DatabaseCont
 
 
 Hello
+
+https://github.com/RogueException/Discord.Net/blob/dev/docs/guides/voice/sending-voice.md
