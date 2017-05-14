@@ -58,7 +58,7 @@ namespace NoeSbot.Logic
             _volume = (volumeLevel * 10) / 100.0f;
         }
 
-        public async Task Start(List<string> items)
+        public async Task<AudioInfo> Start(List<string> items)
         {
             _currentAudioChannel = await _voiceChannel.ConnectAsync();
 
@@ -102,11 +102,18 @@ namespace NoeSbot.Logic
             _status = AudioStatusEnum.Playing;
             audioThread.Start();
 
-            if (items.Count > 1)
+            var loadOthersThread = new Thread(async () =>
             {
-                var otheritems = items.GetRange(1, items.Count - 1);
-                await Add(otheritems);
-            }
+                if (items.Count > 1)
+                {
+                    var otheritems = items.GetRange(1, items.Count - 1);
+                    await Add(otheritems);
+                }
+            });
+
+            loadOthersThread.Start();
+
+            return info;
         }
 
         public async Task Add(List<string> items)
@@ -140,9 +147,32 @@ namespace NoeSbot.Logic
             _status = AudioStatusEnum.Stopped;
         }
 
-        public void SkipAudio()
+        public AudioInfo SkipAudio()
         {
+            if (_adding && _queue.Count <= 1)
+                return new AudioInfo() { Title = "Loading"};
+
             _skip = true;
+
+            var nextItem = _queue.ElementAtOrDefault(1);
+
+            if (_queue.Count > 1 && nextItem != null)
+                return nextItem;
+
+            return null;
+        }
+
+        public AudioInfo CurrentAudio()
+        {
+            if (_queue.TryPeek(out AudioInfo result))
+                return result;
+
+            return new AudioInfo() {
+                Title = "No audio found",
+                Url = "",
+                Description = "",
+                Duration = ""
+            };
         }
 
         #region Private

@@ -14,6 +14,7 @@ using NoeSbot.Database.Services;
 using System.Linq;
 using System.Threading;
 using System.Collections.Concurrent;
+using NoeSbot.Models;
 
 namespace NoeSbot.Modules
 {
@@ -43,10 +44,83 @@ namespace NoeSbot.Modules
 
         #endregion
 
+        #region Help text
+
+        [Command("audioinfo")]
+        [Alias("musicinfo")]
+        [Summary("Get info about an audio item")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task GetInfo()
+        {
+            var user = Context.User as SocketGuildUser;
+            var builder = new EmbedBuilder()
+            {
+                Color = user.GetColor(),
+                Description = "You can get info about an audio item:"
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = "Parameter: The url";
+                x.Value = "Provide an url to the audio item";
+                x.IsInline = false;
+            });
+
+            await ReplyAsync("", false, builder.Build());
+        }
+
+        [Command("volume")]
+        [Alias("v")]
+        [Summary("Set the audio level")]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task SetAudio()
+        {
+            var user = Context.User as SocketGuildUser;
+            var builder = new EmbedBuilder()
+            {
+                Color = user.GetColor(),
+                Description = "You can set the volume level:"
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = "Parameter: a number";
+                x.Value = "Provide a number between 1 and 10";
+                x.IsInline = false;
+            });
+
+            await ReplyAsync("", false, builder.Build());
+        }
+
+        [Command("play")]
+        [Alias("p", "playaudio", "playsong")]
+        [Summary("Start playing audio")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Play()
+        {
+            var user = Context.User as SocketGuildUser;
+            var builder = new EmbedBuilder()
+            {
+                Color = user.GetColor(),
+                Description = "You can play an audio item:"
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = "Parameter: the url";
+                x.Value = "Provide an url to the audio item";
+                x.IsInline = false;
+            });
+
+            await ReplyAsync("", false, builder.Build());
+        }
+
+        #endregion
+
         #region Commands
 
-        [Command("musicinfo")]
-        [Alias("mi")]
+        [Command("audioinfo")]
+        [Alias("musicinfo")]
         [Summary("Get info about a video")]
         [MinPermissions(AccessLevel.User)]
         public async Task GetInfo(string url)
@@ -121,7 +195,7 @@ namespace NoeSbot.Modules
         }
 
         [Command("play")]
-        [Alias("p")]
+        [Alias("p", "playaudio", "playsong")]
         [Summary("Start playing audio")]
         [MinPermissions(AccessLevel.User)]
         public async Task Play(string url)
@@ -132,6 +206,9 @@ namespace NoeSbot.Modules
                 {
                     var user = Context.User as SocketGuildUser;
                     _currentChannel = user.VoiceChannel;
+                    var info = new AudioInfo();
+
+                    var message = await ReplyAsync("", false, GetLoadingEmbed(url, user));
 
                     if (_currentChannel != null)
                     {
@@ -147,7 +224,7 @@ namespace NoeSbot.Modules
                                 // Create new audioplayer
                                 audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, Configuration.Load(Context.Guild.Id).AudioVolume);
                                 _currentAudioClients.TryAdd(Context.Guild.Id, audioplayer);
-                                await audioplayer.Start(items);
+                                info = await audioplayer.Start(items);
                             }
                             else if (audioplayer.CurrentVoiceChannel != _currentChannel.Id || audioplayer.Status == AudioStatusEnum.Stopped)
                             {
@@ -159,34 +236,20 @@ namespace NoeSbot.Modules
                                 // Create new audioplayer
                                 audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, Configuration.Load(Context.Guild.Id).AudioVolume);
                                 _currentAudioClients.TryAdd(Context.Guild.Id, audioplayer);
-                                await audioplayer.Start(items);
+                                info = await audioplayer.Start(items);
                             }
                             else
                             {
                                 // Add audio items to the queue
                                 await audioplayer.Add(items);
+                                info = audioplayer.CurrentAudio();
                             }
+
+                            await message.ModifyAsync(x => x.Embed = GetCurrentAudioEmbed(info, user));
                         });
 
                         audioThread.Start();
                     }
-
-                    var builder = new EmbedBuilder()
-                    {
-                        Color = user.GetColor(),
-                        Description = "You can start playing a sound clip:"
-                    };
-
-                    builder.AddField(x =>
-                    {
-                        x.Name = "Parameter 1: The subject";
-                        x.Value = "Ignore this, is in development";
-                        x.IsInline = false;
-                    });
-
-                    await ReplyAsync("", false, builder.Build());
-
-
                 }
                 catch (Exception ex)
                 {
@@ -196,7 +259,7 @@ namespace NoeSbot.Modules
         }
 
         [Command("stop")]
-        [Alias("s")]
+        [Alias("s", "stopaudio", "stopsong")]
         [Summary("Stop playing audio")]
         [MinPermissions(AccessLevel.User)]
         public async Task Stop()
@@ -222,16 +285,85 @@ namespace NoeSbot.Modules
             {
                 if (_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
                 {
-                    audioplayer.SkipAudio();
-                }
+                    var info = audioplayer.SkipAudio();
+                    if (info != null)
+                    {
+                        var user = Context.User as SocketGuildUser;
 
-                await ReplyAsync("Skipped some audio");
+                        if (info.Title.Equals("loading", StringComparison.OrdinalIgnoreCase))
+                            await ReplyAsync("The next song is still loading...");
+                        else
+                            await ReplyAsync("", false, GetCurrentAudioEmbed(info, user));
+                    } else
+                        await ReplyAsync("That was the last song");
+                }
+            }
+        }
+
+        [Command("current")]
+        [Alias("currentaudio", "currentsong")]
+        [Summary("Get the current audio")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task CurrentAudio()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                if (_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
+                {
+                    var user = Context.User as SocketGuildUser;
+                    var info = audioplayer.CurrentAudio();
+                    await ReplyAsync("", false, GetCurrentAudioEmbed(info, user));
+                } else
+                    await ReplyAsync("No audio playing currently");
             }
         }
 
         #endregion
 
         #region Private
+
+        private Embed GetLoadingEmbed(string url, SocketGuildUser user)
+        {
+            var builder = new EmbedBuilder()
+            {
+                Color = user.GetColor(),
+                Description = "Loading the requested audio..."
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = "Url";
+                x.Value = url;
+                x.IsInline = false;
+            });
+
+            return builder.Build();
+        }
+
+        private Embed GetCurrentAudioEmbed(AudioInfo currentAudio, SocketGuildUser user)
+        {
+            var builder = new EmbedBuilder()
+            {
+                Color = user.GetColor(),
+                Description = "Now playing (Keep in mind, playlists have to be buffered, also WIP ;)):"
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = "Title";
+                x.Value = currentAudio?.Title ?? "No title found";
+                x.IsInline = false;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "Url";
+                x.Value = currentAudio?.Url ?? "No url found";
+                x.IsInline = false;
+            });
+
+            return builder.Build();
+        }
 
         #endregion
     }

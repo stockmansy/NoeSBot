@@ -86,11 +86,12 @@ namespace NoeSbot.Helpers
                     
                     var youtubedl = Process.Start(youtubedlGetTitle);
 
-                    while (!youtubedl.StandardOutput.EndOfStream)
-                    {
-                        string line = youtubedl.StandardOutput.ReadLine();
-                        Console.WriteLine(line);
-                    }
+                    // In case of debug:
+                    //while (!youtubedl.StandardOutput.EndOfStream)
+                    //{
+                    //    string line = youtubedl.StandardOutput.ReadLine();
+                    //    Console.WriteLine(line);
+                    //}
 
                     youtubedl.WaitForExit();
 
