@@ -200,6 +200,7 @@ namespace NoeSbot.Helpers
                     CreateNoWindow = true,
                     RedirectStandardOutput = true
                 };
+                try { 
                 var youtubedl = Process.Start(youtubedlDownload);
 
                 while (!youtubedl.StandardOutput.EndOfStream)
@@ -209,17 +210,21 @@ namespace NoeSbot.Helpers
                 }
 
                 youtubedl.WaitForExit(1000 * 60 * 5);
+                    // Safeguard
+                    Thread.Sleep(1000);
 
-                // Safeguard
-                //Thread.Sleep(1000);
-
-                var fullFileName = File.Exists(file) ? file : null;
-                tcs.SetResult(fullFileName);
+                    var fullFileName = File.Exists(file) ? file : null;
+                    tcs.SetResult(fullFileName);
+                } 
+                catch
+                {
+                    tcs.SetResult(null);
+                }                
             }).Start();
 
             string result = await tcs.Task;
             if (result == null)
-                throw new Exception("youtube-dl failed to download the file!");
+                return "";// throw new Exception("youtube-dl failed to download the file!");
 
             return result.Replace("\n", "").Replace(Environment.NewLine, "");
         }

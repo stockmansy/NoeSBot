@@ -245,7 +245,11 @@ namespace NoeSbot.Modules
                                 info = audioplayer.CurrentAudio();
                             }
 
+                            try { 
                             await message.ModifyAsync(x => x.Embed = GetCurrentAudioEmbed(info, user));
+                            } catch {
+                                await ReplyAsync("", false, GetLoadingEmbed(url, user));
+                            }
                         });
 
                         audioThread.Start();
