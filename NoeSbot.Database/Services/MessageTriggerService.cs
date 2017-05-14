@@ -20,7 +20,7 @@ namespace NoeSbot.Database.Services
             _logger = loggerFactory.CreateLogger<MessageTriggerService>();
         }
 
-        public async Task<bool> SaveMessageTrigger(string trigger, string message, long server)
+        public async Task<bool> SaveMessageTrigger(string trigger, string message, bool tts, long server)
         {
             try
             {
@@ -32,7 +32,8 @@ namespace NoeSbot.Database.Services
                 {
                     Trigger = trigger,
                     Message = message,
-                    Server = server
+                    Server = server,
+                    Tts = tts
                 });
 
                 await _context.SaveChangesAsync();
@@ -41,6 +42,23 @@ namespace NoeSbot.Database.Services
             catch (DbUpdateException ex)
             {
                 _logger.LogError($"Error in Save MessageTrigger: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteMessageTrigger(string trigger, long server)
+        {
+            try
+            {
+                var existing = await _context.MessageTriggerEntities.Where(x => x.Trigger == trigger && x.Server == server).SingleOrDefaultAsync();
+                if (existing != null)
+                    _context.MessageTriggerEntities.Remove(existing);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Delete MessageTrigger: {ex.Message}");
                 return false;
             }
         }
@@ -61,5 +79,6 @@ namespace NoeSbot.Database.Services
                 return new List<MessageTrigger>();
             }
         }
+
     }
 }

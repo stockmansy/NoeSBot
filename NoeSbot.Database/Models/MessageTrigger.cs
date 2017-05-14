@@ -12,5 +12,6 @@ namespace NoeSbot.Database.Models
         public string Trigger { get; set; }
         public string Message { get; set; }
         public long Server { get; set; }
+        public bool Tts { get; set; }
     }
 }

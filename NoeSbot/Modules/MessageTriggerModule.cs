@@ -36,13 +36,27 @@ namespace NoeSbot.Modules
         [Summary("Add a trigger in messages")]
         [MinPermissions(AccessLevel.ServerOwner)]
         public async Task AddTrigger([Summary("The trigger")] string trig,
-                                        [Summary("The message triggered")] string mess)
+                                        [Summary("The message triggered")] string mess,
+                                        [Summary("Optional tts")] bool tts = false)
         {
-            var success = await _database.SaveMessageTrigger(trig.ToLower(), mess, (long)Context.Guild.Id);
+            var success = await _database.SaveMessageTrigger(trig.ToLower(), mess, tts, (long)Context.Guild.Id);
             if (success)
                 await ReplyAsync("Trigger for " + trig.ToLower() + " successfully added");
             else
                 await ReplyAsync("Something went wrong. Trigger not saved.");
+        }
+
+        [Command("deletetrigger")]
+        [Alias("deltrigger")]
+        [Summary("Deletes a trigger in messages")]
+        [MinPermissions(AccessLevel.ServerOwner)]
+        public async Task AddTrigger([Summary("The trigger")] string trig)
+        {
+            var success = await _database.DeleteMessageTrigger(trig.ToLower(), (long)Context.Guild.Id);
+            if (success)
+                await ReplyAsync("Trigger for " + trig.ToLower() + " successfully removed");
+            else
+                await ReplyAsync("Trigger does not exist or something else went wrong.");
         }
     }
 }
