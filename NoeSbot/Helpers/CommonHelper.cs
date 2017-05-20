@@ -129,5 +129,34 @@ namespace NoeSbot.Helpers
             var d = new DirectoryInfo(directory);
             return d.GetFiles();
         }
+
+        public static string[] GetSplitIntoPages(string input, int maxChars = 1000)
+        {
+            var charCount = 0;
+            var lines = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            return lines.GroupBy(w => (charCount += (((charCount % maxChars) + w.Length + 1 >= maxChars)
+                            ? maxChars - (charCount % maxChars) : 0) + w.Length + 1) / maxChars)
+                        .Select(g => string.Join(" ", g.ToArray()))
+                        .ToArray();
+
+
+            //var nPages = (int)Math.Ceiling((double)input.Length / 1000);
+            //var result = new string[nPages];
+
+            //if (input.Length <= maxChars)
+            //{                
+            //    result[0] = input;
+            //    return result;
+            //}
+
+            //for (var i = 0; i < nPages; i++) {
+            //    var sub = input.Substring(i * maxChars);
+            //    if (sub.Length > maxChars)
+            //        sub = input.Substring(i * maxChars, maxChars);
+            //    result[i] = sub;
+            //}
+
+            //return result;
+        }
     }
 }
