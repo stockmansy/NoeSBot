@@ -17,5 +17,7 @@ namespace NoeSbot.Models
         public int DefinitionCount => List.Count;
         public int PagesCount => Pages.Length;
         public UrbanItem CurrentItem => List[CurrentDef - 1];
+        public bool PageIconsSet { get; set; }
+        public bool InHelpMode { get; set; }
     }
 }

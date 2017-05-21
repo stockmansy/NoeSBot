@@ -14,6 +14,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace NoeSbot.Modules
 {
@@ -24,8 +25,7 @@ namespace NoeSbot.Modules
         private IMemoryCache _cache;
         private const string apiBaseUrl = "http://api.urbandictionary.com";
         private const string apiQueryPath = "/v0/define?term=";
-        private readonly Dictionary<ulong, UrbanMain> _urbans;
-        private Dictionary<ulong, string> _messagesBeingAdjusted;
+        private readonly LimitedDictionary<ulong, UrbanMain> _urbans;
 
         #region Constructor
 
@@ -34,8 +34,7 @@ namespace NoeSbot.Modules
             _client = client;
             _cache = memoryCache;
 
-            _urbans = new Dictionary<ulong, UrbanMain>();
-            _messagesBeingAdjusted = new Dictionary<ulong, string>();
+            _urbans = new LimitedDictionary<ulong, UrbanMain>();
         }
 
         #endregion
@@ -47,63 +46,79 @@ namespace NoeSbot.Modules
             var message = await messageParam.GetOrDownloadAsync();
             if (message == null || !reaction.User.IsSpecified)
                 return;
-            
+
             var user = Context.User as SocketGuildUser;
             var userAdjusting = reaction.User.Value;
-            
+
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook && !userAdjusting.IsBot && !userAdjusting.IsWebhook)
             {
                 var success = _urbans.TryGetValue(message.Id, out UrbanMain urbanMain);
                 if (!success)
                     return;
 
-                if (_messagesBeingAdjusted.TryGetValue(message.Id, out string author))
-                    return;
-
-                _messagesBeingAdjusted.Add(message.Id, userAdjusting.Username);
-
                 var name = reaction.Emoji.Name;
 
                 await message.RemoveReactionAsync(reaction.Emoji.Name, reaction.User.Value);
 
-                if (name.Equals(IconHelper.ArrowDown))
+                if (urbanMain.InHelpMode && !name.Equals(IconHelper.Question))
                 {
-                    var current = urbanMain.CurrentDef;
-                    var next = current + 1;
-                    if (urbanMain.DefinitionCount < next)
-                        return;
-
-                    SetCurrentDefinition(urbanMain, next);
-
-                } else if (name.Equals(IconHelper.ArrowUp))
-                {
-                    var current = urbanMain.CurrentDef;
-                    var previous = current - 1;
-                    if (previous < 1)
-                        return;
-
-                    SetCurrentDefinition(urbanMain, previous);
-                } else if (name.Equals(IconHelper.ArrowLeft))
-                {
-                    var current = urbanMain.CurrentPage;
-                    var previous = current - 1;
-                    if (previous < 1)
-                        return;
-
-                    SetCurrentPage(urbanMain, previous);
-                } else if (name.Equals(IconHelper.ArrowRight))
-                {
-                    var current = urbanMain.CurrentPage;
-                    var next = current + 1;
-                    if (urbanMain.PagesCount < next)
-                        return;
-
-                    SetCurrentPage(urbanMain, next);
+                    await message.ModifyAsync(x => x.Embed = GenerateUrban(urbanMain, author: userAdjusting.Username));
+                    urbanMain.InHelpMode = false;
+                    return;
                 }
 
-                await message.ModifyAsync(x => x.Embed = GenerateUrban(urbanMain, author: userAdjusting.Username));
+                new Thread(async () =>
+                {
+                    if (name.Equals(IconHelper.ArrowDown))
+                    {
+                        var current = urbanMain.CurrentDef;
+                        var next = current + 1;
+                        if (urbanMain.DefinitionCount < next)
+                            return;
 
-                _messagesBeingAdjusted.Remove(message.Id);
+                        SetCurrentDefinition(urbanMain, next);
+                        await SetPagingAsync(message, urbanMain);
+
+                    }
+                    else if (name.Equals(IconHelper.ArrowUp))
+                    {
+                        var current = urbanMain.CurrentDef;
+                        var previous = current - 1;
+                        if (previous < 1)
+                            return;
+
+                        SetCurrentDefinition(urbanMain, previous);
+                        await SetPagingAsync(message, urbanMain);
+                    }
+                    else if (name.Equals(IconHelper.ArrowLeft))
+                    {
+                        var current = urbanMain.CurrentPage;
+                        var previous = current - 1;
+                        if (previous < 1)
+                            return;
+
+                        SetCurrentPage(urbanMain, previous);
+                        await SetPagingAsync(message, urbanMain);
+                    }
+                    else if (name.Equals(IconHelper.ArrowRight))
+                    {
+                        var current = urbanMain.CurrentPage;
+                        var next = current + 1;
+                        if (urbanMain.PagesCount < next)
+                            return;
+
+                        SetCurrentPage(urbanMain, next);
+                        await SetPagingAsync(message, urbanMain);
+                    }
+                    else if (name.Equals(IconHelper.Question))
+                    {
+                        await message.ModifyAsync(x => x.Embed = GenerateHelpUrban(userAdjusting.Username));
+                        urbanMain.InHelpMode = true;
+                        return;
+                    }
+
+                    await message.ModifyAsync(x => x.Embed = GenerateUrban(urbanMain, author: userAdjusting.Username));
+                }).Start();
             }
         }
 
@@ -186,6 +201,7 @@ namespace NoeSbot.Modules
                 {
                     iconsToAdd.Add(IconHelper.ArrowUp);
                     iconsToAdd.Add(IconHelper.ArrowDown);
+                    iconsToAdd.Add(IconHelper.Question);
                 }
 
                 urbanMain = SetCurrentDefinition(urbanMain, 1);
@@ -199,6 +215,7 @@ namespace NoeSbot.Modules
                 {
                     iconsToAdd.Add(IconHelper.ArrowLeft);
                     iconsToAdd.Add(IconHelper.ArrowRight);
+                    urbanMain.PageIconsSet = true;
                 }
 
                 if (embed == null)
@@ -211,15 +228,19 @@ namespace NoeSbot.Modules
 
                 _urbans.Add(message.Id, urbanMain);
 
-                foreach (var icon in iconsToAdd) {
-                    await message.AddReactionAsync(icon);
-                    await Task.Delay(1250);
-                }
+                new Thread(async () =>
+                {
+                    foreach (var icon in iconsToAdd)
+                    {
+                        await message.AddReactionAsync(icon);
+                        Thread.Sleep(1300);
+                    }
 
-                if (urbanMain.DefinitionCount > 1)
-                    _client.ReactionAdded += OnReactionAdded;
+                    if (urbanMain.DefinitionCount > 1)
+                        _client.ReactionAdded += OnReactionAdded;
 
-                await message.ModifyAsync(x => x.Embed = GenerateUrban(urbanMain));
+                    await message.ModifyAsync(x => x.Embed = GenerateUrban(urbanMain));
+                }).Start();
             }
         }
 
@@ -246,19 +267,20 @@ namespace NoeSbot.Modules
                 }
             };
 
-            if (initializing) {
+            if (initializing)
+            {
                 builder.Description = "Loading...";
                 builder.ThumbnailUrl = "https://cdn2.iconfinder.com/data/icons/loading-3/100/load01-256.png";
             }
 
-            var definition = urbanMain.Pages[urbanMain.CurrentPage - 1];            
+            var definition = urbanMain.Pages[urbanMain.CurrentPage - 1];
 
             if (urbanMain.CurrentPage > 1)
                 definition = $"... {definition}";
 
             if (urbanMain.CurrentPage < urbanMain.PagesCount)
                 definition = $"{definition} ...";
-            
+
             if (urbanMain.PagesCount > 1)
                 definition = $"{definition}{Environment.NewLine}{Environment.NewLine}Page {urbanMain.CurrentPage} of {urbanMain.PagesCount} ";
 
@@ -275,6 +297,51 @@ namespace NoeSbot.Modules
             {
                 x.Name = "Link";
                 x.Value = urbanMain.CurrentItem?.Permalink ?? "";
+                x.IsInline = false;
+            });
+
+            return builder.Build();
+        }
+
+        private Embed GenerateHelpUrban(string author = "")
+        {
+            var user = Context.User as SocketGuildUser;
+            var hasAuthor = !string.IsNullOrWhiteSpace(author);
+            var footer = "Click the arrows for more definitions";
+
+            if (hasAuthor)
+                footer = $"{footer} (adjusted by {author})";
+
+            var builder = new EmbedBuilder()
+            {
+                Color = user.GetColor(),
+                ThumbnailUrl = "http://icons.veryicon.com/256/Application/isabi/Help.png",
+                Description = "Help",
+                Footer = new EmbedFooterBuilder()
+                {
+                    IconUrl = "https://www.melhorcambio.com/images/question-mark.png",
+                    Text = footer
+                }
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = "How to use";
+                x.Value = "Use the up and down arrows to switch between the various definitions.";
+                x.IsInline = false;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "How to switch pages";
+                x.Value = "Use the left and right arrows to switch between pages.";
+                x.IsInline = false;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "Why use...";
+                x.Value = $"Discord has a 2000 character limit for each message, so some urban dictionary entries need to be split up.{Environment.NewLine}The arrows are added slowly because of the rate limit discord set on reactions (Yes, odd)";
                 x.IsInline = false;
             });
 
@@ -298,6 +365,25 @@ namespace NoeSbot.Modules
             urbanMain.CurrentPage = pageId;
 
             return urbanMain;
+        }
+
+        private async Task SetPagingAsync(IUserMessage message, UrbanMain urbanMain)
+        {
+            if (urbanMain.PageIconsSet && urbanMain.PagesCount <= 1)
+            {
+                await message.RemoveReactionAsync(IconHelper.ArrowLeft, message.Author);
+                await message.RemoveReactionAsync(IconHelper.ArrowRight, message.Author);
+                urbanMain.PageIconsSet = false;
+            }
+
+            if (!urbanMain.PageIconsSet && urbanMain.PagesCount > 1)
+            {
+                await message.AddReactionAsync(IconHelper.ArrowLeft);
+                await Task.Delay(1300);
+                await message.AddReactionAsync(IconHelper.ArrowRight);
+                await Task.Delay(1300);
+                urbanMain.PageIconsSet = true;
+            }
         }
 
         #endregion

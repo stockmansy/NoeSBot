@@ -32,6 +32,8 @@ namespace NoeSbot.Helpers
         public static string ArrowRight = "▶";
         public static string LongArrowLeft = "⬅";
         public static string LongArrowRight = "➡";
+        public static string QuestionFull = "❓";
+        public static string Question = "❔";
 
         private static readonly Dictionary<int, string> _numbers = new Dictionary<int, string>
         {
