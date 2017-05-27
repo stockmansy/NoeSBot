@@ -53,6 +53,15 @@ namespace NoeSbot.Modules
             await ReplyAsync(input);
         }
 
+        [Command("saytts")]
+        [Alias("echotts")]
+        [Summary("Make the bot say with tts...")]
+        public async Task SayTTS([Remainder] string input)
+        {
+            await Context.Message.DeleteAsync();
+            await ReplyAsync(input, true);
+        }
+
         [Command("info")]
         [Summary("Get info about the bot")]
         public async Task Info()
