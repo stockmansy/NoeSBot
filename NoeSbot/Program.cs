@@ -52,6 +52,7 @@ namespace NoeSbot
             _map.Add(serviceProvider.GetService<IPunishedService>());
             _map.Add(serviceProvider.GetService<IConfigurationService>());
             _map.Add(serviceProvider.GetService<IMessageTriggerService>());
+            _map.Add(serviceProvider.GetService<IProfileService>());
 
             await Configuration.LoadAsync(serviceProvider.GetService<IConfigurationService>());
 
@@ -85,6 +86,7 @@ namespace NoeSbot
             serviceCollection.AddSingleton<IPunishedService, PunishedService>();
             serviceCollection.AddSingleton<IConfigurationService, ConfigurationService>();
             serviceCollection.AddSingleton<IMessageTriggerService, MessageTriggerService>();
+            serviceCollection.AddSingleton<IProfileService, ProfileService>();
         }
     }
 }

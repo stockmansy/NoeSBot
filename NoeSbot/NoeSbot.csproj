@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006" />
     <PackageReference Include="Discord.Net" Version="1.0.0-rc" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="1.1.1" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.1" PrivateAssets="All" />

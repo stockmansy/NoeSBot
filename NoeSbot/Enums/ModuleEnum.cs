@@ -17,6 +17,7 @@ namespace NoeSbot.Enums
         Utility = 9,
         MessageTrigger = 10,
         Audio = 11,
-        Urban = 12
+        Urban = 12,
+        Profile = 13
     }
 }

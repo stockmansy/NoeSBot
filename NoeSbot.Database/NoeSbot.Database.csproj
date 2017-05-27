@@ -18,4 +18,8 @@
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />
   </ItemGroup>
   
+  <ItemGroup>
+    <None Include="Services\ProfileService.cs" />
+  </ItemGroup>
+  
 </Project>
