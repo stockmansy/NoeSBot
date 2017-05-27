@@ -60,6 +60,9 @@ namespace NoeSbot.Modules
 
                 await message.RemoveReactionAsync(reaction.Emoji.Name, reaction.User.Value);
 
+                if (urbanMain.AuthorId != userAdjusting.Id)
+                    return;
+
                 if (urbanMain.InHelpMode && !name.Equals(IconHelper.Question))
                 {
                     await message.ModifyAsync(x => x.Embed = GenerateUrban(urbanMain, author: userAdjusting.Username));
@@ -193,6 +196,8 @@ namespace NoeSbot.Modules
                     return;
                 }
 
+                urbanMain.AuthorId = Context.Message.Author.Id;
+
                 var iconsToAdd = new List<string>();
                 Embed embed = null;
                 bool multiplePages = false;
@@ -252,10 +257,10 @@ namespace NoeSbot.Modules
         {
             var user = Context.User as SocketGuildUser;
             var hasAuthor = !string.IsNullOrWhiteSpace(author);
-            var footer = "Click the arrows for more definitions";
+            var footer = "Click the arrows for more definitions (only the author can switch pages)";
 
             if (hasAuthor)
-                footer = $"{footer} (adjusted by {author})";
+                footer = $"{footer} ({author})";
 
             var builder = new EmbedBuilder()
             {
@@ -310,7 +315,7 @@ namespace NoeSbot.Modules
             var footer = "Click the arrows for more definitions";
 
             if (hasAuthor)
-                footer = $"{footer} (adjusted by {author})";
+                footer = $"{footer} ({author})";
 
             var builder = new EmbedBuilder()
             {

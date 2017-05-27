@@ -19,5 +19,6 @@ namespace NoeSbot.Models
         public UrbanItem CurrentItem => List[CurrentDef - 1];
         public bool PageIconsSet { get; set; }
         public bool InHelpMode { get; set; }
+        public ulong AuthorId { get; set; }
     }
 }
