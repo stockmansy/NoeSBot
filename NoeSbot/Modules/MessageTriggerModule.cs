@@ -47,7 +47,7 @@ namespace NoeSbot.Modules
         }
 
         [Command("deletetrigger")]
-        [Alias("deltrigger")]
+        [Alias("deltrigger", "removetrigger")]
         [Summary("Deletes a trigger in messages")]
         [MinPermissions(AccessLevel.ServerOwner)]
         public async Task AddTrigger([Summary("The trigger")] string trig)

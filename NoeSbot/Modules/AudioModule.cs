@@ -218,7 +218,7 @@ namespace NoeSbot.Modules
                             if (items.Count < 1) return;
 
                             var textChannel = await Context.Guild.GetDefaultChannelAsync();
-                            
+
                             if (!_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
                             {
                                 // Create new audioplayer
@@ -245,9 +245,12 @@ namespace NoeSbot.Modules
                                 info = audioplayer.CurrentAudio();
                             }
 
-                            try { 
-                            await message.ModifyAsync(x => x.Embed = GetCurrentAudioEmbed(info, user));
-                            } catch {
+                            try
+                            {
+                                await message.ModifyAsync(x => x.Embed = GetCurrentAudioEmbed(info, user));
+                            }
+                            catch
+                            {
                                 await ReplyAsync("", false, GetLoadingEmbed(url, user));
                             }
                         });
@@ -298,7 +301,8 @@ namespace NoeSbot.Modules
                             await ReplyAsync("The next song is still loading...");
                         else
                             await ReplyAsync("", false, GetCurrentAudioEmbed(info, user));
-                    } else
+                    }
+                    else
                         await ReplyAsync("That was the last song");
                 }
             }
@@ -317,7 +321,8 @@ namespace NoeSbot.Modules
                     var user = Context.User as SocketGuildUser;
                     var info = audioplayer.CurrentAudio();
                     await ReplyAsync("", false, GetCurrentAudioEmbed(info, user));
-                } else
+                }
+                else
                     await ReplyAsync("No audio playing currently");
             }
         }

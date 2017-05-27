@@ -17,3 +17,10 @@ Update-Database -Project NoeSbot.Database -Context NoeSbot.Database.DatabaseCont
 Hello
 
 https://github.com/RogueException/Discord.Net/blob/dev/docs/guides/voice/sending-voice.md
+
+
+var guild = message.Author _client.GetGuild(0123456789);
+                var user = guild.GetUser(discordClient.CurrentUser.Id);
+                await user.ModifyAsync(x => {
+                    x.Nickname = "The bots new nickname";
+                });
