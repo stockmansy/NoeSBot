@@ -8,6 +8,9 @@ namespace NoeSbot.Enums
     {
         Location = 1,
         Age = 2,
-        Birthdate = 3
+        Birthdate = 3,
+        Game = 4,
+        Summary = 5,
+        Streaming = 6
     }
 }

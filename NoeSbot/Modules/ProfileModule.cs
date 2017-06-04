@@ -193,14 +193,19 @@ namespace NoeSbot.Modules
             {
                 var user = Context.User as SocketGuildUser;
                 var fType = CommonHelper.FirstLetterToUpper(type);
+
+                if (input.Length > 255)
+                    input = input.Substring(0, 255);
+
                 if (Enum.IsDefined(typeof(ProfileEnum), fType))
                 {
                     switch ((ProfileEnum)Enum.Parse(typeof(ProfileEnum), fType))
                     {
                         case ProfileEnum.Age:
-                            if (int.TryParse(input, out int age)) 
+                            if (int.TryParse(input, out int age))
                                 await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Age, age.ToString());
-                            else { 
+                            else
+                            {
                                 await ReplyAsync("The age you provided is incorrect (Try something like 28)");
                                 return;
                             }
@@ -217,10 +222,24 @@ namespace NoeSbot.Modules
                         case ProfileEnum.Location:
                             await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Location, input);
                             break;
+                        case ProfileEnum.Game:
+                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Game, input);
+                            break;
+                        case ProfileEnum.Streaming:
+                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Streaming, input);
+                            break;
+                        case ProfileEnum.Summary:
+                            var lines = CommonHelper.SplitToLines(input, 50);
+                            var res = "";
+                            foreach (var line in lines)
+                                res += $"{line}<br>";
+                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Summary, res);
+                            break;
                     }
 
                     await ReplyAsync("Successfully updated your profile");
-                } else
+                }
+                else
                 {
                     await ReplyAsync("Please provide a correct type (Age or Birthdate, Location, ...)");
                 }
@@ -248,7 +267,16 @@ namespace NoeSbot.Modules
                             await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Birthdate);
                             break;
                         case ProfileEnum.Location:
-                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Age);
+                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Location);
+                            break;
+                        case ProfileEnum.Game:
+                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Game);
+                            break;
+                        case ProfileEnum.Streaming:
+                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Streaming);
+                            break;
+                        case ProfileEnum.Summary:
+                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Summary);
                             break;
                     }
 
@@ -271,126 +299,198 @@ namespace NoeSbot.Modules
             var defaultAvatarUrl = @"Images\Profile\default.png";
             var tmpAvatarUrl = $"{_tempDir}\\Avatar{user.Id}.jpg";
             const int quality = 75;
-            var columnOneX = 150;
-            var columnOneRowOneY = 15;
-            var columnOneRowTwoY = 30;
-            var columnOneRowThreeY = 55;
-            var columnOneRowFourY = 70;
+            const int rowDiff = 20;
+            const int columnDiff = 240;
+            var columnOneX = 130;
+            var columnOneRowOneY = 25;
+            var columnOneRowTwoY = 65;
+            var columnOneRowThreeY = 105;
+            var columnOneRowFourY = 145;
+            var columnOneRowFiveY = 185;
 
-            var columnTwoX = 300;
-            var columnTwoRowOneY = 15;
-            var columnTwoRowTwoY = 30;
-            var columnTwoRowThreeY = 55;
-            var columnTwoRowFourY = 70;
+            var columnTwoX = columnOneX + columnDiff;
+            var columnTwoRowOneY = columnOneRowOneY;
+            var columnTwoRowTwoY = columnOneRowTwoY;
+            var columnTwoRowThreeY = columnOneRowThreeY;
 
             var profile = await _profileService.RetrieveProfileAsync((long)user.Guild.Id, (long)user.Id);
 
-            string imageFilePath = @"Images\Profile\profile.jpg";
+            var imageFilePath = @"Images\Profile\profile_bg.jpg";
+            var imageCorePath = @"Images\Profile\profile_core.png";
+
+            var age = "n/a";
+            string birthdate = null;
+            var location = "n/a";
+            var favGame = "n/a";
+            var streaming = "n/a";
+            var summary = "n/a";
+
+            if (profile != null && profile.Items.Any())
+            {
+                age = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Age)?.Value ?? "n/a";
+                birthdate = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Birthdate)?.Value;
+                location = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Location)?.Value ?? "n/a";
+                favGame = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Game)?.Value ?? "n/a";
+                streaming = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Streaming)?.Value ?? "n/a";
+                summary = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Summary)?.Value ?? "n/a";
+
+                // Should probly do this better :')
+                switch (favGame.ToLowerInvariant())
+                {
+                    case "dota":
+                    case "dota 2":
+                    case "dota2":
+                    case "defense of the ancients":
+                    case "defense of the ancients 2":
+                        imageFilePath = @"Images\Profile\profile_bg_dota.jpg";
+                        break;
+                    case "darksouls":
+                    case "dark souls":
+                    case "dark souls 2":
+                    case "bloodborne":
+                    case "demon souls":
+                        imageFilePath = @"Images\Profile\profile_bg_darksouls.jpg";
+                        break;
+                    case "gta":
+                    case "gta5":
+                    case "gta 5":
+                    case "grand theft auto":
+                    case "grand theft auto 5":
+                    case "grand theft auto5":
+                        imageFilePath = @"Images\Profile\profile_bg_gta.jpg";
+                        break;
+                    case "pubg":
+                    case "battlegrounds":
+                    case "playerunknown battlegrounds":
+                    case "player unknown battlegrounds":
+                    case "player unknown battle grounds":
+                        imageFilePath = @"Images\Profile\profile_bg_pubg.jpg";
+                        break;
+                    case "tf2":
+                    case "tf":
+                    case "team fortress":
+                    case "team fortress 2":
+                    case "team fortress2":
+                        imageFilePath = @"Images\Profile\profile_bg_tf2.jpg";
+                        break;
+                    case "witcher":
+                    case "witcher 3":
+                    case "witcher3":
+                    case "gwent":
+                    case "gwent simulator":
+                    case "gwent simulator 3":
+                        imageFilePath = @"Images\Profile\profile_bg_witcher.jpg";
+                        break;
+                    default:
+                        if (File.Exists(@"Images\Profile\profile_bg_" + $"{favGame.ToLowerInvariant()}.jpg"))
+                            imageFilePath = @"Images\Profile\profile_bg_" + $"{favGame.ToLowerInvariant()}.jpg";
+                        break;
+                }
+            }
+
             using (var bitmap = new Bitmap(System.Drawing.Image.FromFile(imageFilePath)))
             {
-                using (Graphics graphics = Graphics.FromImage(bitmap))
+                using (var bitmapCore = new Bitmap(System.Drawing.Image.FromFile(imageCorePath)))
                 {
-                    graphics.CompositingQuality = CompositingQuality.HighSpeed;
-                    graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
-
-                    var username = !string.IsNullOrWhiteSpace(user.Nickname) ? user.Nickname : user.Username;
-
-                    var fontTitle = new Font("Arial", 12);
-                    var fontValue = new Font("Arial", 10);
-                    var brush = new SolidBrush(System.Drawing.Color.MintCream);
-
-                    //var p = new GraphicsPath();
-                    //p.AddString(
-                    //   "Username",
-                    //    FontFamily.GenericSansSerif, 
-                    //    (int)FontStyle.Regular,  
-                    //    graphics.DpiY * 14 / 72, 
-                    //    new Point(110, 15),
-                    //    new StringFormat());
-                    //graphics.DrawPath(Pens.Black, p);
-                    //graphics.FillPath(brush, p);
-
-                    graphics.DrawString("Username", fontTitle, brush, columnOneX, columnOneRowOneY);
-                    graphics.DrawString($"{username}", fontValue, brush, columnOneX, columnOneRowTwoY);
-
-                    graphics.DrawString("Joined", fontTitle, brush, columnOneX, columnOneRowThreeY);
-                    graphics.DrawString($"{user.JoinedAt?.ToString("dd/MM/yyyy HH:mm") ?? "/"}", fontValue, brush, columnOneX, columnOneRowFourY);
-
-                    if (profile != null && profile.Items.Any())
+                    using (Graphics graphics = Graphics.FromImage(bitmap))
                     {
-                        var age = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Age);
-                        var birthdate = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Birthdate);
-                        var location = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Location);
+                        graphics.CompositingQuality = CompositingQuality.HighSpeed;
+                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;                        
+                        
+                        graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
+                        graphics.DrawImage(bitmapCore, 0, 0, bitmapCore.Width, bitmapCore.Height);
 
-                        if ((age != null || birthdate != null) && location != null)
-                        {
-                            if (birthdate != null) { 
-                                graphics.DrawString("Birthdate", fontTitle, brush, columnTwoX, columnTwoRowOneY);
-                                graphics.DrawString(birthdate.Value, fontValue, brush, columnTwoX, columnTwoRowTwoY);
-                            } else
-                            {
-                                graphics.DrawString("Age", fontTitle, brush, columnTwoX, columnTwoRowOneY);
-                                graphics.DrawString(age.Value, fontValue, brush, columnTwoX, columnTwoRowTwoY);
-                            }
+                        var username = !string.IsNullOrWhiteSpace(user.Nickname) ? user.Nickname : user.Username;
 
-                            graphics.DrawString("Location", fontTitle, brush, columnTwoX, columnTwoRowThreeY);
-                            graphics.DrawString(location.Value, fontValue, brush, columnTwoX, columnTwoRowFourY);
-                        } else if (age != null || birthdate != null)
+                        var fontTitle = new Font("Arial", 12);
+                        var fontValue = new Font("Arial", 10);
+                        var brush = new SolidBrush(System.Drawing.Color.Black);
+                        var lightbrush = new SolidBrush(System.Drawing.Color.DarkSlateGray);
+
+                        //var p = new GraphicsPath();
+                        //p.AddString(
+                        //   "Username",
+                        //    FontFamily.GenericSansSerif, 
+                        //    (int)FontStyle.Regular,  
+                        //    graphics.DpiY * 14 / 72, 
+                        //    new Point(110, 15),
+                        //    new StringFormat());
+                        //graphics.DrawPath(Pens.Black, p);
+                        //graphics.FillPath(brush, p);
+
+                        graphics.DrawString("Username", fontTitle, brush, columnOneX, columnOneRowOneY);
+                        graphics.DrawString($"{username}", fontValue, lightbrush, columnOneX, columnOneRowOneY + rowDiff);
+
+                        graphics.DrawString("Joined", fontTitle, brush, columnOneX, columnOneRowTwoY);
+                        graphics.DrawString($"{user.JoinedAt?.ToString("dd/MM/yyyy HH:mm") ?? "/"}", fontValue, lightbrush, columnOneX, columnOneRowTwoY + rowDiff);
+
+                        if (profile != null && profile.Items.Any())
                         {
                             if (birthdate != null)
                             {
                                 graphics.DrawString("Birthdate", fontTitle, brush, columnTwoX, columnTwoRowOneY);
-                                graphics.DrawString(birthdate.Value, fontValue, brush, columnTwoX, columnTwoRowTwoY);
+                                graphics.DrawString(birthdate, fontValue, lightbrush, columnTwoX, columnTwoRowOneY + rowDiff);
                             }
                             else
                             {
                                 graphics.DrawString("Age", fontTitle, brush, columnTwoX, columnTwoRowOneY);
-                                graphics.DrawString(age.Value, fontValue, brush, columnTwoX, columnTwoRowTwoY);
+                                graphics.DrawString(age, fontValue, lightbrush, columnTwoX, columnTwoRowOneY + rowDiff);
                             }
-                        } else if (location != null)
-                        {
-                            graphics.DrawString("Location", fontTitle, brush, columnTwoX, columnTwoRowOneY);
-                            graphics.DrawString(location.Value, fontValue, brush, columnTwoX, columnTwoRowTwoY);
+
+                            graphics.DrawString("Location", fontTitle, brush, columnTwoX, columnTwoRowTwoY);
+                            graphics.DrawString(location, fontValue, lightbrush, columnTwoX, columnTwoRowTwoY + rowDiff);
+
+                            graphics.DrawString("Favorite game", fontTitle, brush, columnOneX, columnOneRowThreeY);
+                            graphics.DrawString(favGame, fontValue, lightbrush, columnOneX, columnOneRowThreeY + rowDiff);
+
+                            graphics.DrawString("Stream (Twitch/Youtube/etc)", fontTitle, brush, columnOneX, columnOneRowFourY);
+                            graphics.DrawString(streaming, fontValue, lightbrush, columnOneX, columnOneRowFourY + rowDiff);
+
+                            graphics.DrawString("Summary (max 255)", fontTitle, brush, columnOneX, columnOneRowFiveY);
+                            graphics.DrawString(summary.Replace("<br>", Environment.NewLine).Replace("<br />", Environment.NewLine).Replace("<br/>", Environment.NewLine), fontValue, lightbrush, columnOneX, columnOneRowFiveY + rowDiff);
                         }
-                    }
 
-                    if (user.AvatarId != null)
-                    {
-                        var avatarUrl = user.GetAvatarUrl(Discord.ImageFormat.Jpeg);
-                        await LoadImage(new Uri(avatarUrl), tmpAvatarUrl);
 
-                        if (File.Exists(tmpAvatarUrl)) {
-                            using (var img = System.Drawing.Image.FromFile(tmpAvatarUrl))
+
+                        if (user.AvatarId != null)
+                        {
+                            var avatarUrl = user.GetAvatarUrl(Discord.ImageFormat.Jpeg);
+                            await LoadImage(new Uri(avatarUrl), tmpAvatarUrl);
+
+                            if (File.Exists(tmpAvatarUrl))
                             {
-                                graphics.DrawImage(img, 10, 10, 80, 80);
-                            }
+                                using (var img = System.Drawing.Image.FromFile(tmpAvatarUrl))
+                                {
+                                    graphics.DrawImage(img, 19, 21, 98, 98);
+                                }
 
-                            File.Delete(tmpAvatarUrl);
-                        } else if (File.Exists(defaultAvatarUrl))
+                                File.Delete(tmpAvatarUrl);
+                            }
+                            else if (File.Exists(defaultAvatarUrl))
+                            {
+                                using (var img = System.Drawing.Image.FromFile(defaultAvatarUrl))
+                                {
+                                    graphics.DrawImage(img, 19, 21, 98, 98);
+                                }
+                            }
+                        }
+                        else if (File.Exists(defaultAvatarUrl))
                         {
                             using (var img = System.Drawing.Image.FromFile(defaultAvatarUrl))
                             {
-                                graphics.DrawImage(img, 10, 10, 80, 80);
+                                graphics.DrawImage(img, 19, 21, 98, 98);
                             }
                         }
-                    }
-                    else if (File.Exists(defaultAvatarUrl))
-                    {
-                        using (var img = System.Drawing.Image.FromFile(defaultAvatarUrl))
-                        {
-                            graphics.DrawImage(img, 10, 10, 80, 80);
-                        }
-                    }
 
-                    using (var output = File.Open(tmpUrl, FileMode.Create))
-                    {
-                        var qualityParamId = Encoder.Quality;
-                        var encoderParameters = new EncoderParameters(1);
-                        encoderParameters.Param[0] = new EncoderParameter(qualityParamId, quality);
-                        var codec = ImageCodecInfo.GetImageDecoders()
-                            .FirstOrDefault(x => x.FormatID == System.Drawing.Imaging.ImageFormat.Jpeg.Guid);
-                        bitmap.Save(output, codec, encoderParameters);
+                        using (var output = File.Open(tmpUrl, FileMode.Create))
+                        {
+                            var qualityParamId = Encoder.Quality;
+                            var encoderParameters = new EncoderParameters(1);
+                            encoderParameters.Param[0] = new EncoderParameter(qualityParamId, quality);
+                            var codec = ImageCodecInfo.GetImageDecoders()
+                                .FirstOrDefault(x => x.FormatID == System.Drawing.Imaging.ImageFormat.Jpeg.Guid);
+                            bitmap.Save(output, codec, encoderParameters);
+                        }
                     }
                 }
             }
