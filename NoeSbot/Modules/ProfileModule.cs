@@ -334,51 +334,48 @@ namespace NoeSbot.Modules
                 streaming = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Streaming)?.Value ?? "n/a";
                 summary = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Summary)?.Value ?? "n/a";
 
-                // Should probly do this better :')
-                switch (favGame.ToLowerInvariant())
+                var input = favGame.ToLowerInvariant().Replace(" ", "");
+                var keys = new string[] { "dota", "dota2", "defenseoftheancients", "defenseoftheancients2", "darksouls", "darksouls2", "darksouls3", "bloodborne", "demonsouls", "gta", "gta5", "grandtheftauto", "grandtheftauto5", "pubg",
+                                          "battlegrounds", "playerunknownbattlegrounds", "tf2", "tf", "teamfortress", "teamfortress2", "witcher", "witcher3", "gwent", "gwentsimulator", "gwentsimulator3" };
+                var sKeyResult = keys.FirstOrDefault(s => input.Contains(s));
+
+                switch (sKeyResult)
                 {
                     case "dota":
-                    case "dota 2":
                     case "dota2":
-                    case "defense of the ancients":
-                    case "defense of the ancients 2":
+                    case "defenseoftheancients":
+                    case "defenseoftheancients2":
                         imageFilePath = @"Images\Profile\profile_bg_dota.jpg";
                         break;
                     case "darksouls":
-                    case "dark souls":
-                    case "dark souls 2":
+                    case "darksouls2":
+                    case "darksouls3":
                     case "bloodborne":
-                    case "demon souls":
+                    case "demonsouls":
                         imageFilePath = @"Images\Profile\profile_bg_darksouls.jpg";
                         break;
                     case "gta":
                     case "gta5":
-                    case "gta 5":
-                    case "grand theft auto":
-                    case "grand theft auto 5":
-                    case "grand theft auto5":
+                    case "grandtheftauto":
+                    case "grandtheftauto5":
                         imageFilePath = @"Images\Profile\profile_bg_gta.jpg";
                         break;
                     case "pubg":
                     case "battlegrounds":
-                    case "playerunknown battlegrounds":
-                    case "player unknown battlegrounds":
-                    case "player unknown battle grounds":
+                    case "playerunknownbattlegrounds":
                         imageFilePath = @"Images\Profile\profile_bg_pubg.jpg";
                         break;
                     case "tf2":
                     case "tf":
-                    case "team fortress":
-                    case "team fortress 2":
-                    case "team fortress2":
+                    case "teamfortress":
+                    case "teamfortress2":
                         imageFilePath = @"Images\Profile\profile_bg_tf2.jpg";
                         break;
                     case "witcher":
-                    case "witcher 3":
                     case "witcher3":
                     case "gwent":
-                    case "gwent simulator":
-                    case "gwent simulator 3":
+                    case "gwentsimulator":
+                    case "gwentsimulator3":
                         imageFilePath = @"Images\Profile\profile_bg_witcher.jpg";
                         break;
                     default:
@@ -395,8 +392,8 @@ namespace NoeSbot.Modules
                     using (Graphics graphics = Graphics.FromImage(bitmap))
                     {
                         graphics.CompositingQuality = CompositingQuality.HighSpeed;
-                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;                        
-                        
+                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
                         graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
                         graphics.DrawImage(bitmapCore, 0, 0, bitmapCore.Width, bitmapCore.Height);
 
@@ -424,33 +421,28 @@ namespace NoeSbot.Modules
                         graphics.DrawString("Joined", fontTitle, brush, columnOneX, columnOneRowTwoY);
                         graphics.DrawString($"{user.JoinedAt?.ToString("dd/MM/yyyy HH:mm") ?? "/"}", fontValue, lightbrush, columnOneX, columnOneRowTwoY + rowDiff);
 
-                        if (profile != null && profile.Items.Any())
+                        if (birthdate != null)
                         {
-                            if (birthdate != null)
-                            {
-                                graphics.DrawString("Birthdate", fontTitle, brush, columnTwoX, columnTwoRowOneY);
-                                graphics.DrawString(birthdate, fontValue, lightbrush, columnTwoX, columnTwoRowOneY + rowDiff);
-                            }
-                            else
-                            {
-                                graphics.DrawString("Age", fontTitle, brush, columnTwoX, columnTwoRowOneY);
-                                graphics.DrawString(age, fontValue, lightbrush, columnTwoX, columnTwoRowOneY + rowDiff);
-                            }
-
-                            graphics.DrawString("Location", fontTitle, brush, columnTwoX, columnTwoRowTwoY);
-                            graphics.DrawString(location, fontValue, lightbrush, columnTwoX, columnTwoRowTwoY + rowDiff);
-
-                            graphics.DrawString("Favorite game", fontTitle, brush, columnOneX, columnOneRowThreeY);
-                            graphics.DrawString(favGame, fontValue, lightbrush, columnOneX, columnOneRowThreeY + rowDiff);
-
-                            graphics.DrawString("Stream (Twitch/Youtube/etc)", fontTitle, brush, columnOneX, columnOneRowFourY);
-                            graphics.DrawString(streaming, fontValue, lightbrush, columnOneX, columnOneRowFourY + rowDiff);
-
-                            graphics.DrawString("Summary (max 255)", fontTitle, brush, columnOneX, columnOneRowFiveY);
-                            graphics.DrawString(summary.Replace("<br>", Environment.NewLine).Replace("<br />", Environment.NewLine).Replace("<br/>", Environment.NewLine), fontValue, lightbrush, columnOneX, columnOneRowFiveY + rowDiff);
+                            graphics.DrawString("Birthdate", fontTitle, brush, columnTwoX, columnTwoRowOneY);
+                            graphics.DrawString(birthdate, fontValue, lightbrush, columnTwoX, columnTwoRowOneY + rowDiff);
+                        }
+                        else
+                        {
+                            graphics.DrawString("Age", fontTitle, brush, columnTwoX, columnTwoRowOneY);
+                            graphics.DrawString(age, fontValue, lightbrush, columnTwoX, columnTwoRowOneY + rowDiff);
                         }
 
+                        graphics.DrawString("Location", fontTitle, brush, columnTwoX, columnTwoRowTwoY);
+                        graphics.DrawString(location, fontValue, lightbrush, columnTwoX, columnTwoRowTwoY + rowDiff);
 
+                        graphics.DrawString("Favorite game", fontTitle, brush, columnOneX, columnOneRowThreeY);
+                        graphics.DrawString(favGame, fontValue, lightbrush, columnOneX, columnOneRowThreeY + rowDiff);
+
+                        graphics.DrawString("Stream (Twitch/Youtube/etc)", fontTitle, brush, columnOneX, columnOneRowFourY);
+                        graphics.DrawString(streaming, fontValue, lightbrush, columnOneX, columnOneRowFourY + rowDiff);
+
+                        graphics.DrawString("Summary (max 255)", fontTitle, brush, columnOneX, columnOneRowFiveY);
+                        graphics.DrawString(summary.Replace("<br>", Environment.NewLine).Replace("<br />", Environment.NewLine).Replace("<br/>", Environment.NewLine), fontValue, lightbrush, columnOneX, columnOneRowFiveY + rowDiff);
 
                         if (user.AvatarId != null)
                         {
