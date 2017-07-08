@@ -46,9 +46,6 @@ namespace NoeSbot
             // Init Commands
             await serviceProvider.GetService<CommandHandler>().InstallCommands(serviceProvider);
 
-            // Init MessageHandler
-            await serviceProvider.GetService<MessageHandler>().InstallHandlers();
-
             await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token);
                         
             Console.WriteLine("Starting the bot");
@@ -71,7 +68,6 @@ namespace NoeSbot
                         .AddSingleton(_client)
                         .AddSingleton<CommandService>()
                         .AddSingleton<CommandHandler>()
-                        .AddSingleton<MessageHandler>()
                         .AddSingleton<IPunishedService, PunishedService>()
                         .AddSingleton<IConfigurationService, ConfigurationService>()
                         .AddSingleton<IMessageTriggerService, MessageTriggerService>()
