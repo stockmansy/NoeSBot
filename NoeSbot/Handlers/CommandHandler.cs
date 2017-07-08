@@ -20,14 +20,16 @@ namespace NoeSbot.Handlers
         private readonly ILogger<CommandHandler> _logger;
         private IMessageTriggerService _msgTrgSrvs;
         private ModLogic _modLogic;
+        private PunishLogic _punishLogic;
 
-        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs, ModLogic modLogic)
+        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs, ModLogic modLogic, PunishLogic punishLogic)
         {
             _commands = commands;
             _client = client;
             _logger = loggerFactory.CreateLogger<CommandHandler>();
             _msgTrgSrvs = msgTrgSrvs;
             _modLogic = modLogic;
+            _punishLogic = punishLogic;
         }
 
         public async Task InstallCommands(IServiceProvider provider)
@@ -92,6 +94,11 @@ namespace NoeSbot.Handlers
                         await msg.DeleteAsync();
                         return false;
                     }
+                }
+
+                if (loadedModules.Contains((int)ModuleEnum.Punish))
+                {
+                    await _punishLogic.HandleMessage(context);
                 }
 
                 if (loadedModules.Contains((int)ModuleEnum.Media))

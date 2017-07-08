@@ -33,6 +33,8 @@ namespace NoeSbot
                 MessageCacheSize = 1000
             });
 
+            //https://github.com/RogueException/DiscordBot/blob/master/src/DiscordBot/Modules/Twitch/TwitchModule.cs
+
             _client.Log += Log;
 
             var serviceCollection = ConfigureServices();
@@ -70,6 +72,7 @@ namespace NoeSbot
                         .AddSingleton<CommandService>()
                         .AddSingleton<CommandHandler>()
                         .AddSingleton<ModLogic>()
+                        .AddSingleton<PunishLogic>()
                         .AddSingleton<IPunishedService, PunishedService>()
                         .AddSingleton<IConfigurationService, ConfigurationService>()
                         .AddSingleton<IMessageTriggerService, MessageTriggerService>()
