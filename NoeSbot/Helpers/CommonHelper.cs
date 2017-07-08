@@ -138,25 +138,6 @@ namespace NoeSbot.Helpers
                             ? maxChars - (charCount % maxChars) : 0) + w.Length + 1) / maxChars)
                         .Select(g => string.Join(" ", g.ToArray()))
                         .ToArray();
-
-
-            //var nPages = (int)Math.Ceiling((double)input.Length / 1000);
-            //var result = new string[nPages];
-
-            //if (input.Length <= maxChars)
-            //{                
-            //    result[0] = input;
-            //    return result;
-            //}
-
-            //for (var i = 0; i < nPages; i++) {
-            //    var sub = input.Substring(i * maxChars);
-            //    if (sub.Length > maxChars)
-            //        sub = input.Substring(i * maxChars, maxChars);
-            //    result[i] = sub;
-            //}
-
-            //return result;
         }
 
         public static string FirstLetterToUpper(string str)

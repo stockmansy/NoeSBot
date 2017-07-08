@@ -44,17 +44,19 @@ namespace NoeSbot.Handlers
         {
             var message = messageParam as SocketUserMessage;
             if (message == null) return;
-            
+
             int argPos = 0;
             var guild = (message.Channel as IGuildChannel)?.Guild;
-            
+
             // Create a Command Context
             var context = new CommandContext(_client, message);
 
             // Handle normal messages            
             if (!messageParam.Author.IsBot && !messageParam.Author.IsWebhook)
             {
-                await ProcessMessage(context);
+                var cont = await ProcessMessage(context);
+                if (!cont) // Should it continue?
+                    return;
             }
 
             // If it isn't a command return
@@ -65,18 +67,30 @@ namespace NoeSbot.Handlers
 
             if (!result.IsSuccess)
             {
-                #if DEBUG
+#if DEBUG
                 await context.Channel.SendMessageAsync(result.ErrorReason);
-                #endif
+#endif
                 _logger.LogError(result.ErrorReason);
             }
         }
 
-        private async Task ProcessMessage(CommandContext context)
+        private async Task<bool> ProcessMessage(CommandContext context)
         {
             try
             {
                 var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
+
+                if (loadedModules.Contains((int)ModuleEnum.Mod))
+                {
+                    var user = context.User as SocketGuildUser; ;
+                    if (!user.GuildPermissions.Administrator && Globals.NukedChannels.Contains(context.Channel.Id))
+                    {
+                        var msg = context.Message as IMessage;
+                        await msg.DeleteAsync();
+                        return false;
+                    }
+                }
+
                 if (loadedModules.Contains((int)ModuleEnum.Media))
                 {
                     var mediaProcessor = new MediaProcessor(context);
@@ -88,10 +102,13 @@ namespace NoeSbot.Handlers
                     var messageProcessor = new MessageTriggers(context, _msgTrgSrvs);
                     await messageProcessor.Process();
                 }
+
+                return true;
             }
             catch (Exception ex)
             {
                 await context.Channel.SendMessageAsync(ex.Message);
+                return false;
             }
         }
 
