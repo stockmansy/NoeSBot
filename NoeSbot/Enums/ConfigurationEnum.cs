@@ -8,6 +8,7 @@
         MediaChannel = 4,
         GeneralChannel = 5,
         LoadedModules = 6,
-        AudioVolume = 7
+        AudioVolume = 7,
+        NewUserRole = 8
     }
 }

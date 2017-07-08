@@ -25,6 +25,7 @@ namespace NoeSbot
         public string PunishedRole { get; set; } = "silenced";
         public string MediaChannel { get; set; } = "media_room";
         public string GeneralChannel { get; set; } = "general";
+        public string NewUserRole { get; set; } = "initiate";
         public int AudioVolume { get; set; } = 5;
 
         private int[] _loadedModules;
@@ -162,6 +163,11 @@ namespace NoeSbot
                     var audioVolume = guildConfigs.Where(x => x.ConfigurationTypeId == (int)ConfigurationEnum.AudioVolume).Select(x => int.Parse(x.Value)).FirstOrDefault();
                     if (audioVolume > 0)
                         exConfig.AudioVolume = audioVolume;
+
+                    var newUserRole = guildConfigs.Where(x => x.ConfigurationTypeId == (int)ConfigurationEnum.NewUserRole).Select(x => x.Value).FirstOrDefault();
+                    if (!string.IsNullOrWhiteSpace(newUserRole))
+                        exConfig.NewUserRole = newUserRole;
+
 
                     _guildSpecificConfig.Add((ulong)guildId, exConfig);
                 }

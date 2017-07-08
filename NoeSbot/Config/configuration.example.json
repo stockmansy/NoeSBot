@@ -6,5 +6,6 @@
   "mediachannel": "media_room",
   "generalchannel": "general",
   "LoadedModules": "",
-  "connectionstring": "Server=localhost; Port=3306; Database=noesbot; Uid=noesbot; Pwd=example;"
+  "connectionstring": "Server=localhost; Port=3306; Database=noesbot; Uid=noesbot; Pwd=example;",
+  "newuserrole":  "initiate"
 }

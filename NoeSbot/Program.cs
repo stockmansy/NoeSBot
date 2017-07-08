@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using NoeSbot.Database;
 using NoeSbot.Database.Services;
 using NoeSbot.Handlers;
+using NoeSbot.Logic;
 using NoeSbot.Modules;
 using System;
 using System.Reflection;
@@ -68,6 +69,7 @@ namespace NoeSbot
                         .AddSingleton(_client)
                         .AddSingleton<CommandService>()
                         .AddSingleton<CommandHandler>()
+                        .AddSingleton<ModLogic>()
                         .AddSingleton<IPunishedService, PunishedService>()
                         .AddSingleton<IConfigurationService, ConfigurationService>()
                         .AddSingleton<IMessageTriggerService, MessageTriggerService>()

@@ -19,13 +19,15 @@ namespace NoeSbot.Handlers
         private IServiceProvider _provider;
         private readonly ILogger<CommandHandler> _logger;
         private IMessageTriggerService _msgTrgSrvs;
+        private ModLogic _modLogic;
 
-        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs)
+        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs, ModLogic modLogic)
         {
             _commands = commands;
             _client = client;
             _logger = loggerFactory.CreateLogger<CommandHandler>();
             _msgTrgSrvs = msgTrgSrvs;
+            _modLogic = modLogic;
         }
 
         public async Task InstallCommands(IServiceProvider provider)
@@ -35,6 +37,7 @@ namespace NoeSbot.Handlers
             // Hook the event handlers
             _client.MessageReceived += MessageReceivedHandler;
             _client.MessageUpdated += MessageUpdatedHandler;
+            _client.UserJoined += _modLogic.UserJoined;
 
             // Discover all of the commands in this assembly and load them.
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
