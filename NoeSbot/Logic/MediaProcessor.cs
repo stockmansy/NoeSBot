@@ -14,12 +14,10 @@ namespace NoeSbot.Logic
     public class MediaProcessor
     {
         private CommandContext _context;
-        private IDependencyMap _map;
 
-        public MediaProcessor(CommandContext context, IDependencyMap map)
+        public MediaProcessor(CommandContext context)
         {
             _context = context;
-            _map = map;
         }
 
         public async Task Process()

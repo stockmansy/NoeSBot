@@ -12,6 +12,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using NoeSbot.Logic;
 using NoeSbot.Enums;
+using NoeSbot.Database.Services;
 
 namespace NoeSbot.Handlers
 {
@@ -19,15 +20,15 @@ namespace NoeSbot.Handlers
     {
         private CommandService _commands;
         private DiscordSocketClient _client;
-        private IDependencyMap _map;
         private readonly ILogger<MessageHandler> _logger;
+        private IMessageTriggerService _msgTrgSrvs;
 
-        public MessageHandler(CommandService commands, DiscordSocketClient client, IDependencyMap map, ILoggerFactory loggerFactory)
+        public MessageHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs)
         {
             _commands = commands;
             _client = client;
-            _map = map;
             _logger = loggerFactory.CreateLogger<MessageHandler>();
+            _msgTrgSrvs = msgTrgSrvs;
         }
 
         public async Task InstallHandlers()
@@ -51,13 +52,13 @@ namespace NoeSbot.Handlers
                     var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
                     if (loadedModules.Contains((int)ModuleEnum.Media))
                     {
-                        var mediaProcessor = new MediaProcessor(context, _map);
+                        var mediaProcessor = new MediaProcessor(context);
                         await mediaProcessor.Process();
                     }
 
                     if (loadedModules.Contains((int)ModuleEnum.MessageTrigger))
                     {
-                        var messageProcessor = new MessageTriggers(context, _map);
+                        var messageProcessor = new MessageTriggers(context, _msgTrgSrvs);
                         await messageProcessor.Process();
                     }
                 }
@@ -87,7 +88,7 @@ namespace NoeSbot.Handlers
                         var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
                         if (loadedModules.Contains((int)ModuleEnum.Media))
                         {
-                            var mediaProcessor = new MediaProcessor(context, _map);
+                            var mediaProcessor = new MediaProcessor(context);
                             await mediaProcessor.Process();
                         }
                     }

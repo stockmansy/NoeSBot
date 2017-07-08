@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Discord;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -64,6 +65,11 @@ namespace NoeSbot.Helpers
             if (_numbers.TryGetValue(index, out string result))
                 return result;
             return Ten;
+        }
+
+        public static IEmote GetEmote(string name)
+        {
+            return new Emoji(name);
         }
     }
 }

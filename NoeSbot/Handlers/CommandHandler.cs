@@ -12,19 +12,20 @@ namespace NoeSbot.Handlers
     {
         private CommandService _commands;
         private DiscordSocketClient _client;
-        private IDependencyMap _map;
+        private IServiceProvider _provider;
         private readonly ILogger<CommandHandler> _logger;
 
-        public CommandHandler(CommandService commands, DiscordSocketClient client, IDependencyMap map, ILoggerFactory loggerFactory)
+        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory)
         {
             _commands = commands;
             _client = client;
-            _map = map;
             _logger = loggerFactory.CreateLogger<CommandHandler>();
         }
 
-        public async Task InstallCommands()
+        public async Task InstallCommands(IServiceProvider provider)
         {
+            _provider = provider;
+
             // Hook the MessageReceived Event into our Command Handler
             _client.MessageReceived += HandleCommand;
 
@@ -46,7 +47,7 @@ namespace NoeSbot.Handlers
             var context = new CommandContext(_client, message);
             // Execute the command. (result does not indicate a return value, 
             // rather an object stating if the command executed succesfully)
-            var result = await _commands.ExecuteAsync(context, argPos, _map);
+            var result = await _commands.ExecuteAsync(context, argPos, _provider, MultiMatchHandling.Best);
 
             if (!result.IsSuccess)
             {

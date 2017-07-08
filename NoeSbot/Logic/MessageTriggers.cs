@@ -23,13 +23,11 @@ namespace NoeSbot.Logic
     {
         private readonly IMessageTriggerService _database;
         private CommandContext _context;
-        private IDependencyMap _map;
 
-        public MessageTriggers(CommandContext context, IDependencyMap map)
+        public MessageTriggers(CommandContext context, IMessageTriggerService database)
         {
             _context = context;
-            _map = map;
-            _database = map.Get<IMessageTriggerService>();
+            _database = database;
         }
 
         public async Task Process()

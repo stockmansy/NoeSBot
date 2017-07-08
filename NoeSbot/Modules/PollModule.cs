@@ -77,11 +77,11 @@ namespace NoeSbot.Modules
                 var alreadyVoted = poll.UsersWhoVoted.TryGetValue(userVoting, out int votedOn);
                 if (alreadyVoted)
                 {
-                    await message.RemoveReactionAsync(reaction.Emoji.Name, reaction.User.Value);
+                    await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
                     return;
                 }
                     
-                var chosenOption = _reactions.Where(pair => pair.Value == reaction.Emoji.Name)
+                var chosenOption = _reactions.Where(pair => pair.Value == reaction.Emote.Name)
                                     .Select(pair => pair.Key)
                                     .FirstOrDefault();
 
@@ -246,7 +246,7 @@ namespace NoeSbot.Modules
 
                 for (var j = 1; j <= poll.Options.Count; j++)
                 {
-                    await message.AddReactionAsync(_reactions[j]);
+                    await message.AddReactionAsync(IconHelper.GetEmote(_reactions[j]));
                     await Task.Delay(1250);
                 }
 

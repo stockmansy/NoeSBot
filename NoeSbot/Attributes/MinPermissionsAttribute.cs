@@ -2,9 +2,7 @@
 using Discord.WebSocket;
 using NoeSbot.Enums;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace NoeSbot.Attributes
@@ -18,8 +16,8 @@ namespace NoeSbot.Attributes
         {
             Level = level;
         }
-
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
+        
+        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             var access = GetPermission(context);
 

@@ -56,9 +56,9 @@ namespace NoeSbot.Modules
                 if (!success)
                     return;
 
-                var name = reaction.Emoji.Name;
+                var name = reaction.Emote.Name;
 
-                await message.RemoveReactionAsync(reaction.Emoji.Name, reaction.User.Value);
+                await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
 
                 if (urbanMain.AuthorId != userAdjusting.Id)
                     return;
@@ -237,7 +237,8 @@ namespace NoeSbot.Modules
                 {
                     foreach (var icon in iconsToAdd)
                     {
-                        await message.AddReactionAsync(icon);
+                        var emote = IconHelper.GetEmote(icon);
+                        await message.AddReactionAsync(emote);
                         Thread.Sleep(1300);
                     }
 
@@ -376,16 +377,16 @@ namespace NoeSbot.Modules
         {
             if (urbanMain.PageIconsSet && urbanMain.PagesCount <= 1)
             {
-                await message.RemoveReactionAsync(IconHelper.ArrowLeft, message.Author);
-                await message.RemoveReactionAsync(IconHelper.ArrowRight, message.Author);
+                await message.RemoveReactionAsync(IconHelper.GetEmote(IconHelper.ArrowLeft), message.Author);
+                await message.RemoveReactionAsync(IconHelper.GetEmote(IconHelper.ArrowRight), message.Author);
                 urbanMain.PageIconsSet = false;
             }
 
             if (!urbanMain.PageIconsSet && urbanMain.PagesCount > 1)
             {
-                await message.AddReactionAsync(IconHelper.ArrowLeft);
+                await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.ArrowLeft));
                 await Task.Delay(1300);
-                await message.AddReactionAsync(IconHelper.ArrowRight);
+                await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.ArrowRight));
                 await Task.Delay(1300);
                 urbanMain.PageIconsSet = true;
             }

@@ -17,9 +17,7 @@ namespace NoeSbot
 {
     public class Program
     {
-        private CommandService _commands;
         private DiscordSocketClient _client;
-        private DependencyMap _map;
 
         static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();
         
@@ -27,15 +25,7 @@ namespace NoeSbot
         {
             Configuration.EnsureExists();            
             Globals.LoadGlobals();
-
-            var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection);
-
-            var serviceProvider = serviceCollection
-                .AddLogging()
-                .AddMemoryCache()
-                .BuildServiceProvider();
-
+            
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Verbose,
@@ -43,29 +33,24 @@ namespace NoeSbot
             });
 
             _client.Log += Log;
-            
-            _commands = new CommandService();
-                        
-            _map = new DependencyMap();
-            _map.Add(_client);
-            _map.Add(serviceProvider.GetService<IMemoryCache>());
-            _map.Add(serviceProvider.GetService<IPunishedService>());
-            _map.Add(serviceProvider.GetService<IConfigurationService>());
-            _map.Add(serviceProvider.GetService<IMessageTriggerService>());
-            _map.Add(serviceProvider.GetService<IProfileService>());
+
+            var serviceCollection = ConfigureServices();
+
+            var serviceProvider = serviceCollection
+                .AddLogging()
+                .AddMemoryCache()
+                .BuildServiceProvider();
 
             await Configuration.LoadAsync(serviceProvider.GetService<IConfigurationService>());
 
-            var commandHandler = new CommandHandler(_commands, _client, _map, serviceProvider.GetService<ILoggerFactory>());
-            await commandHandler.InstallCommands();
+            // Init Commands
+            await serviceProvider.GetService<CommandHandler>().InstallCommands(serviceProvider);
 
-            var messageHandler = new MessageHandler(_commands, _client, _map, serviceProvider.GetService<ILoggerFactory>());
-            await messageHandler.InstallHandlers();
+            // Init MessageHandler
+            await serviceProvider.GetService<MessageHandler>().InstallHandlers();
 
             await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token);
-
-            
-
+                        
             Console.WriteLine("Starting the bot");
             await _client.StartAsync();
 
@@ -79,14 +64,18 @@ namespace NoeSbot
             return Task.CompletedTask;
         }
 
-        private static void ConfigureServices(IServiceCollection serviceCollection)
+        private IServiceCollection ConfigureServices()
         {
-            serviceCollection.AddDbContext<DatabaseContext>(options =>
-                    options.UseMySql(Configuration.Load().ConnectionString));
-            serviceCollection.AddSingleton<IPunishedService, PunishedService>();
-            serviceCollection.AddSingleton<IConfigurationService, ConfigurationService>();
-            serviceCollection.AddSingleton<IMessageTriggerService, MessageTriggerService>();
-            serviceCollection.AddSingleton<IProfileService, ProfileService>();
+            return new ServiceCollection()
+                        .AddDbContext<DatabaseContext>(options => options.UseMySql(Configuration.Load().ConnectionString))
+                        .AddSingleton(_client)
+                        .AddSingleton<CommandService>()
+                        .AddSingleton<CommandHandler>()
+                        .AddSingleton<MessageHandler>()
+                        .AddSingleton<IPunishedService, PunishedService>()
+                        .AddSingleton<IConfigurationService, ConfigurationService>()
+                        .AddSingleton<IMessageTriggerService, MessageTriggerService>()
+                        .AddSingleton<IProfileService, ProfileService>();
         }
     }
 }
