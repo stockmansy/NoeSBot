@@ -109,6 +109,23 @@ namespace NoeSbot.Database.Services
             }
         }
 
+        public async Task<List<Config>> RetrieveAllOfTypeConfigurationsAsync(int configTypeId)
+        {
+            try
+            {
+                var existing = await _context.ConfigurationEntities.Where(x => x.ConfigurationTypeId == configTypeId).ToListAsync();
+                if (existing == null)
+                    return new List<Config>();
+
+                return existing;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Retrieve All Config items by type: {ex.Message}");
+                return new List<Config>();
+            }
+        }
+
         #endregion
     }
 }

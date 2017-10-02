@@ -9,6 +9,7 @@
         GeneralChannel = 5,
         LoadedModules = 6,
         AudioVolume = 7,
-        NewUserRole = 8
+        NewUserRole = 8,
+        NotifySettings = 9
     }
 }

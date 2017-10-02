@@ -19,6 +19,7 @@ namespace NoeSbot.Enums
         Audio = 11,
         Urban = 12,
         Profile = 13,
-        Mod = 14
+        Mod = 14,
+        Notify = 15
     }
 }

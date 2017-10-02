@@ -16,5 +16,6 @@ namespace NoeSbot.Database.Services
         Task<bool> RemoveConfigurationItem(long guildId, int configTypeId, string value);
         Task<bool> SaveConfigurationItem(long guildId, int configTypeId, string value);
         Task<List<Config>> RetrieveAllConfigurationsAsync();
+        Task<List<Config>> RetrieveAllOfTypeConfigurationsAsync(int configTypeId);
     }
 }

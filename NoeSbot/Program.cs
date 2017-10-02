@@ -76,7 +76,8 @@ namespace NoeSbot
                         .AddSingleton<IPunishedService, PunishedService>()
                         .AddSingleton<IConfigurationService, ConfigurationService>()
                         .AddSingleton<IMessageTriggerService, MessageTriggerService>()
-                        .AddSingleton<IProfileService, ProfileService>();
+                        .AddSingleton<IProfileService, ProfileService>()
+                        .AddSingleton<IHttpService, HttpService>();
         }
     }
 }

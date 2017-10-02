@@ -16,6 +16,7 @@ namespace NoeSbot.Modules
     {
         private readonly DiscordSocketClient _client;
         private IMemoryCache _cache;
+        private Random _random = new Random();
 
         #region Constructor
 
@@ -95,6 +96,23 @@ namespace NoeSbot.Modules
                     builder.WithThumbnailUrl(user.GetAvatarUrl());
 
                 await ReplyAsync("", false, builder.Build());
+            }
+        }
+
+        [Command("randommember")]
+        [Alias("rndm", "rndmbr")]
+        [Summary("Pick a random user")]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task RandomMember()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                await Context.Message.DeleteAsync();
+                var allUsers = await Context.Guild.GetUsersAsync();
+                var onlineUsers = allUsers.Where(x => x.Status == UserStatus.Online && !x.IsBot && !x.IsWebhook).ToList();
+                var rndUser = onlineUsers[_random.Next(onlineUsers.Count)];
+                var name = !string.IsNullOrWhiteSpace(rndUser.Nickname) ? rndUser.Nickname : rndUser.Username;
+                await ReplyAsync($"Picked {name} at random");
             }
         }
 

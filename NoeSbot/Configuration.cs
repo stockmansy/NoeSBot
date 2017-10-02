@@ -26,6 +26,7 @@ namespace NoeSbot
         public string MediaChannel { get; set; } = "media_room";
         public string GeneralChannel { get; set; } = "general";
         public string NewUserRole { get; set; } = "initiate";
+        public string TwitchClientId { get; set; }
         public int AudioVolume { get; set; } = 5;
 
         private int[] _loadedModules;
