@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NoeSbot.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,22 +12,16 @@ namespace NoeSbot.Models
 
         public class NotifyStream
         {
-            public NotifyServiceEnum Type { get; set; }
+            public NotifyEnum Type { get; set; }
 
             public string Key { get; set; }
         }
 
         public class NotifyVideo
         {
-            public NotifyServiceEnum Type { get; set; }
+            public NotifyEnum Type { get; set; }
 
             public string Id { get; set; }
         }
-    }
-
-    public enum NotifyServiceEnum
-    {
-        Twitch = 1,
-        Youtube = 2
     }
 }

@@ -9,6 +9,7 @@ using Discord;
 using NoeSbot.Enums;
 using NoeSbot.Logic;
 using NoeSbot.Database.Services;
+using System.Threading;
 
 namespace NoeSbot.Handlers
 {
@@ -21,8 +22,11 @@ namespace NoeSbot.Handlers
         private IMessageTriggerService _msgTrgSrvs;
         private ModLogic _modLogic;
         private PunishLogic _punishLogic;
+        private NotifyLogic _notifyLogic;
+        private bool _notifyTaskRunning;
+        private CancellationTokenSource _tokenSource;
 
-        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs, ModLogic modLogic, PunishLogic punishLogic)
+        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs, ModLogic modLogic, PunishLogic punishLogic, NotifyLogic notifyLogic)
         {
             _commands = commands;
             _client = client;
@@ -30,6 +34,8 @@ namespace NoeSbot.Handlers
             _msgTrgSrvs = msgTrgSrvs;
             _modLogic = modLogic;
             _punishLogic = punishLogic;
+            _notifyLogic = notifyLogic;
+            _tokenSource = new CancellationTokenSource();
         }
 
         public async Task InstallCommands(IServiceProvider provider)
@@ -40,9 +46,20 @@ namespace NoeSbot.Handlers
             _client.MessageReceived += MessageReceivedHandler;
             _client.MessageUpdated += MessageUpdatedHandler;
             _client.UserJoined += _modLogic.UserJoined;
+            _client.Ready += Ready;
 
             // Discover all of the commands in this assembly and load them.
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+        }
+
+        public async Task Ready()
+        {
+            if (!_notifyTaskRunning)
+            {
+                // TODO Maybe change this...
+                await Task.Run(async () => await _notifyLogic.Run(_tokenSource.Token));
+                _notifyTaskRunning = true;
+            }
         }
 
         public async Task MessageReceivedHandler(SocketMessage messageParam)

@@ -28,6 +28,8 @@ namespace NoeSbot.Database
 
         public DbSet<ProfileItem> ProfileItemEntities { get; set; }
 
+        public DbSet<NotifyItem> NotifyItemEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -37,6 +39,7 @@ namespace NoeSbot.Database
             modelBuilder.Entity<MessageTrigger>();
             modelBuilder.Entity<Profile>();
             modelBuilder.Entity<ProfileItem>();
+            modelBuilder.Entity<NotifyItem>();
         }
     }
 

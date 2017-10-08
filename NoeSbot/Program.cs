@@ -73,10 +73,12 @@ namespace NoeSbot
                         .AddSingleton<CommandHandler>()
                         .AddSingleton<ModLogic>()
                         .AddSingleton<PunishLogic>()
+                        .AddSingleton<NotifyLogic>()
                         .AddSingleton<IPunishedService, PunishedService>()
                         .AddSingleton<IConfigurationService, ConfigurationService>()
                         .AddSingleton<IMessageTriggerService, MessageTriggerService>()
                         .AddSingleton<IProfileService, ProfileService>()
+                        .AddSingleton<INotifyService, NotifyService>()
                         .AddSingleton<IHttpService, HttpService>();
         }
     }

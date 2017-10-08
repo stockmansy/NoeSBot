@@ -19,14 +19,16 @@ namespace NoeSbot.Modules
     public class NotifyModule : ModuleBase
     {
         private readonly DiscordSocketClient _client;
+        private readonly INotifyService _notifyService;
         private readonly IHttpService _httpService;
         private IMemoryCache _cache;
 
         #region Constructor
 
-        public NotifyModule(DiscordSocketClient client, IHttpService httpService, IMemoryCache memoryCache)
+        public NotifyModule(DiscordSocketClient client, INotifyService notifyService, IHttpService httpService, IMemoryCache memoryCache)
         {
             _client = client;
+            _notifyService = notifyService;
             _httpService = httpService;
             _cache = memoryCache;
         }
@@ -78,7 +80,7 @@ namespace NoeSbot.Modules
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
-                switch(type.ToLower())
+                switch (type.ToLower())
                 {
                     case "twitch":
                         await AddTwitchStream(name);
@@ -95,15 +97,13 @@ namespace NoeSbot.Modules
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
                 var user = Context.User as SocketGuildUser;
-                
-
                 var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/users?login={name}", "e0ggcjd1zomziofv6qrsa5gn1hf6d4");
                 var response = await content.ReadAsStringAsync();
                 var root = JsonConvert.DeserializeObject<TwitchUsersRoot>(response);
 
-                for (var i = 0; i < root.Total; i++)
+                if (root.Total > 0)
                 {
-                    var twitchUser = root.Users[i];
+                    var twitchUser = root.Users[0];
                     var builder = new EmbedBuilder()
                     {
                         Color = user.GetColor()
@@ -111,12 +111,26 @@ namespace NoeSbot.Modules
 
                     var twitchName = (twitchUser.DisplayName.Equals(twitchUser.Name)) ? twitchUser.DisplayName : $"{twitchUser.DisplayName} ({twitchUser.Name})";
 
-                    builder.AddField(x =>
+                    var success = await _notifyService.AddNotifyItem((long)Context.Guild.Id, (long)user.Id, twitchName, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
+
+                    if (success)
                     {
-                        x.Name = "Added the stream";
-                        x.Value = $"{user.Username} added a stream for twitch user {twitchName}";
-                        x.IsInline = false;
-                    });
+                        builder.AddField(x =>
+                        {
+                            x.Name = "Added the stream";
+                            x.Value = $"{user.Username} added a stream for twitch user {twitchName}";
+                            x.IsInline = false;
+                        });
+                    }
+                    else
+                    {
+                        builder.AddField(x =>
+                        {
+                            x.Name = "Failed to add the stream";
+                            x.Value = $"{user.Username} failed to add a stream for twitch user {twitchName}";
+                            x.IsInline = false;
+                        });
+                    }
 
                     if (twitchUser.Logo != null)
                         builder.WithThumbnailUrl(twitchUser.Logo);
