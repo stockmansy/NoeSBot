@@ -76,14 +76,14 @@ namespace NoeSbot.Modules
         [Command("addstream")]
         [Summary("Add a stream by username")]
         [MinPermissions(AccessLevel.ServerAdmin)]
-        public async Task AddStream(string type, string name)
+        public async Task AddStream(string type, string name, string role = "")
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
                 switch (type.ToLower())
                 {
                     case "twitch":
-                        await AddTwitchStream(name);
+                        await AddTwitchStream(name, role);
                         break;
                 }
             }
@@ -92,7 +92,7 @@ namespace NoeSbot.Modules
         [Command("addtwitchstream")]
         [Summary("Add a twitch stream by username")]
         [MinPermissions(AccessLevel.ServerAdmin)]
-        public async Task AddTwitchStream(string name)
+        public async Task AddTwitchStream(string name, string role = "")
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
@@ -111,7 +111,20 @@ namespace NoeSbot.Modules
 
                     var twitchName = (twitchUser.DisplayName.Equals(twitchUser.Name)) ? twitchUser.DisplayName : $"{twitchUser.DisplayName} ({twitchUser.Name})";
 
-                    var success = await _notifyService.AddNotifyItem((long)Context.Guild.Id, (long)user.Id, twitchName, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
+                    var success = false;
+                    if (string.IsNullOrWhiteSpace(role))
+                        success = await _notifyService.AddNotifyItem((long)Context.Guild.Id, (long)user.Id, twitchName, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
+                    else
+                    {
+                        foreach (var r in Context.Guild.Roles)
+                        {
+                            if (r.Name.Equals(role, StringComparison.OrdinalIgnoreCase))
+                            {
+                                success = await _notifyService.AddNotifyItemRole((long)Context.Guild.Id, (long)r.Id, twitchName, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
+                                break;
+                            }
+                        }
+                    }
 
                     if (success)
                     {
@@ -137,6 +150,86 @@ namespace NoeSbot.Modules
 
                     await ReplyAsync("", false, builder.Build());
                 }
+            }
+        }
+
+        [Command("allstreams")]
+        [Alias("getstreams", "streams")]
+        [Summary("Get all streams")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task AllStreams()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                var builder = new EmbedBuilder()
+                {
+                    Color = user.GetColor()
+                };
+
+                var streams = await _notifyService.RetrieveAllNotifysAsync();
+
+                foreach (var stream in streams)
+                {
+                    var users = "";
+                    foreach (var u in stream.Users)
+                    {
+                        var us = await Context.Guild.GetUserAsync((ulong)u.UserId);
+                        users += $"{us.Username}, ";
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(users))
+                        users = users.Substring(0, users.Length - 2);
+                    else users = "/";
+
+                    var roles = "";
+                    foreach (var r in stream.Roles)
+                    {
+                        var ro = Context.Guild.GetRole((ulong)r.RoleId);
+                        users += $"{ro.Name}, ";
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(roles))
+                        roles = roles.Substring(0, roles.Length - 2);
+                    else roles = "/";
+
+                    var type = "";
+                    switch (stream.Type)
+                    {
+                        case (int)NotifyEnum.Twitch:
+                            type = "Twitch";
+                            break;
+                        case (int)NotifyEnum.Youtube:
+                            type = "Youtube";
+                            break;
+                    }
+
+                    builder.AddField(x =>
+                    {
+                        x.Name = $"{stream.Name}";
+                        x.Value = $"Users: {users}{Environment.NewLine}Roles: {roles}{Environment.NewLine}Type: {type}";
+                        x.IsInline = false;
+                    });
+                }
+
+                await ReplyAsync("", false, builder.Build());
+            }
+        }
+
+        [Command("removetwitchstream")]
+        [Alias("deletetwitchstream")]
+        [Summary("Remove twitch stream")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task RemoveTwitchStream(string name)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var success = await _notifyService.RemoveNotifyItem((long)Context.Guild.Id, name, (int)NotifyEnum.Twitch);
+
+                if (success)
+                    await ReplyAsync($"Removed the twitch stream {name}");
+                else
+                    await ReplyAsync($"Failed to remove the twitch stream {name}");
             }
         }
 

@@ -69,6 +69,52 @@ namespace NoeSbot.Database.Services
             }
         }
 
+        public async Task<bool> AddNotifyItemRole(long guildId, long roleId, string name, string value, string logo, int type)
+        {
+            try
+            {
+                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).Where(x => x.GuildId == guildId && x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).SingleOrDefaultAsync();
+                if (existing != null)
+                {
+                    var existingItem = existing.Roles.Where(x => x.RoleId == roleId).SingleOrDefault();
+                    if (existingItem == null)
+                    {
+                        existing.Roles.Add(new NotifyItem.NotifyRole
+                        {
+                            RoleId = roleId
+                        });
+                    }
+                }
+                else
+                {
+                    _context.NotifyItemEntities.Add(new NotifyItem
+                    {
+                        GuildId = guildId,
+                        Logo = logo,
+                        Name = name,
+                        Type = type,
+                        Value = value,
+                        Users = new List<NotifyItem.NotifyUser>(),                        
+                        Roles = new List<NotifyItem.NotifyRole>()
+                        {
+                            new NotifyItem.NotifyRole
+                            {
+                                RoleId = roleId
+                            }
+                        },
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Save Notify Item: {ex.Message}");
+                return false;
+            }
+        }
+
         public async Task<bool> RemoveNotifyItem(long guildId, string name, int type)
         {
             try
@@ -76,6 +122,8 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).Where(x => x.GuildId == guildId && x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).SingleOrDefaultAsync();
                 if (existing != null)
                 {
+                    existing.Users.Clear();
+                    existing.Roles.Clear();
                     _context.NotifyItemEntities.Remove(existing);
 
                     await _context.SaveChangesAsync();
