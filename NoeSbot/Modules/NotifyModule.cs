@@ -12,6 +12,8 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NoeSbot.Models;
+using NoeSbot.Converters;
+using System.Linq;
 
 namespace NoeSbot.Modules
 {
@@ -85,6 +87,9 @@ namespace NoeSbot.Modules
                     case "twitch":
                         await AddTwitchStream(name, role);
                         break;
+                    case "youtube":
+                        await AddYoutubeStream(name, role);
+                        break;
                 }
             }
         }
@@ -97,9 +102,16 @@ namespace NoeSbot.Modules
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
                 var user = Context.User as SocketGuildUser;
-                var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/users?login={name}", "e0ggcjd1zomziofv6qrsa5gn1hf6d4");
+                var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/users?login={name}", Configuration.Load().TwitchClientId);
                 var response = await content.ReadAsStringAsync();
-                var root = JsonConvert.DeserializeObject<TwitchUsersRoot>(response);
+                var root = JsonConvert.DeserializeObject<TwitchUsersRoot>(response, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    MissingMemberHandling = MissingMemberHandling.Ignore,
+                    Formatting = Formatting.None,
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                    Converters = new System.Collections.Generic.List<JsonConverter> { new DecimalConverter() }
+                });
 
                 if (root.Total > 0)
                 {
@@ -153,6 +165,76 @@ namespace NoeSbot.Modules
             }
         }
 
+        [Command("addyoutubestream")]
+        [Summary("Add a youtube stream by username")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task AddYoutubeStream(string name, string role = "")
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                var content = await _httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/channels?key={Configuration.Load().YoutubeApiKey}&forUsername={name}&part=id");
+                var response = await content.ReadAsStringAsync();
+                var root = JsonConvert.DeserializeObject<YoutubeUserRoot>(response, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    MissingMemberHandling = MissingMemberHandling.Ignore,
+                    Formatting = Formatting.None,
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                    Converters = new System.Collections.Generic.List<JsonConverter> { new DecimalConverter() }
+                });
+
+                if (root.Items != null && root.Items.Length > 0)
+                {
+                    var youtubeUser= root.Items.First();
+                    var builder = new EmbedBuilder()
+                    {
+                        Color = user.GetColor()
+                    };
+
+                    var youtubeName = CommonHelper.FirstLetterToUpper(name);
+
+                    var success = false;
+                    if (string.IsNullOrWhiteSpace(role))
+                        success = await _notifyService.AddNotifyItem((long)Context.Guild.Id, (long)user.Id, youtubeName, youtubeUser.Id, string.Empty, (int)NotifyEnum.Youtube);
+                    else
+                    {
+                        foreach (var r in Context.Guild.Roles)
+                        {
+                            if (r.Name.Equals(role, StringComparison.OrdinalIgnoreCase))
+                            {
+                                success = await _notifyService.AddNotifyItemRole((long)Context.Guild.Id, (long)r.Id, youtubeName, youtubeUser.Id, string.Empty, (int)NotifyEnum.Youtube);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (success)
+                    {
+                        builder.AddField(x =>
+                        {
+                            x.Name = "Added the stream";
+                            x.Value = $"{user.Username} added a stream for youtube channel {youtubeName}";
+                            x.IsInline = false;
+                        });
+                    }
+                    else
+                    {
+                        builder.AddField(x =>
+                        {
+                            x.Name = "Failed to add the stream";
+                            x.Value = $"{user.Username} failed to add a stream for youtube channel {youtubeName}";
+                            x.IsInline = false;
+                        });
+                    }
+                    
+                    builder.WithThumbnailUrl("http://pngimg.com/uploads/youtube/youtube_PNG13.png");
+
+                    await ReplyAsync("", false, builder.Build());
+                }
+            }
+        }
+
         [Command("allstreams")]
         [Alias("getstreams", "streams")]
         [Summary("Get all streams")]
@@ -186,7 +268,7 @@ namespace NoeSbot.Modules
                     foreach (var r in stream.Roles)
                     {
                         var ro = Context.Guild.GetRole((ulong)r.RoleId);
-                        users += $"{ro.Name}, ";
+                        roles += $"{ro.Name}, ";
                     }
 
                     if (!string.IsNullOrWhiteSpace(roles))
@@ -216,9 +298,28 @@ namespace NoeSbot.Modules
             }
         }
 
+        [Command("removestream")]
+        [Summary("Remove a stream by username")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task RemoveStream(string type, string name, string role = "")
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                switch (type.ToLower())
+                {
+                    case "twitch":
+                        await RemoveTwitchStream(name);
+                        break;
+                    case "youtube":
+                        await RemoveYoutubeStream(name);
+                        break;
+                }
+            }
+        }
+
         [Command("removetwitchstream")]
         [Alias("deletetwitchstream")]
-        [Summary("Remove twitch stream")]
+        [Summary("Remove youtube stream")]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task RemoveTwitchStream(string name)
         {
@@ -230,6 +331,23 @@ namespace NoeSbot.Modules
                     await ReplyAsync($"Removed the twitch stream {name}");
                 else
                     await ReplyAsync($"Failed to remove the twitch stream {name}");
+            }
+        }
+
+        [Command("removeyoutubestream")]
+        [Alias("deleteyoutubestream")]
+        [Summary("Remove youtube stream")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task RemoveYoutubeStream(string name)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var success = await _notifyService.RemoveNotifyItem((long)Context.Guild.Id, name, (int)NotifyEnum.Youtube);
+
+                if (success)
+                    await ReplyAsync($"Removed the youtube stream {name}");
+                else
+                    await ReplyAsync($"Failed to remove the youtube stream {name}");
             }
         }
 

@@ -14,5 +14,6 @@ namespace NoeSbot.Database.Services
     public interface IHttpService
     {
         Task<HttpContent> SendTwitch(HttpMethod method, string path, string authToken = null);
+        Task<HttpContent> Send(HttpMethod method, string path);
     }
 }

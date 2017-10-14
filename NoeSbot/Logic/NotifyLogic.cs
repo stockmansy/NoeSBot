@@ -47,13 +47,20 @@ namespace NoeSbot.Logic
                     var notifyItems = await _notifyService.RetrieveAllNotifysAsync();
                     foreach (var notifyItem in notifyItems)
                     {
+                        // Don't spam every stream on startup
+                        if (_printed.Count <= 0 && initial.AddSeconds(10) > DateTime.Now)
+                        {
+                            _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
+                            continue;
+                        }
+
                         var guild = _client.GetGuild((ulong)notifyItem.GuildId) as IGuild;
                         switch (notifyItem.Type)
                         {
                             case (int)NotifyEnum.Twitch:
                                 try
                                 {
-                                    var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/streams/{notifyItem.Value}", "e0ggcjd1zomziofv6qrsa5gn1hf6d4");
+                                    var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/streams/{notifyItem.Value}", Configuration.Load().TwitchClientId);
                                     var response = await content.ReadAsStringAsync();
                                     var root = JsonConvert.DeserializeObject<TwitchStreamRoot>(response, new JsonSerializerSettings
                                     {
@@ -64,28 +71,79 @@ namespace NoeSbot.Logic
                                         Converters = new List<JsonConverter> { new DecimalConverter() }
                                     });
 
+                                    // Is the stream online?
                                     if (root.Stream != null)
                                     {
                                         var existing = _printed.TryGetValue(notifyItem.NotifyItemId, out DateTime? printedItem);
-                                        if (existing && printedItem.HasValue && printedItem.Value.AddHours(1) < DateTime.Now)
+                                        if (existing && (printedItem == null || (printedItem.HasValue && printedItem.Value.AddHours(1) < DateTime.Now))) // Initial print and new print every hour
                                         {
+                                            _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
+
                                             var msg = await GetMessage(notifyItem, guild);
                                             await PrintNotification(msg, root, guild);
                                             continue;
                                         }
                                         else if (!existing)
                                         {
+                                            // New stream added
                                             _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
 
-                                            if (initial.AddMinutes(5) < DateTime.Now)
-                                            {
-                                                var msg = await GetMessage(notifyItem, guild);
-                                                await PrintNotification(msg, root, guild);
-                                            }
+                                            var msg = await GetMessage(notifyItem, guild);
+                                            await PrintNotification(msg, root, guild);
+                                            continue;
                                         }
                                     }
                                     else
                                     {
+                                        // Set item as offline
+                                        _printed.AddOrUpdate(notifyItem.NotifyItemId, null);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    await Task.Delay(5000);
+                                    continue;
+                                }
+                                break;
+                                case (int)NotifyEnum.Youtube:
+                                try
+                                {
+                                    var content = await _httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={notifyItem.Value}&type=video&eventType=live&key={Configuration.Load().YoutubeApiKey}");
+                                    var response = await content.ReadAsStringAsync();
+                                    var root = JsonConvert.DeserializeObject<YoutubeStream>(response, new JsonSerializerSettings
+                                    {
+                                        NullValueHandling = NullValueHandling.Ignore,
+                                        MissingMemberHandling = MissingMemberHandling.Ignore,
+                                        Formatting = Formatting.None,
+                                        DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                                        Converters = new List<JsonConverter> { new DecimalConverter() }
+                                    });
+
+                                    if (root.Items != null && root.Items.Length > 0)
+                                    {
+                                        var item = root.Items[0];
+                                        var existing = _printed.TryGetValue(notifyItem.NotifyItemId, out DateTime? printedItem);
+                                        if (existing && (printedItem == null || (printedItem.HasValue && printedItem.Value.AddHours(1) < DateTime.Now))) // Initial print and new print every hour
+                                        {
+                                            _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
+
+                                            var msg = await GetMessage(notifyItem, guild);
+                                            await PrintNotification(msg, item, guild);
+                                            continue;
+                                        }
+                                        else if (!existing)
+                                        {
+                                            // New stream added
+                                            _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
+
+                                            var msg = await GetMessage(notifyItem, guild);
+                                            await PrintNotification(msg, item, guild);
+                                            continue;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Set item as offline
                                         _printed.AddOrUpdate(notifyItem.NotifyItemId, null);
                                     }
                                 }
@@ -133,7 +191,9 @@ namespace NoeSbot.Logic
 
             var builder = new EmbedBuilder()
             {
-                Color = Color.Red
+                Color = Color.Red,
+                Url = root.Stream.Channel.Url,
+                Footer = new EmbedFooterBuilder { Text = root.Stream.Channel.Url }
             };
 
             var twitchName = (stream.Channel.DisplayName.Equals(stream.Channel.Name)) ? stream.Channel.DisplayName : $"{stream.Channel.DisplayName} ({stream.Channel.Name})";
@@ -147,6 +207,32 @@ namespace NoeSbot.Logic
 
             if (stream.Channel.Logo != null)
                 builder.WithThumbnailUrl(stream.Channel.Logo);
+
+            var defaultChannel = await guild.GetDefaultChannelAsync();
+            await defaultChannel.SendMessageAsync(mentions, false, builder.Build());
+        }
+
+        private async Task PrintNotification(string mentions, YoutubeStream.YoutubeVideoItem item, IGuild guild)
+        {
+            var url = $"https://www.youtube.com/?v={item.Id.VideoId}";
+            var builder = new EmbedBuilder()
+            {
+                Color = Color.Red,
+                Url = url,
+                Footer = new EmbedFooterBuilder { Text = url }
+            };
+
+            var youtubeName = CommonHelper.FirstLetterToUpper(item.Snippet.ChannelTitle);
+
+            builder.AddField(x =>
+            {
+                x.Name = $"{youtubeName}";
+                x.Value = $"youtube channel {youtubeName} started streaming";
+                x.IsInline = false;
+            });
+            
+            if (item.Snippet.Thumbnails?.Default != null)
+                builder.WithThumbnailUrl(item.Snippet.Thumbnails.Default.Url);
 
             var defaultChannel = await guild.GetDefaultChannelAsync();
             await defaultChannel.SendMessageAsync(mentions, false, builder.Build());

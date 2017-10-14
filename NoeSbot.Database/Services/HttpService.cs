@@ -65,6 +65,27 @@ namespace NoeSbot.Database.Services
             return response.Content;
         }
 
+        public Task<HttpContent> Send(HttpMethod method, string path) => Send<object>(method, path, null);
+
+        private async Task<HttpContent> Send<T>(HttpMethod method, string path, T payload)
+            where T : class
+        {
+            HttpRequestMessage msg = new HttpRequestMessage(method, path);
+            
+            if (payload != null)
+            {
+                string json = JsonConvert.SerializeObject(payload);
+                msg.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
+
+            msg.Headers.Add("Accept", "application/json");
+
+            var response = await _http.SendAsync(msg, HttpCompletionOption.ResponseContentRead);
+            if (!response.IsSuccessStatusCode)
+                throw new HttpException(response.StatusCode);
+            return response.Content;
+        }
+
         #endregion
     }
 }

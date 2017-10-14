@@ -8,5 +8,6 @@
   "LoadedModules": "",
   "connectionstring": "Server=localhost; Port=3306; Database=noesbot; Uid=noesbot; Pwd=example;",
   "newuserrole": "initiate",
-  "twitchclientid":  ""
+  "twitchclientid": "",
+  "youtubeapikey":  ""
 }

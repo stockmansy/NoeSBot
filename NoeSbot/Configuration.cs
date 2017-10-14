@@ -27,6 +27,7 @@ namespace NoeSbot
         public string GeneralChannel { get; set; } = "general";
         public string NewUserRole { get; set; } = "initiate";
         public string TwitchClientId { get; set; }
+        public string YoutubeApiKey { get; set; }
         public int AudioVolume { get; set; } = 5;
 
         private int[] _loadedModules;
