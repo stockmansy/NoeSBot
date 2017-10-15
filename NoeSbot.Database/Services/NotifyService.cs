@@ -69,6 +69,37 @@ namespace NoeSbot.Database.Services
             }
         }
 
+        public async Task<bool> AddUserToNotifyItem(long userId, int notifyItemId)
+        {
+            try
+            {
+                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).Where(x => x.NotifyItemId == notifyItemId).SingleOrDefaultAsync();
+                if (existing != null)
+                {
+                    var existingItem = existing.Users.Where(x => x.UserId == userId).SingleOrDefault();
+                    if (existingItem == null)
+                    {
+                        existing.Users.Add(new NotifyItem.NotifyUser
+                        {
+                            UserId = userId
+                        });
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in add user to Notify Item: {ex.Message}");
+                return false;
+            }
+        }
+
         public async Task<bool> AddNotifyItemRole(long guildId, long roleId, string name, string value, string logo, int type)
         {
             try
@@ -133,6 +164,34 @@ namespace NoeSbot.Database.Services
             catch (DbUpdateException ex)
             {
                 _logger.LogError($"Error in Save Notify Item: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveUserFromNotifyItem(long userId, int notifyItemId)
+        {
+            try
+            {
+                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).Where(x => x.NotifyItemId == notifyItemId).SingleOrDefaultAsync();
+                if (existing != null)
+                {
+                    var existingItem = existing.Users.Where(x => x.UserId == userId).SingleOrDefault();
+                    if (existingItem != null)
+                    {
+                        existing.Users.Remove(existingItem);
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in remove user from Notify Item: {ex.Message}");
                 return false;
             }
         }

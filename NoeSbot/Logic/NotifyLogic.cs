@@ -26,6 +26,7 @@ namespace NoeSbot.Logic
         private readonly INotifyService _notifyService;
         private readonly IHttpService _httpService;
         private ConcurrentDictionary<int, DateTime?> _printed;
+        private readonly LimitedDictionary<ulong, NotifyItem> _notifyMessages;
 
         public NotifyLogic(DiscordSocketClient client, IConfigurationService configurationService, INotifyService notifyService, IHttpService httpService)
         {
@@ -34,6 +35,60 @@ namespace NoeSbot.Logic
             _httpService = httpService;
             _notifyService = notifyService;
             _printed = new ConcurrentDictionary<int, DateTime?>();
+            _notifyMessages = new LimitedDictionary<ulong, NotifyItem>();
+
+            client.ReactionAdded += OnReactionAdded;
+        }
+
+        protected async Task OnReactionAdded(Cacheable<IUserMessage, ulong> messageParam, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            var message = await messageParam.GetOrDownloadAsync();
+            if (message == null || !reaction.User.IsSpecified)
+                return;
+                        
+            var userAdjusting = reaction.User.Value;
+
+            if (!userAdjusting.IsBot && !userAdjusting.IsWebhook)
+            {
+                var success = _notifyMessages.TryGetValue(message.Id, out NotifyItem notifyItem);
+                if (!success)
+                    return;
+
+                var name = reaction.Emote.Name;
+
+                await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
+
+                //if (urbanMain.AuthorId != userAdjusting.Id)
+                //    return;
+
+                //if (urbanMain.InHelpMode && !name.Equals(IconHelper.Question))
+                //{
+                //    await message.ModifyAsync(x => x.Embed = GenerateUrban(urbanMain, author: userAdjusting.Username));
+                //    urbanMain.InHelpMode = false;
+                //    return;
+                //}
+
+                new Thread(async () =>
+                {
+                    if (name.Equals(IconHelper.Bell))
+                    {
+                        var addSuccess = await _notifyService.AddUserToNotifyItem((long)userAdjusting.Id, notifyItem.Id);
+                        if (addSuccess)
+                            await userAdjusting.SendMessageAsync("Successfully added you to the subscription list");
+                        else
+                            await userAdjusting.SendMessageAsync("Something went wrong trying to add you to the subscription list");
+                    }
+                    else if (name.Equals(IconHelper.BellStop))
+                    {
+                        var removeSuccess = await _notifyService.RemoveUserFromNotifyItem((long)userAdjusting.Id, notifyItem.Id);
+                        if (removeSuccess)
+                            await userAdjusting.SendMessageAsync("Successfully removed you from the subscription list");
+                        else
+                            await userAdjusting.SendMessageAsync("Something went wrong trying to remove you to the subscription list");
+                        
+                    }
+                }).Start();
+            }
         }
 
         public async Task Run(CancellationToken cancelToken)
@@ -80,7 +135,7 @@ namespace NoeSbot.Logic
                                             _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
 
                                             var msg = await GetMessage(notifyItem, guild);
-                                            await PrintNotification(msg, root, guild);
+                                            await PrintNotification(msg, root, guild, notifyItem.NotifyItemId);
                                             continue;
                                         }
                                         else if (!existing)
@@ -89,7 +144,7 @@ namespace NoeSbot.Logic
                                             _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
 
                                             var msg = await GetMessage(notifyItem, guild);
-                                            await PrintNotification(msg, root, guild);
+                                            await PrintNotification(msg, root, guild, notifyItem.NotifyItemId);
                                             continue;
                                         }
                                     }
@@ -128,7 +183,7 @@ namespace NoeSbot.Logic
                                             _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
 
                                             var msg = await GetMessage(notifyItem, guild);
-                                            await PrintNotification(msg, item, guild);
+                                            await PrintNotification(msg, item, guild, notifyItem.NotifyItemId);
                                             continue;
                                         }
                                         else if (!existing)
@@ -137,7 +192,7 @@ namespace NoeSbot.Logic
                                             _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
 
                                             var msg = await GetMessage(notifyItem, guild);
-                                            await PrintNotification(msg, item, guild);
+                                            await PrintNotification(msg, item, guild, notifyItem.NotifyItemId);
                                             continue;
                                         }
                                     }
@@ -185,7 +240,7 @@ namespace NoeSbot.Logic
             return msg;
         }
 
-        private async Task PrintNotification(string mentions, TwitchStreamRoot root, IGuild guild)
+        private async Task PrintNotification(string mentions, TwitchStreamRoot root, IGuild guild, int notifyItemId)
         {
             var stream = root.Stream;
 
@@ -209,10 +264,16 @@ namespace NoeSbot.Logic
                 builder.WithThumbnailUrl(stream.Channel.Logo);
 
             var defaultChannel = await guild.GetDefaultChannelAsync();
-            await defaultChannel.SendMessageAsync(mentions, false, builder.Build());
+            var message = await defaultChannel.SendMessageAsync(mentions, false, builder.Build());
+
+            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.Bell));
+            await Task.Delay(1250);
+            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.BellStop));
+
+            _notifyMessages.Add(message.Id, new NotifyItem { Id = notifyItemId, Type = NotifyEnum.Twitch });
         }
 
-        private async Task PrintNotification(string mentions, YoutubeStream.YoutubeVideoItem item, IGuild guild)
+        private async Task PrintNotification(string mentions, YoutubeStream.YoutubeVideoItem item, IGuild guild, int notifyItemId)
         {
             var url = $"https://www.youtube.com/?v={item.Id.VideoId}";
             var builder = new EmbedBuilder()
@@ -235,7 +296,13 @@ namespace NoeSbot.Logic
                 builder.WithThumbnailUrl(item.Snippet.Thumbnails.Default.Url);
 
             var defaultChannel = await guild.GetDefaultChannelAsync();
-            await defaultChannel.SendMessageAsync(mentions, false, builder.Build());
+            var message = await defaultChannel.SendMessageAsync(mentions, false, builder.Build());
+
+            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.Bell));
+            await Task.Delay(1250);
+            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.BellStop));
+
+            _notifyMessages.Add(message.Id, new NotifyItem { Id = notifyItemId, Type = NotifyEnum.Youtube });
         }
 
         #endregion

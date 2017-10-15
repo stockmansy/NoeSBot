@@ -13,8 +13,10 @@ namespace NoeSbot.Database.Services
     public interface INotifyService
     {
         Task<bool> AddNotifyItem(long guildId, long userId, string name, string value, string logo, int type);
+        Task<bool> AddUserToNotifyItem(long userId, int notifyItemId);
         Task<bool> AddNotifyItemRole(long guildId, long roleId, string name, string value, string logo, int type);
         Task<bool> RemoveNotifyItem(long guildId, string name, int type);
+        Task<bool> RemoveUserFromNotifyItem(long userId, int notifyItemId);
         Task<List<NotifyItem>> RetrieveAllNotifysAsync();
         Task<NotifyItem> RetrieveNotifyAsync(long guildId, string name, int type);
     }

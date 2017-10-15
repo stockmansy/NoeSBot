@@ -70,6 +70,9 @@ namespace NoeSbot.Handlers
             int argPos = 0;
             var guild = (message.Channel as IGuildChannel)?.Guild;
 
+            if (guild == null)
+                return;
+
             // Create a Command Context
             var context = new CommandContext(_client, message);
 
