@@ -77,7 +77,8 @@ namespace NoeSbot.Logic
                 {
                     try
                     {
-                        if (_queue.Any()) { 
+                        if (_queue.Any())
+                        {
                             var success = _queue.TryPeek(out AudioInfo audioItem);
 
                             if (!string.IsNullOrWhiteSpace(audioItem.File) && success)
@@ -95,7 +96,7 @@ namespace NoeSbot.Logic
                             _queue.TryDequeue(out AudioInfo audioItem);
                     }
                 }
-                
+
                 await Stop();
             });
 
@@ -122,7 +123,8 @@ namespace NoeSbot.Logic
 
             foreach (var url in items)
             {
-                if (_status != AudioStatusEnum.Playing) {
+                if (_status != AudioStatusEnum.Playing)
+                {
                     _adding = false;
                     Dispose();
                     return;
@@ -150,7 +152,7 @@ namespace NoeSbot.Logic
         public AudioInfo SkipAudio()
         {
             if (_adding && _queue.Count <= 1)
-                return new AudioInfo() { Title = "Loading"};
+                return new AudioInfo() { Title = "Loading" };
 
             _skip = true;
 
@@ -167,7 +169,8 @@ namespace NoeSbot.Logic
             if (_queue.TryPeek(out AudioInfo result))
                 return result;
 
-            return new AudioInfo() {
+            return new AudioInfo()
+            {
                 Title = "No audio found",
                 Url = "",
                 Description = "",
@@ -180,56 +183,63 @@ namespace NoeSbot.Logic
         // Initial send audio was based on: mrousavy https://github.com/mrousavy/DiscordMusicBot
         private async Task SendAudio(string filePath)
         {
-            var startInfo = new ProcessStartInfo
+            try
             {
-                FileName = "ffmpeg",
-                Arguments = $"-xerror -i \"{filePath}\" -ac 2 -f s16le -ar 48000 pipe:1",
-                RedirectStandardOutput = true
-            };
-
-            var ffmpeg = Process.Start(startInfo);
-
-            using (Stream output = ffmpeg.StandardOutput.BaseStream)
-            {
-                using (AudioOutStream audioOutput = _currentAudioChannel.CreatePCMStream(AudioApplication.Mixed, 1920))
+                var startInfo = new ProcessStartInfo
                 {
-                    int bufferSize = 3840;
-                    int bytesSent = 0;
-                    var exit = false;
-                    var buffer = new byte[bufferSize];
+                    FileName = "ffmpeg",
+                    Arguments = $"-xerror -i \"{filePath}\" -ac 2 -f s16le -ar 48000 pipe:1",
+                    RedirectStandardOutput = true
+                };
 
-                    while (!_skip &&
-                           !_disposeToken.IsCancellationRequested &&
-                           !exit)
+                var ffmpeg = Process.Start(startInfo);
+
+                using (Stream output = ffmpeg.StandardOutput.BaseStream)
+                {
+                    using (AudioOutStream audioOutput = _currentAudioChannel.CreatePCMStream(AudioApplication.Mixed, null, 1920))
                     {
-                        try
+                        int bufferSize = 3840;
+                        int bytesSent = 0;
+                        var exit = false;
+                        var buffer = new byte[bufferSize];
+
+                        while (!_skip &&
+                               !_disposeToken.IsCancellationRequested &&
+                               !exit)
                         {
-                            int read = await output.ReadAsync(buffer, 0, bufferSize, _disposeToken.Token);
-                            if (read == 0)
+                            try
                             {
-                                // End of audio
-                                exit = true;
-                                break;
+                                int read = await output.ReadAsync(buffer, 0, bufferSize, _disposeToken.Token);
+                                if (read == 0)
+                                {
+                                    // End of audio
+                                    exit = true;
+                                    break;
+                                }
+
+                                // Adjust audio levels
+                                buffer = ScaleVolumeSafeAllocateBuffers(buffer, _volume);
+
+                                await audioOutput.WriteAsync(buffer, 0, read, _disposeToken.Token);
+
+                                bytesSent += read;
                             }
-
-                            // Adjust audio levels
-                            buffer = ScaleVolumeSafeAllocateBuffers(buffer, _volume);
-
-                            await audioOutput.WriteAsync(buffer, 0, read, _disposeToken.Token);
-
-                            bytesSent += read;
+                            catch
+                            {
+                                exit = true;
+                            }
                         }
-                        catch
-                        {
-                            exit = true;
-                        }
+                        output.Dispose();
+                        await audioOutput.FlushAsync();
                     }
-                    output.Dispose();
-                    await audioOutput.FlushAsync();
                 }
             }
+            catch
+            {
+                await Stop();
+            }
         }
-        
+
         private void Dispose()
         {
             _disposeToken.Cancel();
