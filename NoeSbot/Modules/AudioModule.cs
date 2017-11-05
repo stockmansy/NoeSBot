@@ -24,16 +24,18 @@ namespace NoeSbot.Modules
         private readonly DiscordSocketClient _client;
         private IConfigurationService _service;
         private IMemoryCache _cache;
+        private readonly IHttpService _httpService;
         private static ConcurrentDictionary<ulong, AudioPlayer> _currentAudioClients = new ConcurrentDictionary<ulong, AudioPlayer>();
         private IVoiceChannel _currentChannel;
 
         #region Constructor
 
-        public AudioModule(DiscordSocketClient client, IConfigurationService service, IMemoryCache memoryCache)
+        public AudioModule(DiscordSocketClient client, IConfigurationService service, IMemoryCache memoryCache, IHttpService httpService)
         {
             _client = client;
             _service = service;
             _cache = memoryCache;
+            _httpService = httpService;
         }
 
         #endregion
@@ -198,7 +200,7 @@ namespace NoeSbot.Modules
         [Alias("p", "playaudio", "playsong")]
         [Summary("Start playing audio")]
         [MinPermissions(AccessLevel.User)]
-        public async Task Play([Remainder] string url)
+        public async Task Play([Remainder] string input)
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
@@ -208,6 +210,7 @@ namespace NoeSbot.Modules
                     _currentChannel = user.VoiceChannel;
                     var info = new AudioInfo();
 
+                    var url = await DownloadHelper.GetUrl(_httpService, input);
                     var message = await ReplyAsync("", false, GetLoadingEmbed(url, user));
 
                     if (_currentChannel != null)

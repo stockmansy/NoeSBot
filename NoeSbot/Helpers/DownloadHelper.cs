@@ -1,5 +1,8 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using Newtonsoft.Json;
+using NoeSbot.Converters;
+using NoeSbot.Database.Services;
 using NoeSbot.Enums;
 using NoeSbot.Models;
 using System;
@@ -7,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -24,7 +28,7 @@ namespace NoeSbot.Helpers
 
         public static async Task<string> Download(string url, string name)
         {
-            if (IfValidUrl(url)) 
+            if (IfValidUrl(url))
                 return await DownloadFile(url, name);
             else
                 throw new Exception("Invalid Url!");
@@ -44,6 +48,39 @@ namespace NoeSbot.Helpers
                 return await GetInfoOfUrl(url);
             else
                 throw new Exception("Invalid Url!");
+        }
+
+        public static async Task<string> GetUrl(IHttpService httpService, string input)
+        {
+            try
+            {
+                if (IfValidUrl(input))
+                    return input;
+
+                var content = await httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/search?q={input}&maxResults=1&part=snippet&key={Configuration.Load().YoutubeApiKey}");
+                var response = await content.ReadAsStringAsync();
+                var root = JsonConvert.DeserializeObject<YoutubeStream>(response, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    MissingMemberHandling = MissingMemberHandling.Ignore,
+                    Formatting = Formatting.None,
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                    Converters = new List<JsonConverter> { new DecimalConverter() }
+                });
+
+                if (root.Items != null && root.Items.Length > 0)
+                {
+                    var item = root.Items[0];
+                    return $"https://www.youtube.com/watch?v={item.Id.VideoId}";
+
+                }
+            }
+            catch
+            {
+                throw new Exception("Invalid Url!");
+            }
+
+            throw new Exception("Invalid Url!");
         }
 
         #region Private
@@ -83,7 +120,7 @@ namespace NoeSbot.Helpers
                         CreateNoWindow = true,
                         RedirectStandardOutput = true
                     };
-                    
+
                     var youtubedl = Process.Start(youtubedlGetTitle);
 
                     // In case of debug:
@@ -166,7 +203,7 @@ namespace NoeSbot.Helpers
                         Console.WriteLine(line);
                     }
 
-                    youtubedl.WaitForExit();                    
+                    youtubedl.WaitForExit();
 
                     tcs.SetResult(items);
                 }
@@ -200,26 +237,27 @@ namespace NoeSbot.Helpers
                     CreateNoWindow = true,
                     RedirectStandardOutput = true
                 };
-                try { 
-                var youtubedl = Process.Start(youtubedlDownload);
-
-                while (!youtubedl.StandardOutput.EndOfStream)
+                try
                 {
-                    string line = youtubedl.StandardOutput.ReadLine();
-                    Console.WriteLine(line);
-                }
+                    var youtubedl = Process.Start(youtubedlDownload);
 
-                youtubedl.WaitForExit(1000 * 60 * 5);
+                    while (!youtubedl.StandardOutput.EndOfStream)
+                    {
+                        string line = youtubedl.StandardOutput.ReadLine();
+                        Console.WriteLine(line);
+                    }
+
+                    youtubedl.WaitForExit(1000 * 60 * 5);
                     // Safeguard
                     Thread.Sleep(1000);
 
                     var fullFileName = File.Exists(file) ? file : null;
                     tcs.SetResult(fullFileName);
-                } 
+                }
                 catch
                 {
                     tcs.SetResult(null);
-                }                
+                }
             }).Start();
 
             string result = await tcs.Task;
