@@ -11,9 +11,9 @@ namespace NoeSbot.Helpers
 {
     public static class CommonHelper
     {
-        public static int GetTimeInSeconds(string input)
+        public static int GetTimeInSeconds(string input, int defaultInSeconds = 300)
         {
-            var seconds = 0;
+            var seconds = defaultInSeconds;
 
             int minutes = 0;
             bool isNumeric = int.TryParse(input, out minutes);
@@ -32,7 +32,9 @@ namespace NoeSbot.Helpers
                              where !Char.IsDigit(c)
                              select c;
 
-                var time = int.Parse(string.Join("", digits));
+                if (!int.TryParse(string.Join("", digits), out int time))
+                    return seconds;
+                
                 var timestring = string.Join("", alphas).Replace(" ", "");
 
                 switch (timestring)
