@@ -211,10 +211,10 @@ namespace NoeSbot.Modules
                     var info = new AudioInfo();
 
                     var url = await DownloadHelper.GetUrl(_httpService, input);
-                    var message = await ReplyAsync("", false, GetLoadingEmbed(url, user));
-
+                    
                     if (_currentChannel != null)
                     {
+                        var message = await ReplyAsync("", false, GetLoadingEmbed(url, user));
                         var audioThread = new Thread(async () =>
                         {
                             var items = await DownloadHelper.GetItems(url);
@@ -259,6 +259,9 @@ namespace NoeSbot.Modules
                         });
 
                         audioThread.Start();
+                    } else
+                    {
+                        await ReplyAsync("", false, GetNotInChannelEmbed(url, user));
                     }
                 }
                 catch (Exception ex)
@@ -340,6 +343,24 @@ namespace NoeSbot.Modules
             {
                 Color = user.GetColor(),
                 Description = "Loading the requested audio..."
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = "Url";
+                x.Value = url;
+                x.IsInline = false;
+            });
+
+            return builder.Build();
+        }
+
+        private Embed GetNotInChannelEmbed(string url, SocketGuildUser user)
+        {
+            var builder = new EmbedBuilder()
+            {
+                Color = user.GetColor(),
+                Description = "You aren't in any audio channel"
             };
 
             builder.AddField(x =>
