@@ -57,17 +57,7 @@ namespace NoeSbot.Logic
                 var name = reaction.Emote.Name;
 
                 await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
-
-                //if (urbanMain.AuthorId != userAdjusting.Id)
-                //    return;
-
-                //if (urbanMain.InHelpMode && !name.Equals(IconHelper.Question))
-                //{
-                //    await message.ModifyAsync(x => x.Embed = GenerateUrban(urbanMain, author: userAdjusting.Username));
-                //    urbanMain.InHelpMode = false;
-                //    return;
-                //}
-
+                
                 new Thread(async () =>
                 {
                     if (name.Equals(IconHelper.Bell))
@@ -130,7 +120,7 @@ namespace NoeSbot.Logic
                                     if (root.Stream != null)
                                     {
                                         var existing = _printed.TryGetValue(notifyItem.NotifyItemId, out DateTime? printedItem);
-                                        if (existing && (printedItem == null || (printedItem.HasValue && printedItem.Value.AddHours(1) < DateTime.Now))) // Initial print and new print every hour
+                                        if (existing && (printedItem == null || (printedItem.HasValue && printedItem.Value.AddHours(6) < DateTime.Now))) // Initial print and new print every hour
                                         {
                                             _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
 
@@ -178,7 +168,7 @@ namespace NoeSbot.Logic
                                     {
                                         var item = root.Items[0];
                                         var existing = _printed.TryGetValue(notifyItem.NotifyItemId, out DateTime? printedItem);
-                                        if (existing && (printedItem == null || (printedItem.HasValue && printedItem.Value.AddHours(1) < DateTime.Now))) // Initial print and new print every hour
+                                        if (existing && (printedItem == null || (printedItem.HasValue && printedItem.Value.AddHours(6) < DateTime.Now))) // Initial print and new print every hour
                                         {
                                             _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
 
