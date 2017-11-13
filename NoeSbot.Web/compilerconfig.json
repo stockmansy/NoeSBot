@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "wwwroot/css/style.css",
+    "inputFile": "wwwroot/css/style.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/_include/_reset.css",
+    "inputFile": "wwwroot/css/_include/_reset.scss"
+  }
+]
