@@ -53,6 +53,8 @@ namespace NoeSbot.Logic
             var punishedRoles = GetPunishRoles(context);
             if (success && punishedRoles != null)
             {
+                LogHelper.Log($"Punish user {user.Username} ({user.Id}) for guild {context.Guild.Name}", LogLevel.Debug);
+
                 foreach (var role in punishedRoles)
                     await user.AddRoleAsync(role);
 
@@ -94,6 +96,8 @@ namespace NoeSbot.Logic
 
             if (success && punishedRoles != null)
             {
+                LogHelper.Log($"Unpunish user {user.Username} ({user.Id}) for guild {context.Guild.Name}", LogLevel.Debug);
+
                 foreach (var role in punishedRoles)
                     await user.RemoveRoleAsync(role);
 
@@ -118,6 +122,8 @@ namespace NoeSbot.Logic
 
             if (success && punishedRoles != null)
             {
+                LogHelper.Log($"Unpunish all", LogLevel.Debug);
+
                 foreach (var pun in all)
                 {
                     var iuser =await context.Guild.GetUserAsync((ulong)pun.UserId);
@@ -174,12 +180,15 @@ namespace NoeSbot.Logic
             var allPunished = await GetAllPunishedAsync();
             if (allPunished.Count() <= 0)
             {
+                LogHelper.Log($"Stop punished check", LogLevel.Debug);
                 _runPunishedCheck = false;
             }
         }
 
         private void DoPunishedCheckTask(ICommandContext context)
         {
+            LogHelper.Log($"Starting punish check", LogLevel.Debug);
+
             Task.Run(async () =>
             {
                 while (true && _runPunishedCheck)
@@ -190,6 +199,7 @@ namespace NoeSbot.Logic
 
                     if (count <= 0)
                     {
+                        LogHelper.Log($"Stop punish check", LogLevel.Debug);
                         _runPunishedCheck = false;
                         return;
                     }
@@ -197,10 +207,13 @@ namespace NoeSbot.Logic
                     foreach (var pun in allPunished)
                     {
                         var user = await context.Guild.GetUserAsync((ulong)pun.UserId);
-                        var shouldStop = await CheckPunishedAsync(context, (SocketGuildUser)user, allPunished);
+                        var isStillPunished = await CheckPunishedAsync(context, (SocketGuildUser)user, allPunished);
 
-                        if (!shouldStop && count == 1)
+                        if (!isStillPunished && count == 1)
+                        {
+                            LogHelper.Log($"Stop punish check after checkpunished", LogLevel.Debug);
                             _runPunishedCheck = false;
+                        }
                     }
 
                     await Task.Delay(10000);
@@ -269,10 +282,14 @@ namespace NoeSbot.Logic
 
         private async Task Unpunish(IEnumerable<IRole> roles, SocketGuildUser user)
         {
+            LogHelper.Log($"Unpunish user {user.Username} ({user.Id})", LogLevel.Debug);
+
             foreach (var role in roles)
             {
-                if (user.Roles.Contains(role))
+                if (user.Roles.Contains(role)) { 
                     await user.RemoveRoleAsync(role);
+                    LogHelper.Log($"Attempted to remove role {role.Name}", LogLevel.Debug);
+                }
             }
 
             await _database.RemovePunishedAsync((long)user.Id);

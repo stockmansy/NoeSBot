@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using NoeSbot.Enums;
+using NoeSbot.Resources;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -182,6 +183,47 @@ namespace NoeSbot.Helpers
                 }
             }
             yield return line.ToString().Trim();
+        }
+
+        public static Embed GetHelp(string command, char prefix, Color color)
+        {
+            var model = Labels.GetCommandInfo(command);
+
+            var builder = new EmbedBuilder()
+            {
+                Color = color,
+                Description = model.Description
+            };
+
+            foreach (var field in model.Fields)
+            {
+                builder.AddField(x =>
+                {
+                    x.Name = field.Name;
+                    x.Value = field.Value;
+                    x.IsInline = false;
+                });
+            }
+
+            var i = 1;
+            foreach (var example in model.Examples)
+            {
+                builder.AddField(x =>
+                {
+                    x.Name = $"{Labels.GetText("label_example")} {i}";
+                    x.Value = string.Format(example, prefix, command);
+                    x.IsInline = false;
+                });
+
+                i++;
+            }
+
+            return builder.Build();
+        }
+
+        public static string GetTranslation(string id)
+        {
+            return Labels.GetText(id);
         }
     }
 }

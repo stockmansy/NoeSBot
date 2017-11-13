@@ -1,0 +1,19 @@
+﻿{
+  "modules": [
+    {
+      "name": "Audio",
+      "commands": [
+        {
+          "name": "audioinfo",
+          "alias": "musicinfo",
+          "description": "Get info about a video",
+          "examples": [
+            {
+              "example": "{prefix}audioinfo https://www.youtube.com/watch?v=XMxTUS8ssh8"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using log4net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,18 +9,21 @@ using Microsoft.Extensions.Logging;
 using NoeSbot.Database;
 using NoeSbot.Database.Services;
 using NoeSbot.Handlers;
+using NoeSbot.Helpers;
 using NoeSbot.Logic;
 using NoeSbot.Modules;
 using System;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace NoeSbot
 {
     public class Program
     {
         private DiscordSocketClient _client;
-
+        
         static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();
         
         public async Task Start()
@@ -33,8 +37,14 @@ namespace NoeSbot
                 MessageCacheSize = 1000
             });
 
-            //https://github.com/RogueException/DiscordBot/blob/master/src/DiscordBot/Modules/Twitch/TwitchModule.cs
+            var log4netConfig = new XmlDocument();
+            log4netConfig.Load(File.OpenRead("log4net.config"));
 
+            var repo = log4net.LogManager.CreateRepository(
+            Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
+
+            log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
+            
             _client.Log += Log;
 
             var serviceCollection = ConfigureServices();
@@ -50,17 +60,21 @@ namespace NoeSbot
             await serviceProvider.GetService<CommandHandler>().InstallCommands(serviceProvider);
 
             await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token);
-                        
-            Console.WriteLine("Starting the bot");
+
+            LogHelper.LogWithConsole("Starting the bot");
             await _client.StartAsync();
 
-            Console.WriteLine("The bot is running");
+            LogHelper.LogWithConsole("The bot is running");
+
+
+            Resources.Labels.GetModules();
+
             await Task.Delay(-1);
         }
 
         public Task Log(LogMessage message)
         {
-            Console.WriteLine(message.ToString());
+            LogHelper.LogWithConsole(message.ToString());
             return Task.CompletedTask;
         }
 

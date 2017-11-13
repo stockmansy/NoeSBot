@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading;
 using System.Collections.Concurrent;
 using NoeSbot.Models;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -45,85 +46,25 @@ namespace NoeSbot.Modules
 
 
         #endregion
-
-        #region Help text
-
-        [Command("audioinfo")]
-        [Alias("musicinfo")]
-        [Summary("Get info about an audio item")]
-        [MinPermissions(AccessLevel.User)]
-        public async Task GetInfoHelp()
-        {
-            var user = Context.User as SocketGuildUser;
-            var builder = new EmbedBuilder()
-            {
-                Color = user.GetColor(),
-                Description = "You can get info about an audio item:"
-            };
-
-            builder.AddField(x =>
-            {
-                x.Name = "Parameter: The url";
-                x.Value = "Provide an url to the audio item";
-                x.IsInline = false;
-            });
-
-            await ReplyAsync("", false, builder.Build());
-        }
-
-        [Command("volume")]
-        [Alias("v")]
-        [Summary("Set the audio level")]
-        [MinPermissions(AccessLevel.ServerMod)]
-        public async Task SetAudioHelp()
-        {
-            var user = Context.User as SocketGuildUser;
-            var builder = new EmbedBuilder()
-            {
-                Color = user.GetColor(),
-                Description = "You can set the volume level:"
-            };
-
-            builder.AddField(x =>
-            {
-                x.Name = "Parameter: a number";
-                x.Value = "Provide a number between 1 and 10";
-                x.IsInline = false;
-            });
-
-            await ReplyAsync("", false, builder.Build());
-        }
-
-        [Command("play")]
-        [Alias("p", "playaudio", "playsong")]
-        [Summary("Start playing audio")]
-        [MinPermissions(AccessLevel.User)]
-        public async Task PlayHelp()
-        {
-            var user = Context.User as SocketGuildUser;
-            var builder = new EmbedBuilder()
-            {
-                Color = user.GetColor(),
-                Description = "You can play an audio item:"
-            };
-
-            builder.AddField(x =>
-            {
-                x.Name = "Parameter: the url";
-                x.Value = "Provide an url to the audio item";
-                x.IsInline = false;
-            });
-
-            await ReplyAsync("", false, builder.Build());
-        }
-
-        #endregion
-
+              
         #region Commands
 
-        [Command("audioinfo")]
-        [Alias("musicinfo")]
-        [Summary("Get info about a video")]
+        #region AudioInfo
+
+        [Command(Labels.Audio_AudioInfo_Command)]
+        [Alias(Labels.Audio_AudioInfo_Alias_1)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task GetInfo()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_AudioInfo_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Audio_AudioInfo_Command)]
+        [Alias(Labels.Audio_AudioInfo_Alias_1)]
         [MinPermissions(AccessLevel.User)]
         public async Task GetInfo(string url)
         {
@@ -172,10 +113,25 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("volume")]
-        [Alias("v")]
-        [Summary("Set the audio level")]
-        [MinPermissions(AccessLevel.ServerMod)]
+        #endregion
+
+        #region Volume
+
+        [Command(Labels.Audio_Volume_Command)]
+        [Alias(Labels.Audio_Volume_Alias_1)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task SetAudio()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_Volume_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Audio_Volume_Command)]
+        [Alias(Labels.Audio_Volume_Alias_1)]
+        [MinPermissions(AccessLevel.User)]
         public async Task SetAudio(int volume)
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
@@ -196,9 +152,24 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("play")]
-        [Alias("p", "playaudio", "playsong")]
-        [Summary("Start playing audio")]
+        #endregion
+
+        #region Play
+
+        [Command(Labels.Audio_Play_Command)]
+        [Alias(Labels.Audio_Play_Alias_1, Labels.Audio_Play_Alias_2, Labels.Audio_Play_Alias_3)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Play()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_Play_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Audio_Play_Command)]
+        [Alias(Labels.Audio_Play_Alias_1, Labels.Audio_Play_Alias_2, Labels.Audio_Play_Alias_3)]
         [MinPermissions(AccessLevel.User)]
         public async Task Play([Remainder] string input)
         {
@@ -271,9 +242,12 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("stop")]
-        [Alias("s", "stopaudio", "stopsong")]
-        [Summary("Stop playing audio")]
+        #endregion
+
+        #region Stop
+
+        [Command(Labels.Audio_Stop_Command)]
+        [Alias(Labels.Audio_Stop_Alias_1, Labels.Audio_Stop_Alias_2, Labels.Audio_Stop_Alias_3)]
         [MinPermissions(AccessLevel.User)]
         public async Task Stop()
         {
@@ -289,8 +263,11 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("skip")]
-        [Summary("Skip some audio")]
+        #endregion
+
+        #region Skip
+
+        [Command(Labels.Audio_Skip_Command)]
         [MinPermissions(AccessLevel.User)]
         public async Task Skip()
         {
@@ -314,9 +291,12 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("current")]
-        [Alias("currentaudio", "currentsong")]
-        [Summary("Get the current audio")]
+        #endregion
+
+        #region Current
+
+        [Command(Labels.Audio_Current_Command)]
+        [Alias(Labels.Audio_Current_Alias_1, Labels.Audio_Current_Alias_2)]
         [MinPermissions(AccessLevel.User)]
         public async Task CurrentAudio()
         {
@@ -332,6 +312,8 @@ namespace NoeSbot.Modules
                     await ReplyAsync("No audio playing currently");
             }
         }
+
+        #endregion
 
         #endregion
 

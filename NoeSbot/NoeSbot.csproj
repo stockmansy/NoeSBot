@@ -16,6 +16,7 @@
   <ItemGroup>
     <PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006" />
     <PackageReference Include="Discord.Net" Version="1.0.2" />
+    <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="1.1.1" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.1" PrivateAssets="All" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.0" />
@@ -41,6 +42,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\NoeSbot.Database\NoeSbot.Database.csproj" />
+    <ProjectReference Include="..\NoeSbot.Resources\NoeSbot.Resources.csproj" />
   </ItemGroup>
   
   <ItemGroup>
