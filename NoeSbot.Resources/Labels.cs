@@ -511,7 +511,7 @@ namespace NoeSbot.Resources
                     if (string.IsNullOrWhiteSpace(field))
                         break;
 
-                    fields = fields.Replace(field, "");
+                    fields = fields.Replace($"{{field}}{field}{{/field}}", "");
 
                     var name = GetSubstring(field, "name");
                     var value = GetSubstring(field, "value");
@@ -536,7 +536,7 @@ namespace NoeSbot.Resources
                     if (string.IsNullOrWhiteSpace(example))
                         break;
 
-                    examples = examples.Replace(example, "");
+                    examples = examples.Replace($"{{example}}{example}{{/example}}", "");
 
                     model.Examples.Add(example);
 

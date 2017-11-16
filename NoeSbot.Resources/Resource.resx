@@ -863,13 +863,13 @@ You will not be able to send any messages unless you are a server admin.{/value}
 {/fields}
 
 {examples}
-   {example}{0}{1} \"Is person x a?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
+   {example}{0}{1} \"Is person x a y?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
 (Default poll duration 1m, does not show usernames){/example}
-   {example}{0}{1} true \"Is W1klas a pussy?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
+   {example}{0}{1} true \"Is person x a y?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
 (Default poll duration, shows usernames){/example}
-   {example}{0}{1} 2m \"Is W1klas a pussy?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
+   {example}{0}{1} 2m \"Is person x a y?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
 (Duration of 2 minutes, does not show usernames){/example}
-   {example}{0}{1} true 30s \"Is W1klas a pussy?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
+   {example}{0}{1} true 30s \"Is person x a y?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
 (Duration of 30 seconds, shows usernames){/example}
 {/examples}</value>
   </data>
