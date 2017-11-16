@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NoeSbot.Database.Models;
 using System.IO;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -30,65 +31,12 @@ namespace NoeSbot.Modules
             _cache = memoryCache;
         }
 
-        #region Help text
-
-        [Command("rockpaperscissors")]
-        [Alias("rps")]
-        [Summary("Play rock paper scissors")]
-        public async Task RockPaperScissors()
-        {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var builder = new StringBuilder();
-                builder.AppendLine("```");
-                builder.AppendLine("1 required parameter: input");
-                builder.AppendLine("Provide a rock paper scissors input");
-                builder.AppendLine("```");
-                await ReplyAsync(builder.ToString());
-            }
-        }
-
-        [Command("choose")]
-        [Alias("pick")]
-        [Summary("Pick a random thing")]
-        [MinPermissions(AccessLevel.User)]
-        public async Task Choose()
-        {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                string prefix = Configuration.Load(Context.Guild.Id).Prefix.ToString();
-                var builder = new EmbedBuilder()
-                {
-                    Color = user.GetColor(),
-                    Description = "You can make the bot randomly pick between inputs"
-                };
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Parameter: The inputs";
-                    x.Value = "Provide atleast 2 choices.";
-                    x.IsInline = false;
-                });
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Example";
-                    x.Value = $"{prefix}choose yes no";
-                    x.IsInline = false;
-                });
-
-                await ReplyAsync("", false, builder.Build());
-            }
-        }
-
-        #endregion
-
         #region Commands
 
-        [Command("flipcoin")]
-        [Alias("flip")]
-        [Summary("Flip a coin")]
+        #region Flip Coin
+
+        [Command(Labels.Game_FlipCoin_Command)]
+        [Alias(Labels.Game_FlipCoin_Alias_1)]
         [MinPermissions(AccessLevel.User)]
         public async Task FlipCoin()
         {
@@ -102,9 +50,24 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("rockpaperscissors")]
-        [Alias("rps")]
-        [Summary("Play rock paper scissors")]
+        #endregion
+
+        #region Rock Paper Scissors
+
+        [Command(Labels.Game_RockPaperScissors_Command)]
+        [Alias(Labels.Game_RockPaperScissors_Alias_1)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task RockPaperScissors()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_RockPaperScissors_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Game_RockPaperScissors_Command)]
+        [Alias(Labels.Game_RockPaperScissors_Alias_1)]
         [MinPermissions(AccessLevel.User)]
         public async Task RockPaperScissors(string input)
         {
@@ -250,9 +213,24 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("8ball")]
-        [Alias("8b")]
-        [Summary("Play rock paper scissors")]
+        #endregion
+
+        #region 8 Ball
+
+        [Command(Labels.Game_8Ball_Command)]
+        [Alias(Labels.Game_8Ball_Alias_1)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task MagicBall()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_8Ball_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Game_8Ball_Command)]
+        [Alias(Labels.Game_8Ball_Alias_1)]
         [MinPermissions(AccessLevel.User)]
         public async Task MagicBall([Remainder] string input)
         {
@@ -313,9 +291,24 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("choose")]
-        [Alias("pick")]
-        [Summary("Pick a random thing")]
+        #endregion
+
+        #region Choose
+
+        [Command(Labels.Game_Choose_Command)]
+        [Alias(Labels.Game_Choose_Alias_1)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Choose()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Choose_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Game_Choose_Command)]
+        [Alias(Labels.Game_Choose_Alias_1)]
         [MinPermissions(AccessLevel.User)]
         public async Task Choose([Remainder] string input)
         {
@@ -334,9 +327,12 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("blame")]
-        [Alias("blamegame", "randomlyblame")]
-        [Summary("Pick a random user to blame")]
+        #endregion
+
+        #region Blame
+
+        [Command(Labels.Game_Blame_Command)]
+        [Alias(Labels.Game_Blame_Alias_1, Labels.Game_Blame_Alias_2)]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task RandomlyBlame()
         {
@@ -351,9 +347,8 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("blame")]
-        [Alias("blamegame", "randomlyblame")]
-        [Summary("Pick a specific user to blame")]
+        [Command(Labels.Game_Blame_Command)]
+        [Alias(Labels.Game_Blame_Alias_1, Labels.Game_Blame_Alias_2)]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task RandomlyBlame([Summary("The user to be blamed")] SocketGuildUser user)
         {
@@ -364,6 +359,8 @@ namespace NoeSbot.Modules
                 await ReplyAsync($"I blame {name}", true);
             }
         }
+
+        #endregion
 
         #endregion
     }

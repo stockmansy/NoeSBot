@@ -201,7 +201,850 @@
    {example}{0}{1} 2{/example}
 {/examples}</value>
   </data>
+  <data name="commonmodule_info_name" xml:space="preserve">
+    <value>Info Command</value>
+  </data>
+  <data name="commonmodule_info_summary" xml:space="preserve">
+    <value>Get info about the bot:
+
+{examples}
+   {example}{0}{1}{/example}
+{/examples}</value>
+  </data>
+  <data name="commonmodule_name" xml:space="preserve">
+    <value>Common Module</value>
+  </data>
+  <data name="commonmodule_saytts_name" xml:space="preserve">
+    <value>Say Text To Speech Command</value>
+  </data>
+  <data name="commonmodule_saytts_summary" xml:space="preserve">
+    <value>This command will replace your message by a message by the bot in Text To Speech:
+
+{fields}
+   {field}
+      {name}Parameter: the text{/name}
+      {value}Provide a text for the bot to say{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} Hail NoeSbot{/example}
+{/examples}</value>
+  </data>
+  <data name="commonmodule_say_name" xml:space="preserve">
+    <value>Say Command</value>
+  </data>
+  <data name="commonmodule_say_summary" xml:space="preserve">
+    <value>This command will replace your message by a message by the bot:
+
+{fields}
+   {field}
+      {name}Parameter: the text{/name}
+      {value}Provide a text for the bot to say{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} Hail NoeSbot{/example}
+{/examples}</value>
+  </data>
+  <data name="configuremodule_getconfig_name" xml:space="preserve">
+    <value>Get Configuration Command</value>
+  </data>
+  <data name="configuremodule_getconfig_summary" xml:space="preserve">
+    <value>Retrieve the configuration for this server:
+
+{examples}
+   {example}{0}{1}{/example}
+{/examples}</value>
+  </data>
+  <data name="configuremodule_loadallmodules_name" xml:space="preserve">
+    <value>Load All Modules Command</value>
+  </data>
+  <data name="configuremodule_loadallmodules_summary" xml:space="preserve">
+    <value>Load all modules:
+
+{examples}
+   {example}{0}{1}{/example}
+{/examples}</value>
+  </data>
+  <data name="configuremodule_loadmodule_name" xml:space="preserve">
+    <value>Load Module Command</value>
+  </data>
+  <data name="configuremodule_loadmodule_summary" xml:space="preserve">
+    <value>Add a module to load:
+
+{fields}
+   {field}
+      {name}Parameter: module name{/name}
+      {value}Name of the module{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} poll{/example}
+{/examples}</value>
+  </data>
+  <data name="configuremodule_name" xml:space="preserve">
+    <value>Configure Module</value>
+  </data>
+  <data name="configuremodule_saveconfig_name" xml:space="preserve">
+    <value>Save Configuration Command</value>
+  </data>
+  <data name="configuremodule_saveconfig_summary" xml:space="preserve">
+    <value>Save a configuration item, pick 1 option:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}Name of the configuration{/value}
+   {/field}
+   {field}
+      {name}Parameter Option 1: user{/name}
+      {value}Mention of a user{/value}
+   {/field}
+   {field}
+      {name}Parameter Option 2: value{/name}
+      {value}Configuration value{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} punish @Stone#9999{/example}
+{/examples}</value>
+  </data>
+  <data name="configuremodule_unloadmodule_name" xml:space="preserve">
+    <value>Unload Module Command</value>
+  </data>
+  <data name="configuremodule_unloadmodule_summary" xml:space="preserve">
+    <value>Add a module to unload:
+
+{fields}
+   {field}
+      {name}Parameter: module name{/name}
+      {value}Name of the module{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} poll{/example}
+{/examples}</value>
+  </data>
+  <data name="customizemodule_addcustompunish_name" xml:space="preserve">
+    <value>Add Custom Punish Command</value>
+  </data>
+  <data name="customizemodule_addcustompunish_summary" xml:space="preserve">
+    <value>This command will add a custom punish rule for a user:
+
+{fields}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Mention of a user{/value}
+   {/field}
+   {field}
+      {name}Parameter: remainder{/name}
+      {value}The custom rule parameters{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @Stone#9999 You did something wrong{/example}
+   {example}{0}{1} @Stone#9999 "You did something wrong" Be ready you will be punished{/example}
+{/examples}</value>
+  </data>
+  <data name="customizemodule_addcustom_name" xml:space="preserve">
+    <value>Add Custom Command</value>
+  </data>
+  <data name="customizemodule_addcustom_summary" xml:space="preserve">
+    <value>This command will add a custom rule for a user:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}Name of the Module{/value}
+   {/field}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Mention of a user{/value}
+   {/field}
+   {field}
+      {name}Parameter: remainder{/name}
+      {value}The custom rule parameters{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} punish @Stone#9999 You did something wrong{/example}
+   {example}{0}{1} punish @Stone#9999 "You did something wrong" Be ready you will be punished{/example}
+{/examples}</value>
+  </data>
+  <data name="customizemodule_getcustompunish_name" xml:space="preserve">
+    <value>Get Custom Punish Command</value>
+  </data>
+  <data name="customizemodule_getcustompunish_summary" xml:space="preserve">
+    <value>This command will get the custom rules for a user:
+
+{fields}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Mention of a user{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @Stone#9999{/example}
+{/examples}</value>
+  </data>
+  <data name="customizemodule_getcustom_name" xml:space="preserve">
+    <value>Get Custom Command</value>
+  </data>
+  <data name="customizemodule_getcustom_summary" xml:space="preserve">
+    <value>This command will get the custom rules for a user:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}Name of the Module{/value}
+   {/field}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Mention of a user{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} punish @Stone#9999{/example}
+{/examples}</value>
+  </data>
+  <data name="customizemodule_name" xml:space="preserve">
+    <value>Customize Module</value>
+  </data>
+  <data name="customizemodule_removeallcustompunish_name" xml:space="preserve">
+    <value>Remove All Custom Punish Command</value>
+  </data>
+  <data name="customizemodule_removeallcustompunish_summary" xml:space="preserve">
+    <value>This command will remove all the custom punish rules for a user:
+
+{fields}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Mention of a user{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @Stone#9999{/example}
+{/examples}</value>
+  </data>
+  <data name="customizemodule_removeallcustom_name" xml:space="preserve">
+    <value>Remove All Custom Command</value>
+  </data>
+  <data name="customizemodule_removeallcustom_summary" xml:space="preserve">
+    <value>This command will remove all the custom rules for a user:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}Name of the Module{/value}
+   {/field}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Mention of a user{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} punish @Stone#9999{/example}
+{/examples}</value>
+  </data>
+  <data name="customizemodule_removecustompunish_name" xml:space="preserve">
+    <value>Remove Custom Punish Command</value>
+  </data>
+  <data name="customizemodule_removecustompunish_summary" xml:space="preserve">
+    <value>This command will remove a specific custom punish rule for a user:
+
+{fields}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Mention of a user{/value}
+   {/field}
+   {field}
+      {name}Parameter: index{/name}
+      {value}Index of the custom rule{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @Stone#9999 1{/example}
+{/examples}</value>
+  </data>
+  <data name="customizemodule_removecustom_name" xml:space="preserve">
+    <value>Remove Custom Command</value>
+  </data>
+  <data name="customizemodule_removecustom_summary" xml:space="preserve">
+    <value>This command will remove a specific custom rule for a user:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}Name of the Module{/value}
+   {/field}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Mention of a user{/value}
+   {/field}
+   {field}
+      {name}Parameter: index{/name}
+      {value}Index of the custom rule{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} punish @Stone#9999 1{/example}
+{/examples}</value>
+  </data>
+  <data name="gamemodule_8ball_name" xml:space="preserve">
+    <value>8 Ball Command</value>
+  </data>
+  <data name="gamemodule_8ball_summary" xml:space="preserve">
+    <value>Predict your future with an 8 ball:
+
+{fields}
+   {field}
+      {name}Parameter: input{/name}
+      {value}Your question{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} Is this feature usefull?{/example}
+{/examples}</value>
+  </data>
+  <data name="gamemodule_blame_name" xml:space="preserve">
+    <value>Blame Command</value>
+  </data>
+  <data name="gamemodule_blame_summary" xml:space="preserve">
+    <value>Pick a random user to blame:
+
+{fields}
+   {field}
+      {name}Parameter (Optional): user{/name}
+      {value}Make it less random{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @Stone#9999{/example}
+{/examples}</value>
+  </data>
+  <data name="gamemodule_choose_name" xml:space="preserve">
+    <value>Choose Command</value>
+  </data>
+  <data name="gamemodule_choose_summary" xml:space="preserve">
+    <value>You can make the bot randomly pick between inputs:
+
+{fields}
+   {field}
+      {name}Parameter: The inputs{/name}
+      {value}Provide atleast 2 choices{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} yes no{/example}
+{/examples}</value>
+  </data>
+  <data name="gamemodule_flipcoin_name" xml:space="preserve">
+    <value>Flip Coint Command</value>
+  </data>
+  <data name="gamemodule_flipcoin_summary" xml:space="preserve">
+    <value>Flip a coin:
+
+{examples}
+   {example}{0}{1}{/example}
+{/examples}</value>
+  </data>
+  <data name="gamemodule_name" xml:space="preserve">
+    <value>Game Module</value>
+  </data>
+  <data name="gamemodule_rockpaperscissors_name" xml:space="preserve">
+    <value>Rock Paper Scissors Command</value>
+  </data>
+  <data name="gamemodule_rockpaperscissors_summary" xml:space="preserve">
+    <value>Play rock paper scissors:
+
+{fields}
+   {field}
+      {name}Parameter: input{/name}
+      {value}Provide a rock paper scissors input{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} rock{/example}
+{/examples}</value>
+  </data>
+  <data name="helpmodule_help_name" xml:space="preserve">
+    <value>Help Command</value>
+  </data>
+  <data name="helpmodule_help_summary" xml:space="preserve">
+    <value>Get help:
+
+{fields}
+   {field}
+      {name}Parameter (Optional): command{/name}
+      {value}Specify a command to see that one alone{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1}{/example}
+   {example}{0}{1} punish{/example}
+{/examples}</value>
+  </data>
+  <data name="helpmodule_marco_name" xml:space="preserve">
+    <value>Marco Polo Command</value>
+  </data>
+  <data name="helpmodule_marco_summary" xml:space="preserve">
+    <value>See if the bot is still alive with a marco polo:
+
+{examples}
+   {example}{0}{1}{/example}
+{/examples}</value>
+  </data>
+  <data name="helpmodule_name" xml:space="preserve">
+    <value>Help Module</value>
+  </data>
   <data name="label_example" xml:space="preserve">
     <value>Example</value>
+  </data>
+  <data name="mediamodule_name" xml:space="preserve">
+    <value>Media Module</value>
+  </data>
+  <data name="messagetriggermodule_addtrigger_name" xml:space="preserve">
+    <value>Add Trigger Command</value>
+  </data>
+  <data name="messagetriggermodule_addtrigger_summary" xml:space="preserve">
+    <value>Add a trigger in messages:
+
+{fields}
+   {field}
+      {name}Parameter: trigger{/name}
+      {value}The text that triggers{/value}
+   {/field}
+   {field}
+      {name}Parameter: message{/name}
+      {value}The message that gets triggered{/value}
+   {/field}
+   {field}
+      {name}Parameter (Optional): TTS{/name}
+      {value}Should it be Text To Speech{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} Some trigger{/example}
+   {example}{0}{1} "Some trigger" true{/example}
+{/examples}</value>
+  </data>
+  <data name="messagetriggermodule_deletetrigger_name" xml:space="preserve">
+    <value>Delete Trigger Command</value>
+  </data>
+  <data name="messagetriggermodule_deletetrigger_summary" xml:space="preserve">
+    <value>Delete trigger:
+
+{fields}
+   {field}
+      {name}Parameter: trigger{/name}
+      {value}The existing text that triggers{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} Some trigger{/example}
+{/examples}</value>
+  </data>
+  <data name="messagetriggermodule_name" xml:space="preserve">
+    <value>Message Trigger Module</value>
+  </data>
+  <data name="modmodule_name" xml:space="preserve">
+    <value>Mod Module</value>
+  </data>
+  <data name="modmodule_nuke_name" xml:space="preserve">
+    <value>Nuke Command</value>
+  </data>
+  <data name="modmodule_nuke_summary" xml:space="preserve">
+    <value>This will nuke all messages send to the current channel. (Max 1 hour):
+
+{fields}
+   {field}
+      {name}What will happen?/name}
+      {value}UserX put this channel in nuke mode.
+You will not be able to send any messages unless you are a server admin.{/value}
+   {/field}
+   {field}
+      {name}Parameter: time{/name}
+      {value}How long the nuke should last{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} 1h{/example}
+{/examples}</value>
+  </data>
+  <data name="notifymodule_addstream_name" xml:space="preserve">
+    <value>Add Stream Command</value>
+  </data>
+  <data name="notifymodule_addstream_summary" xml:space="preserve">
+    <value>Add a stream:
+
+{fields}
+   {field}
+      {name}Parameter: type{/name}
+      {value}The type of stream (Twitch, Youtube){/value}
+   {/field}
+   {field}
+      {name}Parameter: name{/name}
+      {value}The name of the stream (like purgegamers){/value}
+   {/field}
+   {field}
+      {name}Parameter (Optional): role{/name}
+      {value}If specifified, it will also add a mention for this role{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} twitch purgegamers{/example}
+   {example}{0}{1} twitch purgegamers twitch{/example}
+{/examples}</value>
+  </data>
+  <data name="notifymodule_addtwitchstream_name" xml:space="preserve">
+    <value>Add Twitch Stream Command</value>
+  </data>
+  <data name="notifymodule_addtwitchstream_summary" xml:space="preserve">
+    <value>Add a Twitch stream:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}The name of the stream (like purgegamers){/value}
+   {/field}
+   {field}
+      {name}Parameter (Optional): role{/name}
+      {value}If specifified, it will also add a mention for this role{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} purgegamers{/example}
+   {example}{0}{1} purgegamers twitch{/example}
+{/examples}</value>
+  </data>
+  <data name="notifymodule_addyoutubestream_name" xml:space="preserve">
+    <value>Add Youtube Stream Command</value>
+  </data>
+  <data name="notifymodule_addyoutubestream_summary" xml:space="preserve">
+    <value>Add a Youtube stream:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}The name of the stream (like purgegamers){/value}
+   {/field}
+   {field}
+      {name}Parameter (Optional): role{/name}
+      {value}If specifified, it will also add a mention for this role{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} purgegamers{/example}
+   {example}{0}{1} purgegamers twitch{/example}
+{/examples}</value>
+  </data>
+  <data name="notifymodule_allstreams_name" xml:space="preserve">
+    <value>All Streams Command</value>
+  </data>
+  <data name="notifymodule_allstreams_summary" xml:space="preserve">
+    <value>Get a list of all the added streams:
+
+{examples}
+   {example}{0}{1}{/example}
+{/examples}</value>
+  </data>
+  <data name="notifymodule_name" xml:space="preserve">
+    <value>Notify Module</value>
+  </data>
+  <data name="notifymodule_removestream_name" xml:space="preserve">
+    <value>Remove Stream Command</value>
+  </data>
+  <data name="notifymodule_removestream_summary" xml:space="preserve">
+    <value>Remove a stream:
+
+{fields}
+   {field}
+      {name}Parameter: type{/name}
+      {value}The type of stream{/value}
+   {/field}
+   {field}
+      {name}Parameter: name{/name}
+      {value}The name of the stream (like purgegamers){/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} twitch purgegamers{/example}
+{/examples}</value>
+  </data>
+  <data name="notifymodule_removetwitchstream_name" xml:space="preserve">
+    <value>Remove Twitch Stream Command</value>
+  </data>
+  <data name="notifymodule_removetwitchstream_summary" xml:space="preserve">
+    <value>Remove a Twitch stream:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}The name of the stream (like purgegamers){/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} purgegamers{/example}
+{/examples}</value>
+  </data>
+  <data name="notifymodule_removeyoutubestream_name" xml:space="preserve">
+    <value>Remove Youtube Stream Command</value>
+  </data>
+  <data name="notifymodule_removeyoutubestream_summary" xml:space="preserve">
+    <value>Remove a Youtube stream:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}The name of the stream (like purgegamers){/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} purgegamers{/example}
+{/examples}</value>
+  </data>
+  <data name="pollmodule_name" xml:space="preserve">
+    <value>Poll Module</value>
+  </data>
+  <data name="pollmodule_poll_name" xml:space="preserve">
+    <value>Poll Command</value>
+  </data>
+  <data name="pollmodule_poll_summary" xml:space="preserve">
+    <value>You can create polls using the poll command:
+
+{fields}
+   {field}
+      {name}Parameter 1: The subject{/name}
+      {value}Provide a subject to vote on surrounded by \" \"{/value}
+   {/field}
+   {field}
+      {name}Parameter 2 - 11: Up to 10 poll options{/name}
+      {value}Provide your poll options surrounded by \" \" for each option{/value}
+   {/field}
+   {field}
+      {name}Optional Parameter 1: Show usernames{/name}
+      {value}This optional parameter can be put before the question parameter and will determine if usernames are shown in the vote.{/value}
+   {/field}
+   {field}
+      {name}Optional Parameter 2: Duration{/name}
+      {value}This optional parameter can be put before the question parameter and will determine the duration of the poll.{/value}
+   {/field}
+   {field}
+      {name}How to vote?{/name}
+      {value}A user can vote by clicking the reaction icons below the poll (only 1 per user){/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} \"Is person x a?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
+(Default poll duration 1m, does not show usernames){/example}
+   {example}{0}{1} true \"Is W1klas a pussy?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
+(Default poll duration, shows usernames){/example}
+   {example}{0}{1} 2m \"Is W1klas a pussy?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
+(Duration of 2 minutes, does not show usernames){/example}
+   {example}{0}{1} true 30s \"Is W1klas a pussy?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"
+(Duration of 30 seconds, shows usernames){/example}
+{/examples}</value>
+  </data>
+  <data name="profilemodule_name" xml:space="preserve">
+    <value>Profile Module</value>
+  </data>
+  <data name="profilemodule_profileitem_name" xml:space="preserve">
+    <value>Profile Item Command</value>
+  </data>
+  <data name="profilemodule_profileitem_summary" xml:space="preserve">
+    <value>Change a profile item of yourself:
+
+{fields}
+   {field}
+      {name}Parameter: the item to add/change{/name}
+      {value}Provide an item type like Age or Location{/value}
+   {/field}
+   {field}
+      {name}Parameter 2: The item value{/name}
+      {value}Provide an item value{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} Birthdate 1988-11-30{/example}
+   {example}{0}{1} Age 28{/example}
+   {example}{0}{1} Location Belgium{/example}
+{/examples}</value>
+  </data>
+  <data name="profilemodule_profile_name" xml:space="preserve">
+    <value>Profile Command</value>
+  </data>
+  <data name="profilemodule_profile_summary" xml:space="preserve">
+    <value>You can get the profile of a user:
+
+{fields}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Provide a user{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @MensAap{/example}
+{/examples}</value>
+  </data>
+  <data name="profilemodule_removeprofileitem_name" xml:space="preserve">
+    <value>Remove Profile Item Command</value>
+  </data>
+  <data name="profilemodule_removeprofileitem_summary" xml:space="preserve">
+    <value>Remove a profile item of yourself:
+
+{fields}
+   {field}
+      {name}Parameter: the item to remove{/name}
+      {value}Provide an item type like Age or Location{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} Age{/example}
+{/examples}</value>
+  </data>
+  <data name="punishmodule_name" xml:space="preserve">
+    <value>Punish Module</value>
+  </data>
+  <data name="punishmodule_punished_name" xml:space="preserve">
+    <value>Punished Command</value>
+  </data>
+  <data name="punishmodule_punished_summary" xml:space="preserve">
+    <value>List of the punished users:
+
+{examples}
+   {example}{0}{1}{/example}
+{/examples}</value>
+  </data>
+  <data name="punishmodule_punish_name" xml:space="preserve">
+    <value>Punish Command</value>
+  </data>
+  <data name="punishmodule_punish_summary" xml:space="preserve">
+    <value>Punish people (param user) (Defaults to 5m No reason given):
+
+{fields}
+   {field}
+      {name}Parameter 1 (Required): user{/name}
+      {value}The user you want to punish{/value}
+   {/field}
+   {field}
+      {name}Parameter 2 (Optional): time{/name}
+      {value}(e.g. 10m, 1h){/value}
+   {/field}
+   {field}
+      {name}Parameter 3 (Optional): reason{/name}
+      {value}(e.g. Was being a dick){/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @MensAap{/example}
+   {example}{0}{1} @MensAap 10m{/example}
+   {example}{0}{1} @MensAap For some weird reason...{/example}
+   {example}{0}{1} @MensAap 10m For some weird reason...{/example}
+{/examples}</value>
+  </data>
+  <data name="punishmodule_unpunish_name" xml:space="preserve">
+    <value>Unpunish Command</value>
+  </data>
+  <data name="punishmodule_unpunish_summary" xml:space="preserve">
+    <value>Unpunish somebody or all:
+
+{fields}
+   {field}
+      {name}Parameter: {/name}
+      {value}User (The user you want to unpunish) OR all (If you want to unpunish all){/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @MensAap{/example}
+   {example}{0}{1} all{/example}
+{/examples}</value>
+  </data>
+  <data name="urbanmodule_name" xml:space="preserve">
+    <value>Urban Module</value>
+  </data>
+  <data name="urbanmodule_urban_name" xml:space="preserve">
+    <value>Urban Command</value>
+  </data>
+  <data name="urbanmodule_urban_summary" xml:space="preserve">
+    <value>You can retrieve an urban dictionary item:
+
+{fields}
+   {field}
+      {name}Parameter: subject {/name}
+      {value}Provide a subject to learn more about from the urban dictionary{/value}
+   {/field}
+   {field}
+      {name}Navigation {/name}
+      {value}You can navigate to other urban dictionary entries with the arrow icons. 
+Discord has a 2000 character limit so some entries will be paginated.{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} mango{/example}
+{/examples}</value>
+  </data>
+  <data name="utilitymodule_name" xml:space="preserve">
+    <value>Utility Module</value>
+  </data>
+  <data name="utilitymodule_randommember_name" xml:space="preserve">
+    <value>Random Member Command</value>
+  </data>
+  <data name="utilitymodule_randommember_summary" xml:space="preserve">
+    <value>You can retrieve an urban dictionary item:
+
+{examples}
+   {example}{0}{1}{/example}
+{/examples}</value>
+  </data>
+  <data name="utilitymodule_userinfo_name" xml:space="preserve">
+    <value>User Info Command</value>
+  </data>
+  <data name="utilitymodule_userinfo_summary" xml:space="preserve">
+    <value>You can retrieve info about a user with this command:
+
+{fields}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Specify a user{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @MensAap{/example}
+{/examples}</value>
   </data>
 </root>

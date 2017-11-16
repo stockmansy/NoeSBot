@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 using NoeSbot.Models;
 using NoeSbot.Converters;
 using System.Linq;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -36,47 +37,23 @@ namespace NoeSbot.Modules
         }
 
         #endregion
+        
+        #region Commands
 
-        #region Help
+        #region Add Stream
 
-        [Command("addstream")]
-        [Summary("Add a stream")]
+        [Command(Labels.Notify_AddStream_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
-        public async Task Nuke()
+        public async Task AddStream()
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
                 var user = Context.User as SocketGuildUser;
-                var builder = new EmbedBuilder()
-                {
-                    Color = user.GetColor(),
-                    Description = "This will nuke all messages send to the current channel. (Max 1 hour)"
-                };
-
-                builder.AddField(x =>
-                {
-                    x.Name = "What will happen?";
-                    x.Value = $"UserX put this channel in nuke mode.{Environment.NewLine}You will not be able to send any messages unless you are a server admin.";
-                    x.IsInline = false;
-                });
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Example";
-                    x.Value = "~nuke 2m";
-                    x.IsInline = false;
-                });
-
-                await ReplyAsync("", false, builder.Build());
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_AddStream_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
             }
         }
 
-        #endregion
-
-        #region Commands
-
-        [Command("addstream")]
-        [Summary("Add a stream by username")]
+        [Command(Labels.Notify_AddStream_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task AddStream(string type, string name, string role = "")
         {
@@ -94,8 +71,22 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("addtwitchstream")]
-        [Summary("Add a twitch stream by username")]
+        #endregion
+
+        #region Add Twitch Stream
+
+        [Command(Labels.Notify_AddTwitchStream_Command)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task AddTwitchStream()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_AddTwitchStream_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Notify_AddTwitchStream_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task AddTwitchStream(string name, string role = "")
         {
@@ -165,8 +156,22 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("addyoutubestream")]
-        [Summary("Add a youtube stream by username")]
+        #endregion
+
+        #region Add Youtube Stream
+
+        [Command(Labels.Notify_AddYoutubeStream_Command)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task AddYoutubeStream()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_AddYoutubeStream_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Notify_AddYoutubeStream_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task AddYoutubeStream(string name, string role = "")
         {
@@ -235,9 +240,12 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("allstreams")]
-        [Alias("getstreams", "streams")]
-        [Summary("Get all streams")]
+        #endregion
+
+        #region All Streams
+
+        [Command(Labels.Notify_AllStreams_Command)]
+        [Alias(Labels.Notify_AllStreams_Alias_1, Labels.Notify_AllStreams_Alias_2)]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task AllStreams()
         {
@@ -298,10 +306,25 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("removestream")]
-        [Summary("Remove a stream by username")]
+        #endregion
+
+        #region Remove Stream
+
+        [Command(Labels.Notify_RemoveStream_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
-        public async Task RemoveStream(string type, string name, string role = "")
+        public async Task RemoveStream()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_RemoveStream_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Notify_RemoveStream_Command)]
+        [Alias(Labels.Notify_RemoveStream_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task RemoveStream(string type, string name)
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
@@ -317,9 +340,23 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("removetwitchstream")]
-        [Alias("deletetwitchstream")]
-        [Summary("Remove youtube stream")]
+        #endregion
+
+        #region Remove Twitch Stream
+
+        [Command(Labels.Notify_RemoveTwitchStream_Command)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task RemoveTwitchStream()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_RemoveTwitchStream_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Notify_RemoveTwitchStream_Command)]
+        [Alias(Labels.Notify_RemoveTwitchStream_Alias_1)]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task RemoveTwitchStream(string name)
         {
@@ -334,9 +371,23 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("removeyoutubestream")]
-        [Alias("deleteyoutubestream")]
-        [Summary("Remove youtube stream")]
+        #endregion
+
+        #region Remove Youtube Stream
+
+        [Command(Labels.Notify_RemoveYoutubeStream_Command)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task RemoveYoutubeStream()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_RemoveYoutubeStream_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Notify_RemoveYoutubeStream_Command)]
+        [Alias(Labels.Notify_RemoveYoutubeStream_Alias_1)]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task RemoveYoutubeStream(string name)
         {
@@ -350,6 +401,8 @@ namespace NoeSbot.Modules
                     await ReplyAsync($"Failed to remove the youtube stream {name}");
             }
         }
+
+        #endregion
 
         #endregion
 

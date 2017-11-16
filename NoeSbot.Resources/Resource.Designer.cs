@@ -224,11 +224,1428 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Info Command.
+        /// </summary>
+        internal static string commonmodule_info_name {
+            get {
+                return ResourceManager.GetString("commonmodule_info_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Get info about the bot:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string commonmodule_info_summary {
+            get {
+                return ResourceManager.GetString("commonmodule_info_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Common Module.
+        /// </summary>
+        internal static string commonmodule_name {
+            get {
+                return ResourceManager.GetString("commonmodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Say Command.
+        /// </summary>
+        internal static string commonmodule_say_name {
+            get {
+                return ResourceManager.GetString("commonmodule_say_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command will replace your message by a message by the bot:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: the text{/name}
+        ///      {value}Provide a text for the bot to say{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} Hail NoeSbot{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string commonmodule_say_summary {
+            get {
+                return ResourceManager.GetString("commonmodule_say_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Say Text To Speech Command.
+        /// </summary>
+        internal static string commonmodule_saytts_name {
+            get {
+                return ResourceManager.GetString("commonmodule_saytts_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command will replace your message by a message by the bot in Text To Speech:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: the text{/name}
+        ///      {value}Provide a text for the bot to say{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} Hail NoeSbot{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string commonmodule_saytts_summary {
+            get {
+                return ResourceManager.GetString("commonmodule_saytts_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Get Configuration Command.
+        /// </summary>
+        internal static string configuremodule_getconfig_name {
+            get {
+                return ResourceManager.GetString("configuremodule_getconfig_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieve the configuration for this server:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string configuremodule_getconfig_summary {
+            get {
+                return ResourceManager.GetString("configuremodule_getconfig_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load All Modules Command.
+        /// </summary>
+        internal static string configuremodule_loadallmodules_name {
+            get {
+                return ResourceManager.GetString("configuremodule_loadallmodules_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load all modules:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string configuremodule_loadallmodules_summary {
+            get {
+                return ResourceManager.GetString("configuremodule_loadallmodules_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load Module Command.
+        /// </summary>
+        internal static string configuremodule_loadmodule_name {
+            get {
+                return ResourceManager.GetString("configuremodule_loadmodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a module to load:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: module name{/name}
+        ///      {value}Name of the module{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} poll{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string configuremodule_loadmodule_summary {
+            get {
+                return ResourceManager.GetString("configuremodule_loadmodule_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure Module.
+        /// </summary>
+        internal static string configuremodule_name {
+            get {
+                return ResourceManager.GetString("configuremodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Configuration Command.
+        /// </summary>
+        internal static string configuremodule_saveconfig_name {
+            get {
+                return ResourceManager.GetString("configuremodule_saveconfig_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save a configuration item, pick 1 option:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}Name of the configuration{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter Option 1: user{/name}
+        ///      {value}Mention of a user{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter Option 2: value{/name}
+        ///      {value}Configuration value{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} punish @Stone#9999{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string configuremodule_saveconfig_summary {
+            get {
+                return ResourceManager.GetString("configuremodule_saveconfig_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unload Module Command.
+        /// </summary>
+        internal static string configuremodule_unloadmodule_name {
+            get {
+                return ResourceManager.GetString("configuremodule_unloadmodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a module to unload:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: module name{/name}
+        ///      {value}Name of the module{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} poll{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string configuremodule_unloadmodule_summary {
+            get {
+                return ResourceManager.GetString("configuremodule_unloadmodule_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Custom Command.
+        /// </summary>
+        internal static string customizemodule_addcustom_name {
+            get {
+                return ResourceManager.GetString("customizemodule_addcustom_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command will add a custom rule for a user:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}Name of the Module{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Mention of a user{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: remainder{/name}
+        ///      {value}The custom rule parameters{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} punish @Stone#9999 You did something wrong{/example}
+        ///   {example}{0}{1} punish @Stone#99 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string customizemodule_addcustom_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_addcustom_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Custom Punish Command.
+        /// </summary>
+        internal static string customizemodule_addcustompunish_name {
+            get {
+                return ResourceManager.GetString("customizemodule_addcustompunish_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command will add a custom punish rule for a user:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Mention of a user{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: remainder{/name}
+        ///      {value}The custom rule parameters{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @Stone#9999 You did something wrong{/example}
+        ///   {example}{0}{1} @Stone#9999 &quot;You did something wrong&quot; Be ready you will be punished{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string customizemodule_addcustompunish_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_addcustompunish_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Get Custom Command.
+        /// </summary>
+        internal static string customizemodule_getcustom_name {
+            get {
+                return ResourceManager.GetString("customizemodule_getcustom_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command will get the custom rules for a user:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}Name of the Module{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Mention of a user{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} punish @Stone#9999{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string customizemodule_getcustom_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_getcustom_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Get Custom Punish Command.
+        /// </summary>
+        internal static string customizemodule_getcustompunish_name {
+            get {
+                return ResourceManager.GetString("customizemodule_getcustompunish_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command will get the custom rules for a user:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Mention of a user{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @Stone#9999{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string customizemodule_getcustompunish_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_getcustompunish_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Customize Module.
+        /// </summary>
+        internal static string customizemodule_name {
+            get {
+                return ResourceManager.GetString("customizemodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove All Custom Command.
+        /// </summary>
+        internal static string customizemodule_removeallcustom_name {
+            get {
+                return ResourceManager.GetString("customizemodule_removeallcustom_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command will remove all the custom rules for a user:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}Name of the Module{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Mention of a user{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} punish @Stone#9999{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string customizemodule_removeallcustom_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_removeallcustom_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove All Custom Punish Command.
+        /// </summary>
+        internal static string customizemodule_removeallcustompunish_name {
+            get {
+                return ResourceManager.GetString("customizemodule_removeallcustompunish_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command will remove all the custom punish rules for a user:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Mention of a user{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @Stone#9999{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string customizemodule_removeallcustompunish_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_removeallcustompunish_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Custom Command.
+        /// </summary>
+        internal static string customizemodule_removecustom_name {
+            get {
+                return ResourceManager.GetString("customizemodule_removecustom_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command will remove a specific custom rule for a user:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}Name of the Module{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Mention of a user{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: index{/name}
+        ///      {value}Index of the custom rule{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} punish @Stone#9999 1{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string customizemodule_removecustom_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_removecustom_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Custom Punish Command.
+        /// </summary>
+        internal static string customizemodule_removecustompunish_name {
+            get {
+                return ResourceManager.GetString("customizemodule_removecustompunish_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command will remove a specific custom punish rule for a user:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Mention of a user{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: index{/name}
+        ///      {value}Index of the custom rule{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @Stone#9999 1{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string customizemodule_removecustompunish_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_removecustompunish_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 8 Ball Command.
+        /// </summary>
+        internal static string gamemodule_8ball_name {
+            get {
+                return ResourceManager.GetString("gamemodule_8ball_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Predict your future with an 8 ball:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: input{/name}
+        ///      {value}Your question{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} Is this feature usefull?{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string gamemodule_8ball_summary {
+            get {
+                return ResourceManager.GetString("gamemodule_8ball_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blame Command.
+        /// </summary>
+        internal static string gamemodule_blame_name {
+            get {
+                return ResourceManager.GetString("gamemodule_blame_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pick a random user to blame:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter (Optional): user{/name}
+        ///      {value}Make it less random{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @Stone#9999{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string gamemodule_blame_summary {
+            get {
+                return ResourceManager.GetString("gamemodule_blame_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose Command.
+        /// </summary>
+        internal static string gamemodule_choose_name {
+            get {
+                return ResourceManager.GetString("gamemodule_choose_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can make the bot randomly pick between inputs:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: The inputs{/name}
+        ///      {value}Provide atleast 2 choices{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} yes no{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string gamemodule_choose_summary {
+            get {
+                return ResourceManager.GetString("gamemodule_choose_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flip Coint Command.
+        /// </summary>
+        internal static string gamemodule_flipcoin_name {
+            get {
+                return ResourceManager.GetString("gamemodule_flipcoin_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flip a coin:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string gamemodule_flipcoin_summary {
+            get {
+                return ResourceManager.GetString("gamemodule_flipcoin_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game Module.
+        /// </summary>
+        internal static string gamemodule_name {
+            get {
+                return ResourceManager.GetString("gamemodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rock Paper Scissors Command.
+        /// </summary>
+        internal static string gamemodule_rockpaperscissors_name {
+            get {
+                return ResourceManager.GetString("gamemodule_rockpaperscissors_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play rock paper scissors:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: input{/name}
+        ///      {value}Provide a rock paper scissors input{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} rock{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string gamemodule_rockpaperscissors_summary {
+            get {
+                return ResourceManager.GetString("gamemodule_rockpaperscissors_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help Command.
+        /// </summary>
+        internal static string helpmodule_help_name {
+            get {
+                return ResourceManager.GetString("helpmodule_help_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Get help:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter (Optional): command{/name}
+        ///      {value}Specify a command to see that one alone{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///   {example}{0}{1} punish{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string helpmodule_help_summary {
+            get {
+                return ResourceManager.GetString("helpmodule_help_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Marco Polo Command.
+        /// </summary>
+        internal static string helpmodule_marco_name {
+            get {
+                return ResourceManager.GetString("helpmodule_marco_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to See if the bot is still alive with a marco polo:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string helpmodule_marco_summary {
+            get {
+                return ResourceManager.GetString("helpmodule_marco_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help Module.
+        /// </summary>
+        internal static string helpmodule_name {
+            get {
+                return ResourceManager.GetString("helpmodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Example.
         /// </summary>
         internal static string label_example {
             get {
                 return ResourceManager.GetString("label_example", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Media Module.
+        /// </summary>
+        internal static string mediamodule_name {
+            get {
+                return ResourceManager.GetString("mediamodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Trigger Command.
+        /// </summary>
+        internal static string messagetriggermodule_addtrigger_name {
+            get {
+                return ResourceManager.GetString("messagetriggermodule_addtrigger_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a trigger in messages:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: trigger{/name}
+        ///      {value}The text that triggers{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: message{/name}
+        ///      {value}The message that gets triggered{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter (Optional): TTS{/name}
+        ///      {value}Should it be Text To Speech{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} Some trigger{/example}
+        ///   {example}{0}{1} &quot;Some trigger&quot; true{/example}
+        ///{/exam [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string messagetriggermodule_addtrigger_summary {
+            get {
+                return ResourceManager.GetString("messagetriggermodule_addtrigger_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Trigger Command.
+        /// </summary>
+        internal static string messagetriggermodule_deletetrigger_name {
+            get {
+                return ResourceManager.GetString("messagetriggermodule_deletetrigger_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete trigger:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: trigger{/name}
+        ///      {value}The existing text that triggers{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} Some trigger{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string messagetriggermodule_deletetrigger_summary {
+            get {
+                return ResourceManager.GetString("messagetriggermodule_deletetrigger_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message Trigger Module.
+        /// </summary>
+        internal static string messagetriggermodule_name {
+            get {
+                return ResourceManager.GetString("messagetriggermodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod Module.
+        /// </summary>
+        internal static string modmodule_name {
+            get {
+                return ResourceManager.GetString("modmodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nuke Command.
+        /// </summary>
+        internal static string modmodule_nuke_name {
+            get {
+                return ResourceManager.GetString("modmodule_nuke_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This will nuke all messages send to the current channel. (Max 1 hour):
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}What will happen?/name}
+        ///      {value}UserX put this channel in nuke mode.
+        ///You will not be able to send any messages unless you are a server admin.{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: time{/name}
+        ///      {value}How long the nuke should last{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} 1h{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string modmodule_nuke_summary {
+            get {
+                return ResourceManager.GetString("modmodule_nuke_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Stream Command.
+        /// </summary>
+        internal static string notifymodule_addstream_name {
+            get {
+                return ResourceManager.GetString("notifymodule_addstream_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a stream:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: type{/name}
+        ///      {value}The type of stream (Twitch, Youtube){/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}The name of the stream (like purgegamers){/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter (Optional): role{/name}
+        ///      {value}If specifified, it will also add a mention for this role{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} twitch purgegamers{/example}
+        ///   {example}{0} [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string notifymodule_addstream_summary {
+            get {
+                return ResourceManager.GetString("notifymodule_addstream_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Twitch Stream Command.
+        /// </summary>
+        internal static string notifymodule_addtwitchstream_name {
+            get {
+                return ResourceManager.GetString("notifymodule_addtwitchstream_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a Twitch stream:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}The name of the stream (like purgegamers){/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter (Optional): role{/name}
+        ///      {value}If specifified, it will also add a mention for this role{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} purgegamers{/example}
+        ///   {example}{0}{1} purgegamers twitch{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string notifymodule_addtwitchstream_summary {
+            get {
+                return ResourceManager.GetString("notifymodule_addtwitchstream_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Youtube Stream Command.
+        /// </summary>
+        internal static string notifymodule_addyoutubestream_name {
+            get {
+                return ResourceManager.GetString("notifymodule_addyoutubestream_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a Youtube stream:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}The name of the stream (like purgegamers){/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter (Optional): role{/name}
+        ///      {value}If specifified, it will also add a mention for this role{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} purgegamers{/example}
+        ///   {example}{0}{1} purgegamers twitch{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string notifymodule_addyoutubestream_summary {
+            get {
+                return ResourceManager.GetString("notifymodule_addyoutubestream_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All Streams Command.
+        /// </summary>
+        internal static string notifymodule_allstreams_name {
+            get {
+                return ResourceManager.GetString("notifymodule_allstreams_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Get a list of all the added streams:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string notifymodule_allstreams_summary {
+            get {
+                return ResourceManager.GetString("notifymodule_allstreams_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notify Module.
+        /// </summary>
+        internal static string notifymodule_name {
+            get {
+                return ResourceManager.GetString("notifymodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Stream Command.
+        /// </summary>
+        internal static string notifymodule_removestream_name {
+            get {
+                return ResourceManager.GetString("notifymodule_removestream_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove a stream:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: type{/name}
+        ///      {value}The type of stream{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}The name of the stream (like purgegamers){/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} twitch purgegamers{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string notifymodule_removestream_summary {
+            get {
+                return ResourceManager.GetString("notifymodule_removestream_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Twitch Stream Command.
+        /// </summary>
+        internal static string notifymodule_removetwitchstream_name {
+            get {
+                return ResourceManager.GetString("notifymodule_removetwitchstream_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove a Twitch stream:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}The name of the stream (like purgegamers){/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} purgegamers{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string notifymodule_removetwitchstream_summary {
+            get {
+                return ResourceManager.GetString("notifymodule_removetwitchstream_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Youtube Stream Command.
+        /// </summary>
+        internal static string notifymodule_removeyoutubestream_name {
+            get {
+                return ResourceManager.GetString("notifymodule_removeyoutubestream_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove a Youtube stream:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}The name of the stream (like purgegamers){/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} purgegamers{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string notifymodule_removeyoutubestream_summary {
+            get {
+                return ResourceManager.GetString("notifymodule_removeyoutubestream_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Poll Module.
+        /// </summary>
+        internal static string pollmodule_name {
+            get {
+                return ResourceManager.GetString("pollmodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Poll Command.
+        /// </summary>
+        internal static string pollmodule_poll_name {
+            get {
+                return ResourceManager.GetString("pollmodule_poll_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can create polls using the poll command:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter 1: The subject{/name}
+        ///      {value}Provide a subject to vote on surrounded by \&quot; \&quot;{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter 2 - 11: Up to 10 poll options{/name}
+        ///      {value}Provide your poll options surrounded by \&quot; \&quot; for each option{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Optional Parameter 1: Show usernames{/name}
+        ///      {value}This optional parameter can be put before the question paramet [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string pollmodule_poll_summary {
+            get {
+                return ResourceManager.GetString("pollmodule_poll_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile Module.
+        /// </summary>
+        internal static string profilemodule_name {
+            get {
+                return ResourceManager.GetString("profilemodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile Command.
+        /// </summary>
+        internal static string profilemodule_profile_name {
+            get {
+                return ResourceManager.GetString("profilemodule_profile_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can get the profile of a user:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Provide a user{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @MensAap{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string profilemodule_profile_summary {
+            get {
+                return ResourceManager.GetString("profilemodule_profile_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile Item Command.
+        /// </summary>
+        internal static string profilemodule_profileitem_name {
+            get {
+                return ResourceManager.GetString("profilemodule_profileitem_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change a profile item of yourself:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: the item to add/change{/name}
+        ///      {value}Provide an item type like Age or Location{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter 2: The item value{/name}
+        ///      {value}Provide an item value{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} Birthdate 1988-11-30{/example}
+        ///   {example}{0}{1} Age 28{/example}
+        ///   {example}{0}{1} Location Belgium{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string profilemodule_profileitem_summary {
+            get {
+                return ResourceManager.GetString("profilemodule_profileitem_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Profile Item Command.
+        /// </summary>
+        internal static string profilemodule_removeprofileitem_name {
+            get {
+                return ResourceManager.GetString("profilemodule_removeprofileitem_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove a profile item of yourself:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: the item to remove{/name}
+        ///      {value}Provide an item type like Age or Location{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} Age{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string profilemodule_removeprofileitem_summary {
+            get {
+                return ResourceManager.GetString("profilemodule_removeprofileitem_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Punish Module.
+        /// </summary>
+        internal static string punishmodule_name {
+            get {
+                return ResourceManager.GetString("punishmodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Punish Command.
+        /// </summary>
+        internal static string punishmodule_punish_name {
+            get {
+                return ResourceManager.GetString("punishmodule_punish_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Punish people (param user) (Defaults to 5m No reason given):
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter 1 (Required): user{/name}
+        ///      {value}The user you want to punish{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter 2 (Optional): time{/name}
+        ///      {value}(e.g. 10m, 1h){/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter 3 (Optional): reason{/name}
+        ///      {value}(e.g. Was being a dick){/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @MensAap{/example}
+        ///   {example}{0}{1 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string punishmodule_punish_summary {
+            get {
+                return ResourceManager.GetString("punishmodule_punish_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Punished Command.
+        /// </summary>
+        internal static string punishmodule_punished_name {
+            get {
+                return ResourceManager.GetString("punishmodule_punished_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List of the punished users:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string punishmodule_punished_summary {
+            get {
+                return ResourceManager.GetString("punishmodule_punished_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpunish Command.
+        /// </summary>
+        internal static string punishmodule_unpunish_name {
+            get {
+                return ResourceManager.GetString("punishmodule_unpunish_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpunish somebody or all:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: {/name}
+        ///      {value}User (The user you want to unpunish) OR all (If you want to unpunish all){/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @MensAap{/example}
+        ///   {example}{0}{1} all{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string punishmodule_unpunish_summary {
+            get {
+                return ResourceManager.GetString("punishmodule_unpunish_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Urban Module.
+        /// </summary>
+        internal static string urbanmodule_name {
+            get {
+                return ResourceManager.GetString("urbanmodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Urban Command.
+        /// </summary>
+        internal static string urbanmodule_urban_name {
+            get {
+                return ResourceManager.GetString("urbanmodule_urban_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can retrieve an urban dictionary item:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: subject {/name}
+        ///      {value}Provide a subject to learn more about from the urban dictionary{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Navigation {/name}
+        ///      {value}You can navigate to other urban dictionary entries with the arrow icons. 
+        ///Discord has a 2000 character limit so some entries will be paginated.{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} mango{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string urbanmodule_urban_summary {
+            get {
+                return ResourceManager.GetString("urbanmodule_urban_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Utility Module.
+        /// </summary>
+        internal static string utilitymodule_name {
+            get {
+                return ResourceManager.GetString("utilitymodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Random Member Command.
+        /// </summary>
+        internal static string utilitymodule_randommember_name {
+            get {
+                return ResourceManager.GetString("utilitymodule_randommember_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can retrieve an urban dictionary item:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string utilitymodule_randommember_summary {
+            get {
+                return ResourceManager.GetString("utilitymodule_randommember_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Info Command.
+        /// </summary>
+        internal static string utilitymodule_userinfo_name {
+            get {
+                return ResourceManager.GetString("utilitymodule_userinfo_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can retrieve info about a user with this command:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Specify a user{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @MensAap{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string utilitymodule_userinfo_summary {
+            get {
+                return ResourceManager.GetString("utilitymodule_userinfo_summary", resourceCulture);
             }
         }
     }

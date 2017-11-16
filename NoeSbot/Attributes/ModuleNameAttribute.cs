@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using NoeSbot.Enums;
+using NoeSbot.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;

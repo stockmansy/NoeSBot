@@ -7,6 +7,7 @@ namespace NoeSbot.Resources.Models
     public class CommandInfoModel
     {
         public string Name { get; set; }
+        public string Command { get; set; }
         public IList<string> Alias { get; set; }
         public string Description { get; set; }
         public IList<FieldInfoModel> Fields { get; set; }

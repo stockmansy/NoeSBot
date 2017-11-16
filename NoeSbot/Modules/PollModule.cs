@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using NoeSbot.Database.Models;
 using NoeSbot.Extensions;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -93,95 +94,23 @@ namespace NoeSbot.Modules
         }
 
         #endregion
+        
+        #region Commands
 
-        #region Help text
-
-        [Command("poll")]
-        [Alias("enquete")]
-        [Summary("Create a quick poll")]
+        [Command(Labels.Poll_Poll_Command)]
+        [Alias(Labels.Poll_Poll_Alias_1)]
         [MinPermissions(AccessLevel.User)]
         public async Task QuickPoll()
         {
-            var user = Context.User as SocketGuildUser;
-            var builder = new EmbedBuilder()
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
-                Color = user.GetColor(),
-                Description = "You can create polls using the poll command:"
-            };
-
-            builder.AddField(x =>
-            {
-                x.Name = "Parameter 1: The subject";
-                x.Value = "Provide a subject to vote on surrounded by \" \"";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Parameter 2 - 11: Up to 10 poll options";
-                x.Value = "Provide your poll options surrounded by \" \" for each option";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Optional Parameter 1: Show usernames";
-                x.Value = "This optional parameter can be put before the question parameter and will determine if usernames are shown in the vote.";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Optional Parameter 2: Duration";
-                x.Value = "This optional parameter can be put before the question parameter and will determine the duration of the poll.";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "How to vote?";
-                x.Value = "A user can vote by clicking the reaction icons below the poll (only 1 per user)";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example";
-                x.Value = $"~poll \"Is W1klas a pussy?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"{Environment.NewLine}(Default poll duration 1m, does not show usernames)";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example 2";
-                x.Value = $"~poll true \"Is W1klas a pussy?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"{Environment.NewLine}(Default poll duration, shows usernames)";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example 3";
-                x.Value = $"~poll 2m \"Is W1klas a pussy?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"{Environment.NewLine}(Duration of 2 minutes, does not show usernames)";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example 4";
-                x.Value = $"~poll true 30s \"Is W1klas a pussy?\" \"Yes\" \"Absolutely\" \"For sure\" \"Duh...\"{Environment.NewLine}(Duration of 30 seconds, shows usernames)";
-                x.IsInline = false;
-            });
-
-            await ReplyAsync("", false, builder.Build());
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Poll_Poll_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
         }
 
-        #endregion
-
-        #region Commands
-
-        [Command("poll")]
-        [Alias("enquete")]
-        [Summary("Create a quick poll")]
+        [Command(Labels.Poll_Poll_Command)]
+        [Alias(Labels.Poll_Poll_Alias_1)]
         [MinPermissions(AccessLevel.User)]
         public async Task QuickPoll([Remainder] string input)
         {

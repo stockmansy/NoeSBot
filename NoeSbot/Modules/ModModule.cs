@@ -9,6 +9,7 @@ using NoeSbot.Helpers;
 using Microsoft.Extensions.Caching.Memory;
 using NoeSbot.Enums;
 using NoeSbot.Extensions;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -28,46 +29,22 @@ namespace NoeSbot.Modules
 
         #endregion
 
-        #region Help text
+        #region Commands
 
-        [Command("nuke")]
-        [Summary("Nuke all messages in this channel (Max 1 hour)")]
+        #region Nuke
+
+        [Command(Labels.Mod_Nuke_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task Nuke()
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
                 var user = Context.User as SocketGuildUser;
-                var builder = new EmbedBuilder()
-                {
-                    Color = user.GetColor(),
-                    Description = "This will nuke all messages send to the current channel. (Max 1 hour)"
-                };
-
-                builder.AddField(x =>
-                {
-                    x.Name = "What will happen?";
-                    x.Value = $"UserX put this channel in nuke mode.{Environment.NewLine}You will not be able to send any messages unless you are a server admin.";
-                    x.IsInline = false;
-                });
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Example";
-                    x.Value = "~nuke 2m";
-                    x.IsInline = false;
-                });
-
-                await ReplyAsync("", false, builder.Build());
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_Nuke_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
             }
         }
 
-        #endregion
-
-        #region Commands
-
-        [Command("nuke")]
-        [Summary("Nuke all messages in this channel (Max 1 hour)")]
+        [Command(Labels.Mod_Nuke_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task Nuke(string time)
         {
@@ -103,6 +80,8 @@ namespace NoeSbot.Modules
                 endNuke.DelayFor(timeSpan);
             }
         }
+
+        #endregion
 
         #endregion
 

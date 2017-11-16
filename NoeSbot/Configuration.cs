@@ -2,6 +2,7 @@
 using NoeSbot.Database.Services;
 using NoeSbot.Enums;
 using NoeSbot.Helpers;
+using NoeSbot.Resources;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -14,6 +14,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Net.Http;
 using NoeSbot.Database.Services;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -42,136 +43,22 @@ namespace NoeSbot.Modules
 
         #endregion
 
-        #region Help
+        #region Commands
 
-        [Command("profile")]
-        [Summary("Get the profile of a user")]
+        #region Profile
+
+        [Command(Labels.Profile_Profile_Command)]
         [MinPermissions(AccessLevel.User)]
         public async Task Profile()
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
                 var user = Context.User as SocketGuildUser;
-                string prefix = Configuration.Load(Context.Guild.Id).Prefix.ToString();
-                var builder = new EmbedBuilder()
-                {
-                    Color = user.GetColor(),
-                    Description = "You can get the profile of a user."
-                };
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Parameter: The user";
-                    x.Value = "Provide a user.";
-                    x.IsInline = false;
-                });
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Example";
-                    x.Value = $"{prefix}profile @MensAap";
-                    x.IsInline = false;
-                });
-
-                await ReplyAsync("", false, builder.Build());
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Profile_Profile_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
             }
         }
 
-        [Command("profileitem")]
-        [Alias("addprofileitem", "addprofile")]
-        [Summary("Adjust a profileItem of yourself")]
-        [MinPermissions(AccessLevel.User)]
-        public async Task ProfileItem()
-        {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                string prefix = Configuration.Load(Context.Guild.Id).Prefix.ToString();
-                var builder = new EmbedBuilder()
-                {
-                    Color = user.GetColor(),
-                    Description = "Change a profile item of yourself."
-                };
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Parameter: The item to change";
-                    x.Value = "Provide an item type like Age or Location.";
-                    x.IsInline = false;
-                });
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Parameter 2: The item value";
-                    x.Value = "Provide an item value.";
-                    x.IsInline = false;
-                });
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Example";
-                    x.Value = $"{prefix}profileitem Birthdate 1988-11-30";
-                    x.IsInline = false;
-                });
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Example 2";
-                    x.Value = $"{prefix}profileitem Age 28";
-                    x.IsInline = false;
-                });
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Example 3";
-                    x.Value = $"{prefix}profileitem Location Belgium";
-                    x.IsInline = false;
-                });
-
-                await ReplyAsync("", false, builder.Build());
-            }
-        }
-
-        [Command("removeprofileitem")]
-        [Alias("deleteprofileitem")]
-        [Summary("Remove a profileItem of yourself")]
-        [MinPermissions(AccessLevel.User)]
-        public async Task RemoveProfileItem()
-        {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                string prefix = Configuration.Load(Context.Guild.Id).Prefix.ToString();
-                var builder = new EmbedBuilder()
-                {
-                    Color = user.GetColor(),
-                    Description = "Remove a profile item of yourself."
-                };
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Parameter: The item to remove";
-                    x.Value = "Provide an item type like Age or Location.";
-                    x.IsInline = false;
-                });
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Example";
-                    x.Value = $"{prefix}removeprofileitem Age";
-                    x.IsInline = false;
-                });
-
-                await ReplyAsync("", false, builder.Build());
-            }
-        }
-
-        #endregion
-
-        #region Commands
-
-        [Command("profile")]
-        [Summary("Get the profile of a user")]
+        [Command(Labels.Profile_Profile_Command)]
         [MinPermissions(AccessLevel.User)]
         public async Task Profile(SocketGuildUser user)
         {
@@ -183,9 +70,23 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("profileitem")]
-        [Alias("addprofileitem", "addprofile")]
-        [Summary("Adjust a profileItem of yourself")]
+        #endregion
+
+        #region Profile Item
+
+        [Command(Labels.Profile_ProfileItem_Command)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task ProfileItem()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Profile_ProfileItem_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Profile_ProfileItem_Command)]
+        [Alias(Labels.Profile_ProfileItem_Alias_1, Labels.Profile_ProfileItem_Alias_2)]
         [MinPermissions(AccessLevel.User)]
         public async Task ProfileItem(string type, [Remainder]string input)
         {
@@ -246,9 +147,23 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("removeprofileitem")]
-        [Alias("deleteprofileitem")]
-        [Summary("Remove a profileItem of yourself")]
+        #endregion
+
+        #region Remove Profile Item
+
+        [Command(Labels.Profile_RemoveProfileItem_Command)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task RemoveProfileItem()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Profile_RemoveProfileItem_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Profile_RemoveProfileItem_Command)]
+        [Alias(Labels.Profile_RemoveProfileItem_Alias_1)]
         [MinPermissions(AccessLevel.User)]
         public async Task RemoveProfileItem(string type)
         {
@@ -288,6 +203,8 @@ namespace NoeSbot.Modules
                 }
             }
         }
+
+        #endregion
 
         #endregion
 

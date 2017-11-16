@@ -8,6 +8,7 @@ using System.Linq;
 using NoeSbot.Helpers;
 using Microsoft.Extensions.Caching.Memory;
 using NoeSbot.Enums;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -28,39 +29,23 @@ namespace NoeSbot.Modules
 
         #endregion
 
-        #region Help text
+        #region Commands
 
-        [Command("userinfo")]
-        [Summary("Get info regarding a certain user")]
+        #region User Info
+
+        [Command(Labels.Utility_UserInfo_Command)]
         [MinPermissions(AccessLevel.User)]
         public async Task UserInfo()
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
                 var user = Context.User as SocketGuildUser;
-                var builder = new EmbedBuilder()
-                {
-                    Color = user.GetColor(),
-                    Description = "You can retrieve info about a user with this command."
-                };
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Example";
-                    x.Value = "~userinfo @MensAap";
-                    x.IsInline = false;
-                });
-
-                await ReplyAsync("", false, builder.Build());
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Utility_UserInfo_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
             }
         }
 
-        #endregion
 
-        #region Commands
-
-        [Command("userinfo")]
-        [Summary("Get info regarding a certain user")]
+        [Command(Labels.Utility_UserInfo_Command)]
         [MinPermissions(AccessLevel.User)]
         public async Task UserInfo(SocketGuildUser user)
         {
@@ -99,9 +84,12 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("randommember")]
-        [Alias("rndm", "rndmbr")]
-        [Summary("Pick a random user")]
+        #endregion
+
+        #region Random Member
+
+        [Command(Labels.Utility_RandomMember_Command)]
+        [Alias(Labels.Utility_RandomMember_Alias_1, Labels.Utility_RandomMember_Alias_2)]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task RandomMember()
         {
@@ -115,6 +103,8 @@ namespace NoeSbot.Modules
                 await ReplyAsync($"Picked {name} at random");
             }
         }
+
+        #endregion
 
         #endregion
 

@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using NoeSbot.Attributes;
 using NoeSbot.Enums;
 using NoeSbot.Helpers;
+using NoeSbot.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,75 +23,39 @@ namespace NoeSbot.Modules
             _service = service;
         }
 
-        #region Help text
-
-        [Command("help")]
-        [Summary("Get info about a specific command")]
-        public async Task HelpCommandAsync()
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine("```");
-            builder.AppendLine("1 required parameter: commandname");
-            builder.AppendLine("Provide info about a certain command");
-            builder.AppendLine("```");
-            await ReplyAsync(builder.ToString());
-        }
-
-        #endregion
-
         #region Commands
 
-        [Command("marco")]
+        #region Marco
+
+        [Command(Labels.Help_Marco_Command)]
+        [MinPermissions(AccessLevel.User)]
         public async Task MarcoPoloAsync()
         {
             await ReplyAsync("Polo");
         }
 
-        [Command("help")]
-        [Summary("Retrieve a list of all commands")]
+        #endregion
+
+        #region Help
+
+        [Command(Labels.Help_Help_Command)]
+        [MinPermissions(AccessLevel.User)]
         public async Task HelpAsync()
         {
-            var user = Context.User as SocketGuildUser;
-
-            string prefix = Configuration.Load(Context.Guild.Id).Prefix.ToString();
-            var builder = new EmbedBuilder()
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
-                Color = user.GetColor(),
-                Description = "You can use the following commands:"
-            };
+                await Context.Message.DeleteAsync();
+                var user = Context.User as SocketGuildUser;
 
-            foreach (var module in _service.Modules)
-            {
-                if (module.Name.Equals("ignore", StringComparison.OrdinalIgnoreCase))
-                    continue;
+                var prefix = Configuration.Load(Context.Guild.Id).Prefix;
+                var loadedModules = Configuration.Load(Context.Guild.Id).LoadedModules;
 
-                string description = null;
-                foreach (var cmd in module.Commands)
-                {
-                    var result = await cmd.CheckPreconditionsAsync(Context);
-                    if (result.IsSuccess)
-                    {
-                        description += $"{prefix}{cmd.Aliases.GetAliases()}";
-                        description += $" -> {cmd.Summary}\n";
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(description))
-                {
-                    builder.AddField(x =>
-                    {
-                        x.Name = module.Name;
-                        x.Value = description;
-                        x.IsInline = false;
-                    });
-                }
+                await user.SendMessageAsync("", false, CommonHelper.GetModules(prefix, user.GetColor(), loadedModules));
             }
-
-            await ReplyAsync("", false, builder.Build());
         }
 
-        [Command("help")]
-        [Summary("Get info about a specific command")]
+        [Command(Labels.Help_Help_Command)]
+        [MinPermissions(AccessLevel.User)]
         public async Task HelpAsync(string command)
         {
             var user = Context.User as SocketGuildUser;
@@ -102,32 +67,10 @@ namespace NoeSbot.Modules
                 return;
             }
 
-            string prefix = Configuration.Load(Context.Guild.Id).Prefix.ToString();
-            var builder = new EmbedBuilder()
-            {
-                Color = user.GetColor(),
-                Description = $"Commands like {command}:"
-            };
-
-            foreach (var match in result.Commands)
-            {
-                var cmd = match.Command;
-                var value = $"Parameters: {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n";
-                if (!string.IsNullOrWhiteSpace(cmd.Summary))
-                    value += $"Summary: {cmd.Summary}\n";
-                if (!string.IsNullOrWhiteSpace(cmd.Remarks))
-                    value += $"Remarks: {cmd.Remarks}";
-
-                builder.AddField(x =>
-                {
-                    x.Name = string.Join(", ", cmd.Aliases);
-                    x.Value = value;
-                    x.IsInline = false;
-                });
-            }
-
-            await ReplyAsync("", false, builder.Build());
+            await ReplyAsync("", false, CommonHelper.GetHelp(command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
+
+        #endregion
 
         #endregion
     }

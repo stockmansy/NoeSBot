@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using NoeSbot.Attributes;
 using Microsoft.Extensions.Caching.Memory;
 using NoeSbot.Enums;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -21,13 +22,7 @@ namespace NoeSbot.Modules
         }
 
         #endregion
-
-        #region Handlers
-
-       
-
-        #endregion
-
+        
         #region Commands
 
         

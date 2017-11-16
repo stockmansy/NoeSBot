@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NoeSbot.Enums
+namespace NoeSbot.Resources
 {
     public enum ModuleEnum
     {

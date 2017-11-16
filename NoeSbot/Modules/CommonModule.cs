@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -27,62 +28,90 @@ namespace NoeSbot.Modules
             _cache = memoryCache;
         }
 
-        #region Help text
+        #region Say
 
-        [Command("say")]
-        [Alias("echo")]
-        [Summary("Make the bot say ...")]
+        [Command(Labels.Common_Say_Command)]
+        [Alias(Labels.Common_Say_Alias_1)]
+        [MinPermissions(AccessLevel.User)]
         public async Task Say()
         {
-            var builder = new StringBuilder();
-            builder.AppendLine("```");
-            builder.AppendLine("1 parameter: Text");
-            builder.AppendLine("This command will replace your message by a message by the bot");
-            builder.AppendLine("```");
-            await ReplyAsync(builder.ToString());
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Common_Say_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Common_Say_Command)]
+        [Alias(Labels.Common_Say_Alias_1)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Say([Remainder] string input)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                await Context.Message.DeleteAsync();
+                await ReplyAsync(input);
+            }
         }
 
         #endregion
 
-        [Command("say")]
-        [Alias("echo")]
-        [Summary("Make the bot say ...")]
-        public async Task Say([Remainder] string input)
+        #region SayTTS
+
+        [Command(Labels.Common_SayTTS_Command)]
+        [Alias(Labels.Common_SayTTS_Alias_1)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task SayTTS()
         {
-            await Context.Message.DeleteAsync();
-            await ReplyAsync(input);
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Common_SayTTS_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
         }
 
-        [Command("saytts")]
-        [Alias("echotts")]
-        [Summary("Make the bot say with tts...")]
+        [Command(Labels.Common_SayTTS_Command)]
+        [Alias(Labels.Common_SayTTS_Alias_1)]
+        [MinPermissions(AccessLevel.User)]
         public async Task SayTTS([Remainder] string input)
         {
-            await Context.Message.DeleteAsync();
-            await ReplyAsync(input, true);
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                await Context.Message.DeleteAsync();
+                await ReplyAsync(input, true);
+            }
         }
 
-        [Command("info")]
-        [Summary("Get info about the bot")]
+        #endregion
+
+        [Command(Labels.Common_Info_Command)]
+        [MinPermissions(AccessLevel.User)]
         public async Task Info()
         {
-            var application = await Context.Client.GetApplicationInfoAsync();
-            await ReplyAsync(
-                $"{Format.Bold("Info")}\n" +
-                $"- Library: Discord.Net ({DiscordConfig.Version})\n" +
-                $"- Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}\n" +
-                $"- Uptime: {GetUptime()}\n\n" +
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var application = await Context.Client.GetApplicationInfoAsync();
+                await ReplyAsync(
+                    $"{Format.Bold("Info")}\n" +
+                    $"- Library: Discord.Net ({DiscordConfig.Version})\n" +
+                    $"- Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}\n" +
+                    $"- Uptime: {GetUptime()}\n\n" +
 
-                $"{Format.Bold("Stats")}\n" +
-                $"- Heap Size: {GetHeapSize()} MB\n" +
-                $"- Guilds: {(Context.Client as DiscordSocketClient).Guilds.Count}\n" +
-                $"- Channels: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}" +
-                $"- Users: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}"
-            );
+                    $"{Format.Bold("Stats")}\n" +
+                    $"- Heap Size: {GetHeapSize()} MB\n" +
+                    $"- Guilds: {(Context.Client as DiscordSocketClient).Guilds.Count}\n" +
+                    $"- Channels: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}" +
+                    $"- Users: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}"
+                );
+            }
         }
+
+        #region Private
 
         private static string GetUptime()
             => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
         private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
+
+        #endregion
     }
 }

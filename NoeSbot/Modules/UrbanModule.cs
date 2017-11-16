@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -127,52 +128,24 @@ namespace NoeSbot.Modules
 
         #endregion
 
-        #region Help text
+        #region Commands
 
-        [Command("urban")]
-        [Alias("lookup")]
-        [Summary("Create a quick poll")]
+        #region Urban
+
+        [Command(Labels.Urban_Urban_Command)]
+        [Alias(Labels.Urban_Urban_Alias_1)]
         [MinPermissions(AccessLevel.User)]
         public async Task Urban()
         {
-            var user = Context.User as SocketGuildUser;
-            var builder = new EmbedBuilder()
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
-                Color = user.GetColor(),
-                Description = "You can retrieve an urban dictionary item:"
-            };
-
-            builder.AddField(x =>
-            {
-                x.Name = "Parameter: The subject";
-                x.Value = "Provide a subject to learn more about from the urban dictionary.";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Navigation";
-                x.Value = $"You can navigate to other urban dictionary entries with the arrow icons. {Environment.NewLine}Discord has a 2000 character limit so some entries will be paginated.";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example";
-                x.Value = $"~urban mango";
-                x.IsInline = false;
-            });
-
-            await ReplyAsync("", false, builder.Build());
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Urban_Urban_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
         }
 
-        #endregion
-
-        #region Commands
-
-        [Command("urban")]
-        [Alias("lookup")]
-        [Summary("Create a quick poll")]
+        [Command(Labels.Urban_Urban_Command)]
+        [Alias(Labels.Urban_Urban_Alias_1)]
         [MinPermissions(AccessLevel.User)]
         public async Task Urban([Remainder] string input)
         {
@@ -249,6 +222,8 @@ namespace NoeSbot.Modules
                 }).Start();
             }
         }
+
+        #endregion
 
         #endregion
 

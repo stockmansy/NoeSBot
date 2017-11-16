@@ -14,6 +14,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -31,9 +32,22 @@ namespace NoeSbot.Modules
             _cache = memoryCache;
         }
 
-        [Command("addtrigger")]
-        [Alias("trigger")]
-        [Summary("Add a trigger in messages")]
+        #region Add Trigger
+
+        [Command(Labels.MessageTrigger_AddTrigger_Command)]
+        [Alias(Labels.MessageTrigger_AddTrigger_Alias_1)]
+        [MinPermissions(AccessLevel.ServerOwner)]
+        public async Task AddTrigger()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.MessageTrigger_AddTrigger_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.MessageTrigger_AddTrigger_Command)]
+        [Alias(Labels.MessageTrigger_AddTrigger_Alias_1)]
         [MinPermissions(AccessLevel.ServerOwner)]
         public async Task AddTrigger([Summary("The trigger")] string trig,
                                         [Summary("The message triggered")] string mess,
@@ -46,11 +60,26 @@ namespace NoeSbot.Modules
                 await ReplyAsync("Something went wrong. Trigger not saved.");
         }
 
-        [Command("deletetrigger")]
-        [Alias("deltrigger", "removetrigger")]
-        [Summary("Deletes a trigger in messages")]
+        #endregion
+
+        #region Delete Trigger
+
+        [Command(Labels.MessageTrigger_DeleteTrigger_Command)]
+        [Alias(Labels.MessageTrigger_DeleteTrigger_Alias_1, Labels.MessageTrigger_DeleteTrigger_Alias_2)]
         [MinPermissions(AccessLevel.ServerOwner)]
-        public async Task AddTrigger([Summary("The trigger")] string trig)
+        public async Task DeleteTrigger()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.MessageTrigger_DeleteTrigger_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.MessageTrigger_DeleteTrigger_Command)]
+        [Alias(Labels.MessageTrigger_DeleteTrigger_Alias_1, Labels.MessageTrigger_DeleteTrigger_Alias_2)]
+        [MinPermissions(AccessLevel.ServerOwner)]
+        public async Task DeleteTrigger([Summary("The trigger")] string trig)
         {
             var success = await _database.DeleteMessageTrigger(trig.ToLower(), (long)Context.Guild.Id);
             if (success)
@@ -58,5 +87,7 @@ namespace NoeSbot.Modules
             else
                 await ReplyAsync("Trigger does not exist or something else went wrong.");
         }
+
+        #endregion
     }
 }

@@ -66,9 +66,6 @@ namespace NoeSbot
 
             LogHelper.LogWithConsole("The bot is running");
 
-
-            Resources.Labels.GetModules();
-
             await Task.Delay(-1);
         }
 

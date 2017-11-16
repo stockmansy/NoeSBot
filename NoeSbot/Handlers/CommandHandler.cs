@@ -10,6 +10,7 @@ using NoeSbot.Enums;
 using NoeSbot.Logic;
 using NoeSbot.Database.Services;
 using System.Threading;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Handlers
 {

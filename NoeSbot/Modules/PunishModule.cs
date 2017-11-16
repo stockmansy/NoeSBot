@@ -15,6 +15,7 @@ using System.Threading;
 using NoeSbot.Database.Services;
 using NoeSbot.Database.Models;
 using NoeSbot.Logic;
+using NoeSbot.Resources;
 
 namespace NoeSbot.Modules
 {
@@ -27,139 +28,37 @@ namespace NoeSbot.Modules
 
         public PunishModule(PunishLogic logic)
         {
-            _logic = logic;
-        }
-
-        #endregion
-
-        #region Help text
-
-        [Command("punish")]
-        [Alias("silence")]
-        [Summary("Punish people (param user) (Defaults to 5m No reason given)")]
-        public async Task Punish()
-        {
-            var user = Context.User as SocketGuildUser;
-            string prefix = Configuration.Load(Context.Guild.Id).Prefix.ToString();
-            var builder = new EmbedBuilder()
-            {
-                Color = user.GetColor(),
-                Description = "Punish a user (Defaults to 5m No reason given)",
-                Footer = new EmbedFooterBuilder
-                {
-                    Text = "Permission: Mod minimum"
-                }
-            };
-
-            builder.AddField(x =>
-            {
-                x.Name = "Parameter 1 (Required)";
-                x.Value = $"User (The user you want to punish)";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Parameter 2 (Optional)";
-                x.Value = "Time (e.g. 10m)";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Parameter 3 (Optional)";
-                x.Value = "Reason (e.g. Was being a dick)";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example";
-                x.Value = $"{prefix}punish @MensAap";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example 2";
-                x.Value = $"{prefix}punish @MensAap 10m";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example 3 ";
-                x.Value = $"{prefix}punish @MensAap For some weird reason...";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example 4";
-                x.Value = $"{prefix}punish @MensAap 10m For some weird reason...";
-                x.IsInline = false;
-            });
-
-            await ReplyAsync("", false, builder.Build());
-        }
-
-        [Command("unpunish")]
-        [Alias("unsilence")]
-        [Summary("Unpunish specific user")]
-        public async Task UnPunish()
-        {
-            var user = Context.User as SocketGuildUser;
-            string prefix = Configuration.Load(Context.Guild.Id).Prefix.ToString();
-            var builder = new EmbedBuilder()
-            {
-                Color = user.GetColor(),
-                Description = "Unpunish a user",
-                Footer = new EmbedFooterBuilder
-                {
-                    Text = "Permission: Mod minimum"
-                }
-            };
-
-            builder.AddField(x =>
-            {
-                x.Name = "Parameter 1 (Required)";
-                x.Value = $"User (The user you want to unpunish) OR all (If you want to unpunish all)";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example";
-                x.Value = $"{prefix}unpunish @MensAap";
-                x.IsInline = false;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Example";
-                x.Value = $"{prefix}unpunish all";
-                x.IsInline = false;
-            });
-
-            await ReplyAsync("", false, builder.Build());
+            _logic = logic; 
         }
 
         #endregion
 
         #region Commands
 
-        [Command("punish")]
-        [Alias("silence")]
-        [Summary("Punish people (param user) (Defaults to 5m No reason given)")]
+        #region Punish
+
+        [Command(Labels.Punish_Punish_Command)]
+        [Alias(Labels.Punish_Punish_Alias_1)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task Punish()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Punish_Punish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Punish_Punish_Command)]
+        [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user)
         {
             await Punish(user, "5m", "No reason given");
         }
 
-        [Command("punish")]
-        [Alias("silence")]
-        [Summary("Punish people (param user, time) (Defaults to No reason given)")]
+        [Command(Labels.Punish_Punish_Command)]
+        [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user,
                                  [Summary("The punish time")]string time)
@@ -167,9 +66,8 @@ namespace NoeSbot.Modules
             await Punish(user, time, "No reason given");
         }
 
-        [Command("punish")]
-        [Alias("silence")]
-        [Summary("Punish people (param user time reason)")]
+        [Command(Labels.Punish_Punish_Command)]
+        [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user,
                                  [Summary("The punish time")]string time,
@@ -201,42 +99,63 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("punished")]
-        [Alias("silenced")]
-        [Summary("List of the punished users")]
+        #endregion
+
+        #region Punished
+
+        [Command(Labels.Punish_Punished_Command)]
+        [Alias(Labels.Punish_Punished_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task Punished()
         {
-            var allPunished = await _logic.GetPunished(Context);
-
-            var user = Context.User as SocketGuildUser;
-            var count = allPunished.Count();
-            var end = (count <= 0) ? $"{Environment.NewLine}None" : "";
-            var builder = new EmbedBuilder()
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
-                Color = user.GetColor(),
-                Description = $"The following users were punished:{end}"
-            };
-            
-            foreach (var pun in allPunished)
-            {
-                var punUser = await Context.Client.GetUserAsync((ulong)pun.UserId);
-                var punishTime = CommonHelper.GetTimeString(pun.TimeOfPunishment, pun.Duration);
+                var allPunished = await _logic.GetPunished(Context);
 
-                builder.AddField(x =>
+                var user = Context.User as SocketGuildUser;
+                var count = allPunished.Count();
+                var end = (count <= 0) ? $"{Environment.NewLine}None" : "";
+                var builder = new EmbedBuilder()
                 {
-                    x.Name = punUser.Username;
-                    x.Value = $"Punished for: {punishTime}";
-                    x.IsInline = false;
-                });
-            }
+                    Color = user.GetColor(),
+                    Description = $"The following users were punished:{end}"
+                };
 
-            await ReplyAsync("", false, builder.Build());
+                foreach (var pun in allPunished)
+                {
+                    var punUser = await Context.Client.GetUserAsync((ulong)pun.UserId);
+                    var punishTime = CommonHelper.GetTimeString(pun.TimeOfPunishment, pun.Duration);
+
+                    builder.AddField(x =>
+                    {
+                        x.Name = punUser.Username;
+                        x.Value = $"Punished for: {punishTime}";
+                        x.IsInline = false;
+                    });
+                }
+
+                await ReplyAsync("", false, builder.Build());
+            }
         }
 
-        [Command("unpunish")]
-        [Alias("unsilence")]
-        [Summary("Unpunish specific user")]
+        #endregion
+
+        #region Unpunish
+
+        [Command(Labels.Punish_Unpunish_Command)]
+        [Alias(Labels.Punish_Unpunish_Alias_1)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task UnPunish()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Punish_Unpunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Punish_Unpunish_Command)]
+        [Alias(Labels.Punish_Unpunish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task UnPunish([Summary("The user to be unpunished")] SocketGuildUser user)
         {
@@ -252,9 +171,8 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("unpunish")]
-        [Alias("unsilence")]
-        [Summary("Unpunish all users")]
+        [Command(Labels.Punish_Unpunish_Command)]
+        [Alias(Labels.Punish_Unpunish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
         public async Task UnPunish([Remainder, Summary("The punish input")]string input)
         {
@@ -275,8 +193,10 @@ namespace NoeSbot.Modules
 
         #endregion
 
+        #endregion
+
         #region Private
-                
+
         #endregion
     }
 }

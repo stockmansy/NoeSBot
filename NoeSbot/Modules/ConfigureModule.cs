@@ -5,6 +5,7 @@ using NoeSbot.Attributes;
 using NoeSbot.Database.Services;
 using NoeSbot.Enums;
 using NoeSbot.Helpers;
+using NoeSbot.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,27 +25,12 @@ namespace NoeSbot.Modules
             _service = service;
         }
 
-        #region Help text
-
-        [Command("help")]
-        [Summary("Get info about a specific command")]
-        public async Task HelpCommandAsync()
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine("```");
-            builder.AppendLine("1 required parameter: commandname");
-            builder.AppendLine("Provide info about a certain command");
-            builder.AppendLine("```");
-            await ReplyAsync(builder.ToString());
-        }
-
-        #endregion
-
         #region Commands
 
-        [Command("getconfig")]
-        [Alias("getconfiguration")]
-        [Summary("Retrieve the configuration for this server")]
+        #region Get Config
+
+        [Command(Labels.Configure_GetConfig_Command)]
+        [Alias(Labels.Configure_GetConfig_Alias_1)]
         [MinPermissions(AccessLevel.ServerOwner)]
         public async Task GetConfigsAsync()
         {
@@ -53,7 +39,8 @@ namespace NoeSbot.Modules
                 var user = Context.User as SocketGuildUser;
 
                 var config = Configuration.Load(Context.Guild.Id);
-                var builder = new EmbedBuilder() {
+                var builder = new EmbedBuilder()
+                {
                     Color = user.GetColor(),
                     Description = "You have the following configuration:"
                 };
@@ -116,8 +103,22 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("saveconfig")]
-        [Summary("Save a configuration item")]
+        #endregion
+
+        #region Save Config
+
+        [Command(Labels.Configure_SaveConfig_Command)]
+        [MinPermissions(AccessLevel.ServerOwner)]
+        public async Task SaveConfigAsync()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_SaveConfig_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Configure_SaveConfig_Command)]
         [MinPermissions(AccessLevel.ServerOwner)]
         public async Task SaveConfigAsync([Summary("Name of the configuration")] string configName,
                                           [Summary("The user")] SocketGuildUser user)
@@ -140,10 +141,9 @@ namespace NoeSbot.Modules
                 else
                     await ReplyAsync("Failed to save the configuration");
             }
-        }        
+        }
 
-        [Command("saveconfig")]
-        [Summary("Save a configuration item")]
+        [Command(Labels.Configure_SaveConfig_Command)]
         [MinPermissions(AccessLevel.ServerOwner)]
         public async Task SaveConfigAsync([Summary("Name of the configuration")] string configName,
                                           [Summary("Configuration value")] string value)
@@ -176,9 +176,24 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("loadmodule")]
-        [Alias("load")]
-        [Summary("Add a loaded module")]
+        #endregion
+
+        #region Load Module
+
+        [Command(Labels.Configure_LoadModule_Command)]
+        [Alias(Labels.Configure_LoadModule_Alias_1)]
+        [MinPermissions(AccessLevel.ServerOwner)]
+        public async Task LoadModuleAsync()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_LoadModule_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Configure_LoadModule_Command)]
+        [Alias(Labels.Configure_LoadModule_Alias_1)]
         [MinPermissions(AccessLevel.ServerOwner)]
         public async Task LoadModuleAsync([Summary("Name of the module")] string moduleName)
         {
@@ -191,7 +206,8 @@ namespace NoeSbot.Modules
                     var moduleId = (int)module;
                     var isInt = int.TryParse(moduleName, out int parsedId);
                     if (module.ToString().Equals(moduleName, StringComparison.OrdinalIgnoreCase) ||
-                        (isInt && parsedId == moduleId)) { 
+                        (isInt && parsedId == moduleId))
+                    {
                         success = await _service.AddConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.LoadedModules, moduleId.ToString());
                         break;
                     }
@@ -206,9 +222,12 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("loadallmodules")]
-        [Alias("loadall")]
-        [Summary("Add a loaded module")]
+        #endregion
+
+        #region Load All Modules
+
+        [Command(Labels.Configure_LoadAllModules_Command)]
+        [Alias(Labels.Configure_LoadAllModules_Alias_1)]
         [MinPermissions(AccessLevel.ServerOwner)]
         public async Task LoadAllModuleAsync()
         {
@@ -231,9 +250,24 @@ namespace NoeSbot.Modules
             }
         }
 
-        [Command("unloadmodule")]
-        [Alias("unload")]
-        [Summary("Add a loaded module")]
+        #endregion
+
+        #region Unload Module
+
+        [Command(Labels.Configure_UnloadModule_Command)]
+        [Alias(Labels.Configure_UnloadModule_Alias_1)]
+        [MinPermissions(AccessLevel.ServerOwner)]
+        public async Task UnLoadModuleAsync()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_UnloadModule_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Configure_UnloadModule_Command)]
+        [Alias(Labels.Configure_UnloadModule_Alias_1)]
         [MinPermissions(AccessLevel.ServerOwner)]
         public async Task UnLoadModuleAsync([Summary("Name of the module")] string moduleName)
         {
@@ -261,6 +295,8 @@ namespace NoeSbot.Modules
                     await ReplyAsync("Failed to save the configuration");
             }
         }
+
+        #endregion
 
         #endregion
     }
