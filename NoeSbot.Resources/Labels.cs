@@ -451,7 +451,7 @@ namespace NoeSbot.Resources
                 Examples = new List<string>()
             };
 
-            var command = AllFields.Where(x => x.GetValue("").ToString().Equals(commandname, System.StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            var command = AllFields.Where(x => x.FieldType == typeof(string) && x.GetValue("").ToString().Equals(commandname, System.StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             if (command != null)
             {
                 var split = command.Name.Split('_');
