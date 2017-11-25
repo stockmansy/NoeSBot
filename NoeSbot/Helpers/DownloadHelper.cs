@@ -21,7 +21,7 @@ namespace NoeSbot.Helpers
     internal static class DownloadHelper
     {
         private static readonly string _tempFolder = Path.Combine(Directory.GetCurrentDirectory(), "Temp");
-        private static readonly string _youtubeRegex = @"(https ?://(www\.)?youtube\.com/.*v=\w+.*)|(https?://youtu\.be/\w+.*)|(.*src=.https?://(www\.)?youtube\.com/v/\w+.*)|(.*src=.https?://(www\.)?youtube\.com/embed/\w+.*)";
+        private static readonly string _youtubeRegex = @"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$";
         private static Dictionary<ulong, int> _fileCount = new Dictionary<ulong, int>();
 
         public static Dictionary<ulong, int> FileCount { get => _fileCount; set => _fileCount = value; }
@@ -34,10 +34,10 @@ namespace NoeSbot.Helpers
                 throw new Exception("Invalid Url!");
         }
 
-        public static async Task<List<string>> GetItems(string url)
+        public static async Task<List<string>> GetItems(string url, bool ignorePlaylist = false)
         {
             if (IfValidUrl(url))
-                return await GetNumberOfItems(url);
+                return await GetNumberOfItems(url, ignorePlaylist: ignorePlaylist);
             else
                 throw new Exception("Invalid Url!");
         }
@@ -172,13 +172,14 @@ namespace NoeSbot.Helpers
             return result;
         }
 
-        private static async Task<List<string>> GetNumberOfItems(string url, int max = 10)
+        private static async Task<List<string>> GetNumberOfItems(string url, int max = 10, bool ignorePlaylist = false)
         {
             var tcs = new TaskCompletionSource<List<string>>();
 
             new Thread(() =>
             {
                 var items = new List<string>();
+                var playlistargs = ignorePlaylist ? "--no-playlist" : $"--playlist-start 1 --playlist-end {max}";
 
                 try
                 {
@@ -189,7 +190,7 @@ namespace NoeSbot.Helpers
                     var youtubedlGetTitle = new ProcessStartInfo()
                     {
                         FileName = "youtube-dl",
-                        Arguments = $"-s --playlist-start 1 --playlist-end {max} --get-id {url}",
+                        Arguments = $"-s -i {playlistargs} --get-id {url}",
                         CreateNoWindow = true,
                         RedirectStandardOutput = true
                     };

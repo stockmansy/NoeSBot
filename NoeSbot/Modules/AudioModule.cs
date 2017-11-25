@@ -46,7 +46,7 @@ namespace NoeSbot.Modules
 
 
         #endregion
-              
+
         #region Commands
 
         #region AudioInfo
@@ -182,55 +182,60 @@ namespace NoeSbot.Modules
                     var info = new AudioInfo();
 
                     var url = await DownloadHelper.GetUrl(_httpService, input);
-                    
+
                     if (_currentChannel != null)
                     {
                         var message = await ReplyAsync("", false, GetLoadingEmbed(url, user));
                         var audioThread = new Thread(async () =>
                         {
-                            var items = await DownloadHelper.GetItems(url);
-                            if (items.Count < 1) return;
-
-                            var textChannel = await Context.Guild.GetDefaultChannelAsync();
-
-                            if (!_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
-                            {
-                                // Create new audioplayer
-                                audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, Configuration.Load(Context.Guild.Id).AudioVolume);
-                                _currentAudioClients.TryAdd(Context.Guild.Id, audioplayer);
-                                info = await audioplayer.Start(items);
-                            }
-                            else if (audioplayer.CurrentVoiceChannel != _currentChannel.Id || audioplayer.Status == AudioStatusEnum.Stopped)
-                            {
-                                // Stop existing player
-                                if (audioplayer.Status != AudioStatusEnum.Stopped)
-                                    await audioplayer.Stop();
-                                _currentAudioClients.TryRemove(Context.Guild.Id, out AudioPlayer removedPlayer);
-
-                                // Create new audioplayer
-                                audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, Configuration.Load(Context.Guild.Id).AudioVolume);
-                                _currentAudioClients.TryAdd(Context.Guild.Id, audioplayer);
-                                info = await audioplayer.Start(items);
-                            }
-                            else
-                            {
-                                // Add audio items to the queue
-                                await audioplayer.Add(items);
-                                info = audioplayer.CurrentAudio();
-                            }
-
                             try
                             {
-                                await message.ModifyAsync(x => x.Embed = GetCurrentAudioEmbed(info, user));
+                                var items = await DownloadHelper.GetItems(url);
+                                if (items.Count < 1)
+                                    items = await DownloadHelper.GetItems(url, true);
+                                if (items.Count < 1)
+                                    throw new Exception("No items found");
+
+                                var textChannel = await Context.Guild.GetDefaultChannelAsync();
+
+                                if (!_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
+                                {
+                                    // Create new audioplayer
+                                    audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, Configuration.Load(Context.Guild.Id).AudioVolume);
+                                    _currentAudioClients.TryAdd(Context.Guild.Id, audioplayer);
+                                    info = await audioplayer.Start(items);
+                                }
+                                else if (audioplayer.CurrentVoiceChannel != _currentChannel.Id || audioplayer.Status == AudioStatusEnum.Stopped)
+                                {
+                                    // Stop existing player
+                                    if (audioplayer.Status != AudioStatusEnum.Stopped)
+                                        await audioplayer.Stop();
+                                    _currentAudioClients.TryRemove(Context.Guild.Id, out AudioPlayer removedPlayer);
+
+                                    // Create new audioplayer
+                                    audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, Configuration.Load(Context.Guild.Id).AudioVolume);
+                                    _currentAudioClients.TryAdd(Context.Guild.Id, audioplayer);
+                                    info = await audioplayer.Start(items);
+                                }
+                                else
+                                {
+                                    // Add audio items to the queue
+                                    await audioplayer.Add(items);
+                                    info = audioplayer.CurrentAudio();
+                                }
+
+                                await message?.ModifyAsync(x => x.Embed = GetCurrentAudioEmbed(info, user));
                             }
                             catch
                             {
-                                await ReplyAsync("", false, GetLoadingEmbed(url, user));
-                            }
+                                await message?.DeleteAsync();
+                                await ReplyAsync("", false, GetFailedEmbed(user));
+                            }                            
                         });
 
                         audioThread.Start();
-                    } else
+                    }
+                    else
                     {
                         await ReplyAsync("", false, GetNotInChannelEmbed(url, user));
                     }
@@ -374,6 +379,24 @@ namespace NoeSbot.Modules
             {
                 x.Name = "Url";
                 x.Value = currentAudio?.Url ?? "No url found";
+                x.IsInline = false;
+            });
+
+            return builder.Build();
+        }
+
+        private Embed GetFailedEmbed(SocketGuildUser user)
+        {
+            var builder = new EmbedBuilder()
+            {
+                Color = user.GetColor(),
+                Description = "Something went wrong when trying to play the requested audio"
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = "Bugreport";
+                x.Value = "Please let me know how you broke it at https://github.com/stockmansy/NoeSBot";
                 x.IsInline = false;
             });
 
