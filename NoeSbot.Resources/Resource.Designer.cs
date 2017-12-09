@@ -882,6 +882,35 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Roll Command.
+        /// </summary>
+        internal static string gamemodule_roll_name {
+            get {
+                return ResourceManager.GetString("gamemodule_roll_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can roll the dice:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: number{/name}
+        ///      {value}Specify the max number the roll can be{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} 6{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string gamemodule_roll_summary {
+            get {
+                return ResourceManager.GetString("gamemodule_roll_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Help Command.
         /// </summary>
         internal static string helpmodule_help_name {

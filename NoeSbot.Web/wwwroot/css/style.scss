@@ -22,3 +22,71 @@ body {
         padding: 20px;
     }
 }
+
+#features {
+    .tabs-component {
+        &:after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        .tabs-component-tabs {
+            border-right: 1px solid #DDD;
+            float: left;
+            width: 20%;
+
+            .tabs-component-tab {
+
+
+                &.is-active {
+                    background: #efefef;
+                    border: 1px solid #DDD;
+                }
+
+                a {
+                    color: #333;
+                    padding: 6px 8px;
+                    display: block;
+                    text-decoration: none;
+
+                    &:hover {
+                        background: #ededed;
+                        text-decoration: none;
+                    }
+                }
+            }
+        }
+
+        .tabs-component-panels {
+            padding: 3px;
+            float: left;
+            width: 80%;
+        }
+    }
+
+    .command-group {
+        padding: 4px;
+        margin-bottom: 10px;
+        border: 1px solid #DDD;
+
+        .command-name.command-title {
+            font-size: 1.2em;
+        }
+
+        .command-title {
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .command-item-group {
+            margin-bottom: 10px;
+        }
+
+        .command-field {
+            margin-bottom: 3px;
+        }
+    }
+}
+
+

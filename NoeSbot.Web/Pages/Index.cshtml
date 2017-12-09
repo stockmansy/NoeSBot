@@ -5,7 +5,7 @@
 }
 
 @section Scripts {
-<script src="~/js/app.build.js"></script>
+    <script src="~/js/app.build.js"></script>
 }
 
 <div id="header" class="large">
@@ -52,9 +52,73 @@
                         {{ todo.text }}
                     </li>
                 </ol>
-                <div v-for="feature in features">
-                    {{feature}}
-                </div>
+                <tabs :options="{ useUrlFragment: false }">
+                    <tab v-for="feature in features" :key="feature.name" v-bind:name="feature.name">
+                        <div v-for="command in feature.commands" :key="command.name" class="command-group">
+                            <div class="command-item-group">
+                                <div class="command-name command-title">{{command.name}}</div>
+                            </div>
+
+                            <div class="command-item-group">
+                                <div class="command-title">Alias</div>
+                                <ul>
+                                    <li v-for="alias in command.alias">
+                                        {{alias}}
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="command-item-group">
+                                <div class="command-title">Fields</div>
+                                <ul>
+                                    <li v-for="field in command.fields" class="command-field">
+                                        <div>{{field.name}}</div>
+                                        <div>{{field.value}}</div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="command-item-group">
+                                <div class="command-title">Examples</div>
+                                <ul>
+                                    <li v-for="example in command.examples" class="command-field">
+                                        <div>{{example}}</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Command</th>
+                                    <th>Description</th>
+                                    <th>Example(s)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="command in feature.commands" :key="command.name">
+                                    <td>{{command.name}}</td>
+                                    <td>
+                                        <div class="command">{{command.command}}</div>
+                                        <div v-for="alias in command.alias">
+                                            {{alias}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{command.description}}
+                                        <div v-for="field in command.fields">
+                                            <div>{{field.name}}</div>
+                                            <div>{{field.value}}</div>
+                                        </div>
+                                    </td>
+                                    <td>{{command.examples}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </tab>
+                </tabs>
             </div>
         </div>
     </div>

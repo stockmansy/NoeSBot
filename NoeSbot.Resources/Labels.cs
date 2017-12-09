@@ -203,6 +203,13 @@ namespace NoeSbot.Resources
         public const string Game_Blame_Name = "gamemodule_blame_name";
         public const string Game_Blame_Summary = "gamemodule_blame_summary";
 
+        public const string Game_Roll_Command = "roll";
+        public const string Game_Roll_Alias_1 = "d";
+        public const string Game_Roll_Alias_2 = "dice";
+        public const string Game_Roll_Alias_3 = "r";
+        public const string Game_Roll_Name = "gamemodule_roll_name";
+        public const string Game_Roll_Summary = "gamemodule_roll_summary";
+
         #endregion
 
         #region Help Module

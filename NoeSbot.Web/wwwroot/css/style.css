@@ -60,3 +60,43 @@ body {
   #header.small {
     padding: 20px; }
 
+#features .tabs-component:after {
+  content: "";
+  clear: both;
+  display: table; }
+
+#features .tabs-component .tabs-component-tabs {
+  border-right: 1px solid #DDD;
+  float: left;
+  width: 20%; }
+  #features .tabs-component .tabs-component-tabs .tabs-component-tab.is-active {
+    background: #efefef;
+    border: 1px solid #DDD; }
+  #features .tabs-component .tabs-component-tabs .tabs-component-tab a {
+    color: #333;
+    padding: 6px 8px;
+    display: block;
+    text-decoration: none; }
+    #features .tabs-component .tabs-component-tabs .tabs-component-tab a:hover {
+      background: #ededed;
+      text-decoration: none; }
+
+#features .tabs-component .tabs-component-panels {
+  padding: 3px;
+  float: left;
+  width: 80%; }
+
+#features .command-group {
+  padding: 4px;
+  margin-bottom: 10px;
+  border: 1px solid #DDD; }
+  #features .command-group .command-name.command-title {
+    font-size: 1.2em; }
+  #features .command-group .command-title {
+    font-size: 1em;
+    font-weight: 600; }
+  #features .command-group .command-item-group {
+    margin-bottom: 10px; }
+  #features .command-group .command-field {
+    margin-bottom: 3px; }
+

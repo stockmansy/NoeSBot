@@ -362,6 +362,41 @@ namespace NoeSbot.Modules
 
         #endregion
 
+        #region Rock Paper Scissors
+
+        [Command(Labels.Game_Roll_Command)]
+        [Alias(Labels.Game_Roll_Alias_1, Labels.Game_Roll_Alias_2, Labels.Game_Roll_Alias_3)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Roll()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Roll_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Game_Roll_Command)]
+        [Alias(Labels.Game_Roll_Alias_1, Labels.Game_Roll_Alias_2, Labels.Game_Roll_Alias_3)]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Roll(string input)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                await Context.Message.DeleteAsync();
+
+                if (int.TryParse(input, out int number)) {
+                    var rnd = _random.Next(number);
+                    await ReplyAsync($"{IconHelper.Dice} {rnd}");
+                } else
+                {
+                    await Context.User.SendMessageAsync("Invalid input, you have to specify a solid number (e.g. 6)");
+                }
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 }

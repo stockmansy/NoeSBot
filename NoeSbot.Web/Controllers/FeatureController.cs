@@ -16,6 +16,14 @@ namespace NoeSbot.Web.Controllers
         {
             var modules = Labels.GetModules();
             
+            foreach (var module in modules)
+            {
+                foreach (var command in module.Commands)
+                {
+                    command.Examples = command.Examples.Select(x => string.Format(x, '~', command.Command.ToLower())).ToList();
+                }
+            }
+
             return modules;
         }
 

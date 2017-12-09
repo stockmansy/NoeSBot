@@ -39,6 +39,7 @@ namespace NoeSbot.Helpers
         public static string Minus = "➖";
         public static string Bell = "🔔";
         public static string BellStop = "🔕";
+        public static string Dice = "🎲";
 
         private static readonly Dictionary<int, string> _numbers = new Dictionary<int, string>
         {
