@@ -8,9 +8,10 @@ using NoeSbot.Database;
 namespace NoeSbot.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20171210104228_Initial Event support")]
+    partial class InitialEventsupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1");
@@ -57,8 +58,6 @@ namespace NoeSbot.Database.Migrations
                     b.Property<DateTime>("CreationDate");
 
                     b.Property<DateTime>("Date");
-
-                    b.Property<string>("Description");
 
                     b.Property<long>("GuildId");
 

@@ -388,6 +388,26 @@ namespace NoeSbot.Resources
 
         #endregion
 
+        #region Event Module
+
+        public const string Event_Module = "eventmodule_name";
+        public const ModuleEnum Event_Id = ModuleEnum.Event;
+
+        public const string Event_StartEvent_Command = "startevent";
+        public const string Event_StartEvent_Alias_1 = "addevent";
+        public const string Event_StartEvent_Name = "eventmodule_startevent_name";
+        public const string Event_StartEvent_Summary = "eventmodule_startevent_summary";
+
+        public const string Event_UpdateEvent_Command = "updateevent";
+        public const string Event_UpdateEvent_Name = "eventmodule_updateevent_name";
+        public const string Event_UpdateEvent_Summary = "eventmodule_updateevent_summary";
+
+        public const string Event_StopEvent_Command = "stopevent";
+        public const string Event_StopEvent_Name = "eventmodule_stopevent_name";
+        public const string Event_StopEvent_Summary = "eventmodule_stopevent_summary";
+
+        #endregion
+
         #endregion
 
         public static string GetText(string id)
@@ -502,6 +522,9 @@ namespace NoeSbot.Resources
             var fields = GetSubstring(summary, "fields");
             var descr = summary;
 
+            if (string.IsNullOrWhiteSpace(summary))
+                return model;
+
             var indexOf = summary.IndexOf("{fields");
             if (indexOf <= 0)
                 indexOf = summary.IndexOf("{examples");
@@ -558,6 +581,9 @@ namespace NoeSbot.Resources
 
         private static string GetSubstring(string full, string between)
         {
+            if (string.IsNullOrWhiteSpace(full))
+                return "";
+
             var startString = $"{{{between}}}";
             var endString = $"{{/{between}}}";
             var startIndex = full.IndexOf(startString);

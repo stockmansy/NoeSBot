@@ -24,10 +24,11 @@ namespace NoeSbot.Handlers
         private ModLogic _modLogic;
         private PunishLogic _punishLogic;
         private NotifyLogic _notifyLogic;
+        private EventLogic _eventLogic;
         private bool _notifyTaskRunning;
         private CancellationTokenSource _tokenSource;
 
-        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs, ModLogic modLogic, PunishLogic punishLogic, NotifyLogic notifyLogic)
+        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs, ModLogic modLogic, PunishLogic punishLogic, NotifyLogic notifyLogic, EventLogic eventLogic)
         {
             _commands = commands;
             _client = client;
@@ -36,6 +37,7 @@ namespace NoeSbot.Handlers
             _modLogic = modLogic;
             _punishLogic = punishLogic;
             _notifyLogic = notifyLogic;
+            _eventLogic = eventLogic;
             _tokenSource = new CancellationTokenSource();
         }
 
@@ -61,6 +63,9 @@ namespace NoeSbot.Handlers
                 await Task.Run(async () => await _notifyLogic.Run(_tokenSource.Token));
                 _notifyTaskRunning = true;
             }
+
+            _client.ReactionAdded -= _eventLogic.OnReactionAdded;
+            _client.ReactionAdded += _eventLogic.OnReactionAdded;
         }
 
         public async Task MessageReceivedHandler(SocketMessage messageParam)

@@ -735,6 +735,115 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Event Module.
+        /// </summary>
+        internal static string eventmodule_name {
+            get {
+                return ResourceManager.GetString("eventmodule_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start Event Command.
+        /// </summary>
+        internal static string eventmodule_startevent_name {
+            get {
+                return ResourceManager.GetString("eventmodule_startevent_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can start an event:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: Type{/name}
+        ///      {value}Specify the type of event (e.g. secretsanta){/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: Unique identifier{/name}
+        ///      {value}Specify a unique identifier{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: Name{/name}
+        ///      {value}Specify a name of the event{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: Description{/name}
+        ///      {value}Specify a description of the event{/value}
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string eventmodule_startevent_summary {
+            get {
+                return ResourceManager.GetString("eventmodule_startevent_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop Event Command.
+        /// </summary>
+        internal static string eventmodule_stopevent_name {
+            get {
+                return ResourceManager.GetString("eventmodule_stopevent_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can stop an event:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: Unique identifier{/name}
+        ///      {value}Specify the unique identifier{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} secretsanta2017{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string eventmodule_stopevent_summary {
+            get {
+                return ResourceManager.GetString("eventmodule_stopevent_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Event Command.
+        /// </summary>
+        internal static string eventmodule_updateevent_name {
+            get {
+                return ResourceManager.GetString("eventmodule_updateevent_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can update an existing event:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: Unique identifier{/name}
+        ///      {value}Specify the unique identifier{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: Name{/name}
+        ///      {value}Specify a new name of the event{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: Description{/name}
+        ///      {value}Specify a new description of the event{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: Date{/name}
+        ///      {value}Specify a new date of the event{/v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string eventmodule_updateevent_summary {
+            get {
+                return ResourceManager.GetString("eventmodule_updateevent_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 8 Ball Command.
         /// </summary>
         internal static string gamemodule_8ball_name {

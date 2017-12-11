@@ -8,6 +8,7 @@ using NoeSbot.Enums;
 using NoeSbot.Extensions;
 using NoeSbot.Helpers;
 using NoeSbot.Models;
+using NoeSbot.Resources;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -100,6 +101,10 @@ namespace NoeSbot.Logic
                         }
 
                         var guild = _client.GetGuild((ulong)notifyItem.GuildId) as IGuild;
+
+                        if (!Configuration.Load(guild.Id).LoadedModules.Contains((int)ModuleEnum.Notify))
+                            return;
+
                         switch (notifyItem.Type)
                         {
                             case (int)NotifyEnum.Twitch:

@@ -20,6 +20,7 @@ namespace NoeSbot.Resources
         Urban = 12,
         Profile = 13,
         Mod = 14,
-        Notify = 15
+        Notify = 15,
+        Event = 16
     }
 }

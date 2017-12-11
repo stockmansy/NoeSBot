@@ -4,6 +4,7 @@ using NoeSbot.Enums;
 using NoeSbot.Resources;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -268,6 +269,22 @@ namespace NoeSbot.Helpers
         public static string GetTranslation(string id)
         {
             return Labels.GetText(id);
+        }
+
+        public static DateTime? GetDate(string datetime)
+        {
+            DateTime? result = null;
+
+            string[] formats = { "yyyy-MM-dd hh:mm", "yyyy-MM-dd", "yyyy/MM/dd hh:mm", "yyyy/MM/dd", "dd-MM-yyyy hh:mm", "dd-MM-yyyy", "dd/MM/yyyy hh:mm", "dd/MM/yyyy", "d/M/yyyy h:mm:ss tt", "d/M/yyyy h:mm tt",
+                     "dd/MM/yyyy hh:mm:ss", "d/M/yyyy h:mm:ss", 
+                     "d/M/yyyy hh:mm tt", "d/M/yyyy hh tt", 
+                     "d/M/yyyy h:mm", "d/M/yyyy h:mm",
+                     "dd/MM/yyyy hh:mm", "dd/M/yyyy hh:mm"};
+            
+
+            if (DateTime.TryParseExact(datetime, formats, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime dt))
+                result = dt;
+            return result;
         }
     }
 }

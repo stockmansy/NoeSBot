@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using NoeSbot.Database.Models;
+using System.Linq;
+using System.Reflection;
 
 namespace NoeSbot.Database
 {
@@ -14,6 +16,26 @@ namespace NoeSbot.Database
 
             Database.EnsureCreated();
             Database.Migrate();
+
+            var entries = ChangeTracker
+                            .Entries()
+                            .Where(x => x.State == EntityState.Modified 
+                                     || x.State == EntityState.Added 
+                                     && x.Entity != null 
+                                     && typeof(BaseModel).IsAssignableFrom(x.Entity.GetType()))
+                            .ToList();
+
+            
+            foreach (var entry in entries)
+            {
+                var entityBase = entry.Entity as BaseModel;
+                if (entry.State == EntityState.Added)
+                {
+                    entityBase.CreationDate = System.DateTime.UtcNow;
+                }
+
+                entityBase.ModifiedDate = System.DateTime.UtcNow;
+            }
         }
 
         public DbSet<Punished> PunishedEntities { get; set; }
@@ -30,6 +52,8 @@ namespace NoeSbot.Database
 
         public DbSet<NotifyItem> NotifyItemEntities { get; set; }
 
+        public DbSet<EventItem> EventItemEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -40,6 +64,7 @@ namespace NoeSbot.Database
             modelBuilder.Entity<Profile>();
             modelBuilder.Entity<ProfileItem>();
             modelBuilder.Entity<NotifyItem>();
+            modelBuilder.Entity<EventItem>();
         }
     }
 

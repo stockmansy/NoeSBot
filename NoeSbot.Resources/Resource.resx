@@ -1064,4 +1064,86 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
    {example}{0}{1} 6{/example}
 {/examples}</value>
   </data>
+  <data name="eventmodule_name" xml:space="preserve">
+    <value>Event Module</value>
+  </data>
+  <data name="eventmodule_startevent_name" xml:space="preserve">
+    <value>Start Event Command</value>
+  </data>
+  <data name="eventmodule_startevent_summary" xml:space="preserve">
+    <value>You can start an event:
+
+{fields}
+   {field}
+      {name}Parameter: Type{/name}
+      {value}Specify the type of event (e.g. secretsanta){/value}
+   {/field}
+   {field}
+      {name}Parameter: Unique identifier{/name}
+      {value}Specify a unique identifier{/value}
+   {/field}
+   {field}
+      {name}Parameter: Name{/name}
+      {value}Specify a name of the event{/value}
+   {/field}
+   {field}
+      {name}Parameter: Description{/name}
+      {value}Specify a description of the event{/value}
+   {/field}
+   {field}
+      {name}Parameter: Date{/name}
+      {value}Specify a date of the event{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} secretsanta secretsanta2017 "Event name" "Event description###Line 2" "2017-12-22"{/example}
+{/examples}</value>
+  </data>
+  <data name="eventmodule_stopevent_name" xml:space="preserve">
+    <value>Stop Event Command</value>
+  </data>
+  <data name="eventmodule_stopevent_summary" xml:space="preserve">
+    <value>You can stop an event:
+
+{fields}
+   {field}
+      {name}Parameter: Unique identifier{/name}
+      {value}Specify the unique identifier{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} secretsanta2017{/example}
+{/examples}</value>
+  </data>
+  <data name="eventmodule_updateevent_name" xml:space="preserve">
+    <value>Update Event Command</value>
+  </data>
+  <data name="eventmodule_updateevent_summary" xml:space="preserve">
+    <value>You can update an existing event:
+
+{fields}
+   {field}
+      {name}Parameter: Unique identifier{/name}
+      {value}Specify the unique identifier{/value}
+   {/field}
+   {field}
+      {name}Parameter: Name{/name}
+      {value}Specify a new name of the event{/value}
+   {/field}
+   {field}
+      {name}Parameter: Description{/name}
+      {value}Specify a new description of the event{/value}
+   {/field}
+   {field}
+      {name}Parameter: Date{/name}
+      {value}Specify a new date of the event{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} secretsanta2017 "New name" "New description###Line 2" "2017-12-22"{/example}
+{/examples}</value>
+  </data>
 </root>

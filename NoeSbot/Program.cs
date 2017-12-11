@@ -85,12 +85,14 @@ namespace NoeSbot
                         .AddSingleton<ModLogic>()
                         .AddSingleton<PunishLogic>()
                         .AddSingleton<NotifyLogic>()
+                        .AddSingleton<EventLogic>()
                         .AddSingleton<IPunishedService, PunishedService>()
                         .AddSingleton<IConfigurationService, ConfigurationService>()
                         .AddSingleton<IMessageTriggerService, MessageTriggerService>()
                         .AddSingleton<IProfileService, ProfileService>()
                         .AddSingleton<INotifyService, NotifyService>()
-                        .AddSingleton<IHttpService, HttpService>();
+                        .AddSingleton<IHttpService, HttpService>()
+                        .AddSingleton<IEventService, EventService>();
         }
     }
 }
