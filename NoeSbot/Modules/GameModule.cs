@@ -383,8 +383,6 @@ namespace NoeSbot.Modules
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
-                await Context.Message.DeleteAsync();
-
                 if (int.TryParse(input, out int number)) {
                     var rnd = _random.Next(number);
                     await ReplyAsync($"{IconHelper.Dice} {rnd}");
