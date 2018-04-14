@@ -809,6 +809,35 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Trigger Event Command.
+        /// </summary>
+        internal static string eventmodule_triggerevent_name {
+            get {
+                return ResourceManager.GetString("eventmodule_triggerevent_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can trigger an event with this command:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: unique idenfitier{/name}
+        ///      {value}Specify the unique identifier of the event{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} secretsanta2017{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string eventmodule_triggerevent_summary {
+            get {
+                return ResourceManager.GetString("eventmodule_triggerevent_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Event Command.
         /// </summary>
         internal static string eventmodule_updateevent_name {

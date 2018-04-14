@@ -406,6 +406,10 @@ namespace NoeSbot.Resources
         public const string Event_StopEvent_Name = "eventmodule_stopevent_name";
         public const string Event_StopEvent_Summary = "eventmodule_stopevent_summary";
 
+        public const string Event_TriggerEvent_Command = "triggerevent";
+        public const string Event_TriggerEvent_Name = "eventmodule_triggerevent_name";
+        public const string Event_TriggerEvent_Summary = "eventmodule_triggerevent_summary";
+
         #endregion
 
         #endregion

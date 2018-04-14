@@ -1146,4 +1146,21 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
    {example}{0}{1} secretsanta2017 "New name" "New description###Line 2" "2017-12-22"{/example}
 {/examples}</value>
   </data>
+  <data name="eventmodule_triggerevent_name" xml:space="preserve">
+    <value>Trigger Event Command</value>
+  </data>
+  <data name="eventmodule_triggerevent_summary" xml:space="preserve">
+    <value>You can trigger an event with this command:
+
+{fields}
+   {field}
+      {name}Parameter: unique idenfitier{/name}
+      {value}Specify the unique identifier of the event{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} secretsanta2017{/example}
+{/examples}</value>
+  </data>
 </root>

@@ -14,6 +14,8 @@ using System.Collections.Concurrent;
 using System.Threading;
 using NoeSbot.Database.Services;
 using NoeSbot.Logic;
+using System.Collections.Generic;
+using System.Text;
 
 namespace NoeSbot.Modules
 {
@@ -248,6 +250,121 @@ namespace NoeSbot.Modules
 
         #endregion
 
+        #region Trigger Event
+
+        [Command(Labels.Event_TriggerEvent_Command)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task TriggerEvent()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_TriggerEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Event_TriggerEvent_Command)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task TriggerEvent(string uniqueidentifier)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+
+                try
+                {
+                    var eventItem = await _eventService.RetrieveEventAsync((long)Context.Guild.Id, uniqueidentifier);
+                    if (eventItem != null)
+                    {
+                        await Context.Message.DeleteAsync();
+
+                        switch(eventItem.Type)
+                        {
+                            case (int)EventEmum.SecretSanta:
+                                var partsTasks = eventItem.Participants.Select(async x =>
+                                {
+                                    return await Context.Channel.GetUserAsync((ulong)x.UserId);
+                                });
+                                var parts = await Task.WhenAll(partsTasks);
+                                var participants = parts.ToList();
+
+                                //TODO fix this silly holiday mindset logic
+                                var pooled = true;
+                                var users = new List<EventUser>();
+                                do
+                                {
+                                    users.Clear();
+
+                                    foreach (var p in CommonHelper.Shuffle(parts))
+                                    {
+                                        var found = false;
+                                        var random = -1;
+                                        IUser ss = null;
+                                        while (!found)
+                                        {
+                                            random = _random.Next(participants.Count);
+                                            ss = participants.ElementAt(random);
+                                            if (ss.Id != p.Id)
+                                                found = true;
+                                            else if (participants.Count <= 1)
+                                            {
+                                                pooled = false;
+                                                break;
+                                            }
+                                        }
+
+                                        participants.RemoveAt(random);
+
+                                        users.Add(new EventUser
+                                        {
+                                            User = p,
+                                            SecretSanta = ss
+                                        });
+                                    }
+                                } while (!pooled);
+
+                                var orgsTasks = eventItem.Organisers.Select(async x =>
+                                {
+                                    return await Context.Channel.GetUserAsync((ulong)x.UserId);
+                                });
+                                var orgs = await Task.WhenAll(orgsTasks);
+
+                                var embed = GetSecretSantaAuthorEmbed(eventItem.Name, eventItem.Description, users);
+                                foreach (var o in orgs)
+                                {
+                                    await o.SendMessageAsync("", false, embed);
+                                }
+
+                                foreach (var u in users)
+                                {
+                                    var msg = GetSecretSantaMatchEmbed(eventItem.Name, u);
+                                    await u.User.SendMessageAsync("", false, msg);
+                                }
+
+                                break;
+                        }
+
+                        
+
+                        //var embed = GetParticipantsEmbed(parts, item);
+                        //await userAdjusting.SendMessageAsync("", false, embed);
+                    }
+                }
+                catch
+                {
+                    var builder = new EmbedBuilder()
+                    {
+                        Color = user.GetColor(),
+                        Description = "Failed to trigger the event"
+                    };
+
+                    await user.SendMessageAsync("", false, builder.Build());
+                }
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Private
@@ -298,6 +415,83 @@ namespace NoeSbot.Modules
             await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.ClipBoard));
 
             _eventLogic.AddEvent(message.Id, item);
+        }
+
+        private Embed GetSecretSantaAuthorEmbed(string eventName, string eventDescription, IEnumerable<EventUser> users)
+        {
+            var user = Context.User as SocketGuildUser;
+            var builder = new EmbedBuilder()
+            {
+                Color = user.GetColor(),
+                Description = $"{user.Nickname} has triggered the event",
+                Footer = new EmbedFooterBuilder { Text = $"Please file an issue for the bot if this list is somehow wrong." }
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = $"{eventName}";
+                x.Value = $"The event has ended";
+                x.IsInline = false;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "Description";
+                x.Value = eventDescription;
+                x.IsInline = false;
+            });
+
+            var strBuilder = new StringBuilder();
+            foreach (var u in users)
+            {
+                var usr = u.User as SocketGuildUser;
+                var ssusr = u.SecretSanta as SocketGuildUser;
+                strBuilder.AppendLine($"{usr.Nickname} ({usr.Username}) has {ssusr.Nickname} ({ssusr.Username}) as a match");
+            }
+
+            builder.AddField(x =>
+            {
+                x.Name = $"Matches";
+                x.Value = $"{strBuilder.ToString()}";
+                x.IsInline = false;
+            });
+
+            if (Context.Guild.IconUrl != null)
+                builder.WithThumbnailUrl(Context.Guild.IconUrl);
+
+            return builder.Build();
+        }
+
+        private Embed GetSecretSantaMatchEmbed(string eventName, EventUser u)
+        {
+
+            var user = Context.User as SocketGuildUser;
+            var builder = new EmbedBuilder()
+            {
+                Color = user.GetColor(),
+                Description = $"{user.Nickname} has triggered the event",
+                Footer = new EmbedFooterBuilder { Text = $"Please file an issue for the bot if your match seems incorrect." }
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = $"{eventName}";
+                x.Value = $"The event has ended";
+                x.IsInline = false;
+            });
+
+            var ss = u.SecretSanta as SocketGuildUser;
+            builder.AddField(x =>
+            {
+                x.Name = $"You were matched with";
+                x.Value = $"{ss.Nickname} ({ss.Username})";
+                x.IsInline = false;
+            });
+
+            if (Context.Guild.IconUrl != null)
+                builder.WithThumbnailUrl(Context.Guild.IconUrl);
+
+            return builder.Build();
         }
 
         #endregion
