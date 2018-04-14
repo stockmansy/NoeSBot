@@ -22,13 +22,15 @@ namespace NoeSbot.Modules
     [ModuleName(ModuleEnum.Punish)]
     public class PunishModule : ModuleBase
     {
+        private const int PUNISH_TIME = 3000;
+
         private PunishLogic _logic;
 
         #region Constructor
 
         public PunishModule(PunishLogic logic)
         {
-            _logic = logic; 
+            _logic = logic;
         }
 
         #endregion
@@ -77,24 +79,32 @@ namespace NoeSbot.Modules
             {
                 try
                 {
-                    var res = await _logic.Punish(Context, user, time, reason);
-                    if (!res.HasCustom)
-                        await Context.Channel.SendFileAsync(Globals.RandomPunishedImage.FullName, $"Successfully punished {user.Mention} ({user.Username}) for {res.PunishTime}");
+                    var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+                    var punishTime = CommonHelper.ToReadableString(TimeSpan.FromSeconds(durationInSecs));
+
+                    var cus = await _logic.GetCustomPunish(user);
+                    if (!cus.HasCustom)
+                    {
+                        await _logic.Punish(Context, user, time, reason, durationInSecs);
+                        await Context.Channel.SendFileAsync(Globals.RandomPunishedImage.FullName, $"Successfully punished {user.Mention} ({user.Username}) for {punishTime}");
+                    }
                     else
                     {
-                        if (!string.IsNullOrWhiteSpace(res.DelayMessage))
+                        if (!string.IsNullOrWhiteSpace(cus.DelayMessage))
                         {
-                            await ReplyAsync(res.DelayMessage);
-                            await Task.Delay(3000);
+                            await ReplyAsync(cus.DelayMessage);
+                            await Task.Delay(PUNISH_TIME);
                         }
 
-                        await ReplyAsync(res.ReasonMessage);
+                        await _logic.Punish(Context, user, time, reason, durationInSecs);
+                        await ReplyAsync(cus.ReasonMessage);
                     }
                 }
                 catch
                 {
-                    // TODO logging
-                    await ReplyAsync($"Failed to punish {user.Username}");
+                    var msg = $"Failed to punish {user.Username}";
+                    LogHelper.Log(msg, LogLevel.Debug);
+                    await ReplyAsync(msg);
                 }
             }
         }

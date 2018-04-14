@@ -41,15 +41,36 @@ namespace NoeSbot.Logic
             }
         }
 
-        public async Task<CustomPunishItem> Punish(ICommandContext context, SocketGuildUser user, string time, string reason)
+        public async Task<CustomPunishItem> GetCustomPunish(SocketGuildUser user)
         {
-            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
-            var success = await _database.SavePunishedAsync((long)user.Id, DateTime.UtcNow, durationInSecs, reason);
-            var result = new CustomPunishItem {
-                HasCustom = false,
-                PunishTime = CommonHelper.ToReadableString(TimeSpan.FromSeconds(durationInSecs))
+            var result = new CustomPunishItem
+            {
+                HasCustom = false
             };
 
+            var customMsgs = await _database.RetrieveAllCustomPunishedAsync((long)user.Id);
+            if (customMsgs != null && customMsgs.Count() > 0)
+            {
+                var rnd = new Random();
+                int r = rnd.Next(customMsgs.Count());
+                var randomCustomMsg = customMsgs[r];
+                if (randomCustomMsg == null)
+                    throw new Exception("Random custom message is missing");
+
+                result.HasCustom = true;
+
+                if (!string.IsNullOrWhiteSpace(randomCustomMsg.DelayMessage))
+                    result.DelayMessage = randomCustomMsg.DelayMessage.GetProcessedString();
+
+                result.ReasonMessage = randomCustomMsg.Reason.GetProcessedString();
+            }
+
+            return result;
+        }
+
+        public async Task Punish(ICommandContext context, SocketGuildUser user, string time, string reason, int durationInSecs)
+        {
+            var success = await _database.SavePunishedAsync((long)user.Id, DateTime.UtcNow, durationInSecs, reason);
             var punishedRoles = GetPunishRoles(context);
             if (success && punishedRoles != null)
             {
@@ -62,27 +83,9 @@ namespace NoeSbot.Logic
 
                 if (!_runPunishedCheck)
                     StartPunishedCheck(context);
-
-                var customMsgs = await _database.RetrieveAllCustomPunishedAsync((long)user.Id);
-                if (customMsgs != null && customMsgs.Count() > 0) { 
-                    var rnd = new Random();
-                    int r = rnd.Next(customMsgs.Count());
-                    var randomCustomMsg = customMsgs[r];
-                    if (randomCustomMsg == null)
-                        throw new Exception("Random custom message is missing");
-
-                    result.HasCustom = true;
-
-                    if (!string.IsNullOrWhiteSpace(randomCustomMsg.DelayMessage))
-                        result.DelayMessage = randomCustomMsg.DelayMessage.GetProcessedString();
-
-                    result.ReasonMessage = randomCustomMsg.Reason.GetProcessedString();
-                }
             }
             else
                 throw new Exception("Could not successfully punish the user");
-
-            return result;
         }
 
         public async Task<bool?> UnPunish(ICommandContext context, SocketGuildUser user)
