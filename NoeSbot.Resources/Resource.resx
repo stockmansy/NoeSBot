@@ -1163,4 +1163,22 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
    {example}{0}{1} secretsanta2017{/example}
 {/examples}</value>
   </data>
+  <data name="gamemodule_dnd_name" xml:space="preserve">
+    <value>Dnd Command</value>
+  </data>
+  <data name="gamemodule_dnd_summary" xml:space="preserve">
+    <value>You can roll the dnd dice:
+
+{fields}
+   {field}
+      {name}Parameter: number or expression{/name}
+      {value}Specify the roll expression{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} 20 + 2{/example}
+   {example}{0}{1} 20 x 5{/example}
+{/examples}</value>
+  </data>
 </root>

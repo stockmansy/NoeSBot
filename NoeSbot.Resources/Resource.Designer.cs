@@ -960,6 +960,36 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dnd Command.
+        /// </summary>
+        internal static string gamemodule_dnd_name {
+            get {
+                return ResourceManager.GetString("gamemodule_dnd_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can roll the dnd dice:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: number or expression{/name}
+        ///      {value}Specify the roll expression{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} 20 + 2{/example}
+        ///   {example}{0}{1} 20 x 5{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string gamemodule_dnd_summary {
+            get {
+                return ResourceManager.GetString("gamemodule_dnd_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip Coint Command.
         /// </summary>
         internal static string gamemodule_flipcoin_name {
