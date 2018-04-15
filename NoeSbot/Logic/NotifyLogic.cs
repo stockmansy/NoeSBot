@@ -121,10 +121,12 @@ namespace NoeSbot.Logic
                                         Converters = new List<JsonConverter> { new DecimalConverter() }
                                     });
 
+                                    // Try to get the existing item
+                                    var existing = _printed.TryGetValue(notifyItem.NotifyItemId, out DateTime? printedItem);
+
                                     // Is the stream online?
                                     if (root.Stream != null)
                                     {
-                                        var existing = _printed.TryGetValue(notifyItem.NotifyItemId, out DateTime? printedItem);
                                         if (existing && (printedItem == null || (printedItem.HasValue && printedItem.Value.AddHours(6) < DateTime.Now))) // Initial print and new print every hour
                                         {
                                             _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
@@ -145,6 +147,10 @@ namespace NoeSbot.Logic
                                     }
                                     else
                                     {
+                                        // To avoid printing too many times in case of stream problems
+                                        if (existing && printedItem.HasValue && printedItem.Value.AddMinutes(30) < DateTime.Now)
+                                            continue;
+
                                         // Set item as offline
                                         _printed.AddOrUpdate(notifyItem.NotifyItemId, null);
                                     }
