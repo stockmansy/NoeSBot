@@ -98,52 +98,53 @@ namespace NoeSbot.Modules
                 if (input.Length > 255)
                     input = input.Substring(0, 255);
 
-                if (Enum.IsDefined(typeof(ProfileEnum), fType))
+                switch (fType)
                 {
-                    switch ((ProfileEnum)Enum.Parse(typeof(ProfileEnum), fType))
-                    {
-                        case ProfileEnum.Age:
-                            if (int.TryParse(input, out int age))
-                                await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Age, age.ToString());
-                            else
-                            {
-                                await ReplyAsync("The age you provided is incorrect (Try something like 28)");
-                                return;
-                            }
-                            break;
-                        case ProfileEnum.Birthdate:
-                            if (DateTime.TryParse(input, out DateTime birthDate))
-                                await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Birthdate, birthDate.ToString("dd-MM-yyyy"));
-                            else
-                            {
-                                await ReplyAsync("The birthdate you provided is incorrect (Try something like 1988-11-30)");
-                                return;
-                            }
-                            break;
-                        case ProfileEnum.Location:
-                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Location, input);
-                            break;
-                        case ProfileEnum.Game:
-                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Game, input);
-                            break;
-                        case ProfileEnum.Streaming:
-                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Streaming, input);
-                            break;
-                        case ProfileEnum.Summary:
-                            var lines = CommonHelper.SplitToLines(input, 50);
-                            var res = "";
-                            foreach (var line in lines)
-                                res += $"{line}<br>";
-                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Summary, res);
-                            break;
-                    }
+                    case nameof(ProfileEnum.Age):
+                    case "Old":
+                        if (int.TryParse(input, out int age))
+                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Age, age.ToString());
+                        else
+                        {
+                            await ReplyAsync("The age you provided is incorrect (Try something like 28)");
+                            return;
+                        }
+                        break;
+                    case nameof(ProfileEnum.Birthdate):
+                        if (DateTime.TryParse(input, out DateTime birthDate))
+                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Birthdate, birthDate.ToString("dd-MM-yyyy"));
+                        else
+                        {
+                            await ReplyAsync("The birthdate you provided is incorrect (Try something like 1988-11-30)");
+                            return;
+                        }
+                        break;
+                    case nameof(ProfileEnum.Location):
+                        await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Location, input);
+                        break;
+                    case nameof(ProfileEnum.Game):
+                        await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Game, input);
+                        break;
+                    case nameof(ProfileEnum.Streaming):
+                    case "Stream":
+                    case "Twitch":
+                    case "Youtube":
+                        await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Streaming, input);
+                        break;
+                    case nameof(ProfileEnum.Summary):
+                    case "Description":
+                        var lines = CommonHelper.SplitToLines(input, 50);
+                        var res = "";
+                        foreach (var line in lines)
+                            res += $"{line}<br>";
+                        await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Summary, res);
+                        break;
+                    default:
+                        await ReplyAsync("Please provide a correct type (Age or Birthdate, Location, ...)");
+                        break;
+                }
 
-                    await ReplyAsync("Successfully updated your profile");
-                }
-                else
-                {
-                    await ReplyAsync("Please provide a correct type (Age or Birthdate, Location, ...)");
-                }
+                await ReplyAsync("Successfully updated your profile");
             }
         }
 
