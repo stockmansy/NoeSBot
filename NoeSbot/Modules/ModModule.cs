@@ -98,7 +98,7 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Mod_Botstatus_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
-        public async Task Botstatus(string status)
+        public async Task Botstatus([Remainder]string status)
         {
             if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
             {
