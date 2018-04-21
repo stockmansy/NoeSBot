@@ -2,11 +2,18 @@
 
 body {
     font-family: Arial, Helvetica, sans-serif;
+
+    h2 {
+        font-size: 1.6em;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
 }
 
 #header {
     padding: 40px;
     background: #FF0033;
+    color: #FFF;
 
     h1 {
         font-size: 60px;
@@ -87,6 +94,10 @@ body {
             margin-bottom: 3px;
         }
     }
+}
+
+footer {
+    margin-bottom: 20px;
 }
 
 

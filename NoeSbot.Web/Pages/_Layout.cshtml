@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - NoeSbot.Web</title>
+    <title>@ViewData["Title"] - NoeSbot</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -18,11 +18,49 @@
 </head>
 <body>
     <div class="body-content">
+        <div id="header" class="large">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h1>NoeSbot</h1>
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                            A Discord bot based on Discord.NET <br />(https://github.com/RogueException/Discord.Net) .NET core version.<br />
+                            <br />
+                            It's currently fully in development still.<br />
+                            <br />
+                            Feel free to use this bot. I'd love to hear your opinion on it. <br />You can find me on my discord server.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a asp-page="/Index" class="navbar-brand">NoeSbot</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a asp-page="/About">About</a></li>
+                        <li><a asp-page="/Contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
         @RenderBody()
         <hr />
         <footer>
             <div class="container">
-                <p>&copy; 2017 - NoeSbot</p>
+                <p>&copy; @DateTime.Now.Year - NoeSbot</p>
             </div>
         </footer>
     </div>

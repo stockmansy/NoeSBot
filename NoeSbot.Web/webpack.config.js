@@ -10,7 +10,7 @@ module.exports = {
         filename: "app.build.js"
     },
     module: {
-        loaders: [{
+        rules: [{
             exclude: /node_modules/,
             loader: "babel-loader"
         }]

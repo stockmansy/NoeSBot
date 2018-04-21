@@ -7,6 +7,8 @@ Vue.component('tab', Tab);
 
 Vue.use(Resource);
 
+//Build me using webpack --mode development in the noesbot.web folder
+
 var featureapp = new Vue({
     el: '#features',
     created() {

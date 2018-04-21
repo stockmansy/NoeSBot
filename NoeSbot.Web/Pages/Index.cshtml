@@ -8,50 +8,16 @@
     <script src="~/js/app.build.js"></script>
 }
 
-<div id="header" class="large">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h1>NoeSbot</h1>
-            </div>
-            <div class="col-md-6">
-                <p>Some description</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<nav class="navbar navbar-inverse">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a asp-page="/Index" class="navbar-brand">NoeSbot</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a asp-page="/Index">Home</a></li>
-                <li><a asp-page="/About">About</a></li>
-                <li><a asp-page="/Contact">Contact</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
 <div class="container">
     <div class="row">
         <div class="col-md-12">
             <div id="features">
-                {{ message }}
+                @*{{ message }}
                 <ol>
                     <li v-for="todo in todos">
                         {{ todo.text }}
                     </li>
-                </ol>
+                </ol>*@
                 <tabs :options="{ useUrlFragment: false }">
                     <tab v-for="feature in features" :key="feature.name" v-bind:name="feature.name">
                         <div v-for="command in feature.commands" :key="command.name" class="command-group">
@@ -88,7 +54,9 @@
                             </div>
                         </div>
 
-                        <table>
+                        <hr />
+                        <p>This is all very much WIP</p>
+                        @*<table>
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -116,7 +84,7 @@
                                     <td>{{command.examples}}</td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table>*@
                     </tab>
                 </tabs>
             </div>
