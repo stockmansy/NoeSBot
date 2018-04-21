@@ -268,6 +268,10 @@ namespace NoeSbot.Resources
         public const string Mod_Nuke_Name = "modmodule_nuke_name";
         public const string Mod_Nuke_Summary = "modmodule_nuke_summary";
 
+        public const string Mod_Botstatus_Command = "botstatus";
+        public const string Mod_Botstatus_Name = "modmodule_botstatus_name";
+        public const string Mod_Botstatus_Summary = "modmodule_botstatus_summary";
+
         #endregion
 
         #region Notify Module

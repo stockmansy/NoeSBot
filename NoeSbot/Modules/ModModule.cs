@@ -83,6 +83,32 @@ namespace NoeSbot.Modules
 
         #endregion
 
+        #region Botstatus
+
+        [Command(Labels.Mod_Botstatus_Command)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task Botstatus()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_Botstatus_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Mod_Botstatus_Command)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task Botstatus(string status)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                await _client.SetGameAsync(status);
+                await ReplyAsync("Status changed.");
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Private

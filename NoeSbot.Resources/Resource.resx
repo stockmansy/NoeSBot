@@ -1181,4 +1181,21 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
    {example}{0}{1} 20 x 5{/example}
 {/examples}</value>
   </data>
+  <data name="modmodule_botstatus_name" xml:space="preserve">
+    <value>botstatus</value>
+  </data>
+  <data name="modmodule_botstatus_summary" xml:space="preserve">
+    <value>You can set the status of the bot too:
+
+{fields}
+   {field}
+      {name}Parameter: status{/name}
+      {value}Specify a status{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} Help: siteurl{/example}
+{/examples}</value>
+  </data>
 </root>

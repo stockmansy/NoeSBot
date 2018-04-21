@@ -1234,6 +1234,35 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to botstatus.
+        /// </summary>
+        internal static string modmodule_botstatus_name {
+            get {
+                return ResourceManager.GetString("modmodule_botstatus_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can set the status of the bot too:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: status{/name}
+        ///      {value}Specify a status{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} Help: siteurl{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string modmodule_botstatus_summary {
+            get {
+                return ResourceManager.GetString("modmodule_botstatus_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mod Module.
         /// </summary>
         internal static string modmodule_name {
