@@ -248,8 +248,7 @@ namespace NoeSbot.Logic
             var builder = new EmbedBuilder()
             {
                 Color = Color.Red,
-                Url = root.Stream.Channel.Url,
-                Footer = new EmbedFooterBuilder { Text = root.Stream.Channel.Url }
+                Url = root.Stream.Channel.Url
             };
 
             var twitchName = (stream.Channel.DisplayName.Equals(stream.Channel.Name)) ? stream.Channel.DisplayName : $"{stream.Channel.DisplayName} ({stream.Channel.Name})";
@@ -258,6 +257,13 @@ namespace NoeSbot.Logic
             {
                 x.Name = $"{twitchName}";
                 x.Value = $"twitch user {twitchName} started streaming{Environment.NewLine}{Environment.NewLine}Game: {stream.Game}          Current viewers: {stream.ViewerCount}";
+                x.IsInline = false;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "Url";
+                x.Value = url;
                 x.IsInline = false;
             });
 
@@ -276,12 +282,11 @@ namespace NoeSbot.Logic
 
         private async Task PrintNotification(string mentions, YoutubeStream.YoutubeVideoItem item, IGuild guild, int notifyItemId)
         {
-            var url = $"https://www.youtube.com/?v={item.Id.VideoId}";
+            var url = $"https://youtu.be/{item.Id.VideoId}"; // Todo find out url for .com
             var builder = new EmbedBuilder()
             {
                 Color = Color.Red,
-                Url = url,
-                Footer = new EmbedFooterBuilder { Text = url }
+                Url = url
             };
 
             var youtubeName = CommonHelper.FirstLetterToUpper(item.Snippet.ChannelTitle);
@@ -290,6 +295,13 @@ namespace NoeSbot.Logic
             {
                 x.Name = $"{youtubeName}";
                 x.Value = $"youtube channel {youtubeName} started streaming";
+                x.IsInline = false;
+            });
+
+            builder.AddField(x =>
+            {                
+                x.Name = "Url";
+                x.Value = url;
                 x.IsInline = false;
             });
             

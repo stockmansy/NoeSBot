@@ -237,6 +237,10 @@ namespace NoeSbot.Modules
 
                     await ReplyAsync("", false, builder.Build());
                 }
+                else
+                {
+                    await ReplyAsync("Could not find the user");
+                }
             }
         }
 
