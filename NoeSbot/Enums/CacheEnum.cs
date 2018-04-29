@@ -7,6 +7,7 @@ namespace NoeSbot.Enums
     public enum CacheEnum
     {
         PunishedRoles,
-        PunishedUsers
+        PunishedUsers,
+        NotifyMessages
     }
 }

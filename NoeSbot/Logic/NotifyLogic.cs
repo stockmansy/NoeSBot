@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NoeSbot.Converters;
@@ -28,8 +29,9 @@ namespace NoeSbot.Logic
         private readonly IHttpService _httpService;
         private ConcurrentDictionary<int, DateTime?> _printed;
         private readonly LimitedDictionary<ulong, NotifyItem> _notifyMessages;
+        private readonly IMemoryCache _cache;
 
-        public NotifyLogic(DiscordSocketClient client, IConfigurationService configurationService, INotifyService notifyService, IHttpService httpService)
+        public NotifyLogic(DiscordSocketClient client, IConfigurationService configurationService, INotifyService notifyService, IHttpService httpService, IMemoryCache memoryCache)
         {
             _client = client;
             _configurationService = configurationService;
@@ -37,6 +39,7 @@ namespace NoeSbot.Logic
             _notifyService = notifyService;
             _printed = new ConcurrentDictionary<int, DateTime?>();
             _notifyMessages = new LimitedDictionary<ulong, NotifyItem>();
+            _cache = memoryCache;
 
             client.ReactionAdded += OnReactionAdded;
         }
@@ -148,7 +151,8 @@ namespace NoeSbot.Logic
                                     else
                                     {
                                         // To avoid printing too many times in case of stream problems
-                                        if (existing && printedItem.HasValue && printedItem.Value.AddMinutes(30) < DateTime.Now)
+                                        var oldMsg = await CheckForOlderMessages(guild);
+                                        if ((existing && printedItem.HasValue && printedItem.Value.AddMinutes(30) < DateTime.Now) || oldMsg)
                                             continue;
 
                                         // Set item as offline
@@ -175,10 +179,12 @@ namespace NoeSbot.Logic
                                         Converters = new List<JsonConverter> { new DecimalConverter() }
                                     });
 
+                                    var existing = _printed.TryGetValue(notifyItem.NotifyItemId, out DateTime? printedItem);
+
                                     if (root.Items != null && root.Items.Length > 0)
                                     {
                                         var item = root.Items[0];
-                                        var existing = _printed.TryGetValue(notifyItem.NotifyItemId, out DateTime? printedItem);
+                                        
                                         if (existing && (printedItem == null || (printedItem.HasValue && printedItem.Value.AddHours(6) < DateTime.Now))) // Initial print and new print every hour
                                         {
                                             _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
@@ -199,6 +205,11 @@ namespace NoeSbot.Logic
                                     }
                                     else
                                     {
+                                        // To avoid printing too many times in case of stream problems
+                                        var oldMsg = await CheckForOlderMessages(guild);
+                                        if ((existing && printedItem.HasValue && printedItem.Value.AddMinutes(30) < DateTime.Now) || oldMsg)
+                                            continue;
+
                                         // Set item as offline
                                         _printed.AddOrUpdate(notifyItem.NotifyItemId, null);
                                     }
@@ -256,14 +267,14 @@ namespace NoeSbot.Logic
             builder.AddField(x =>
             {
                 x.Name = $"{twitchName}";
-                x.Value = $"twitch user {twitchName} started streaming{Environment.NewLine}{Environment.NewLine}Game: {stream.Game}          Current viewers: {stream.ViewerCount}";
+                x.Value = $"twitch user {twitchName} started streaming{Environment.NewLine}{Environment.NewLine}Game: {stream.Game}          Current viewers: {stream.ViewerCount}{Environment.NewLine}{Environment.NewLine}";
                 x.IsInline = false;
             });
 
             builder.AddField(x =>
             {
                 x.Name = "Url";
-                x.Value = url;
+                x.Value = root.Stream.Channel.Url;
                 x.IsInline = false;
             });
 
@@ -294,7 +305,7 @@ namespace NoeSbot.Logic
             builder.AddField(x =>
             {
                 x.Name = $"{youtubeName}";
-                x.Value = $"youtube channel {youtubeName} started streaming";
+                x.Value = $"youtube channel {youtubeName} started streaming{Environment.NewLine}{Environment.NewLine}";
                 x.IsInline = false;
             });
 
@@ -316,6 +327,31 @@ namespace NoeSbot.Logic
             await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.BellStop));
 
             _notifyMessages.Add(message.Id, new NotifyItem { Id = notifyItemId, Type = NotifyEnum.Youtube });
+        }
+
+        private async Task<bool> CheckForOlderMessages(IGuild guild)
+        {
+            var oldMsgs = await GetLastFewMessages(guild);
+            return oldMsgs.Where(msg => msg.Embeds.FirstOrDefault()?.Fields.FirstOrDefault(f => f.Value.ToLowerInvariant().Contains("started streaming")) != null && msg.Author.IsBot).Any();
+        }
+
+        private async Task<IEnumerable<IMessage>> GetLastFewMessages(IGuild guild)
+        {
+            if (!_cache.TryGetValue(CacheEnum.NotifyMessages, out IEnumerable<IMessage> cacheEntry))
+            {
+                var defaultChannel = await guild.GetDefaultChannelAsync();
+                cacheEntry = await defaultChannel.GetMessagesAsync(15, options: new RequestOptions
+                {
+                    AuditLogReason = "Checking if people were notified"
+                }).Flatten();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
+
+                _cache.Set(CacheEnum.NotifyMessages, cacheEntry, cacheEntryOptions);
+            }
+
+            return cacheEntry;
         }
 
         #endregion
