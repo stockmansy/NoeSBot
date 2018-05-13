@@ -158,8 +158,10 @@ namespace NoeSbot.Database.Services
                     _context.NotifyItemEntities.Remove(existing);
 
                     await _context.SaveChangesAsync();
+
+                    return true;
                 }
-                return true;
+                return false;
             }
             catch (DbUpdateException ex)
             {
