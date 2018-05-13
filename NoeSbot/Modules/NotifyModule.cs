@@ -116,14 +116,14 @@ namespace NoeSbot.Modules
 
                     var success = false;
                     if (string.IsNullOrWhiteSpace(role))
-                        success = await _notifyService.AddNotifyItem((long)Context.Guild.Id, (long)user.Id, twitchName, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
+                        success = await _notifyService.AddNotifyItem((long)Context.Guild.Id, (long)user.Id, twitchUser.Name, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
                     else
                     {
                         foreach (var r in Context.Guild.Roles)
                         {
                             if (r.Name.Equals(role, StringComparison.OrdinalIgnoreCase))
                             {
-                                success = await _notifyService.AddNotifyItemRole((long)Context.Guild.Id, (long)r.Id, twitchName, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
+                                success = await _notifyService.AddNotifyItemRole((long)Context.Guild.Id, (long)r.Id, twitchUser.Name, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
                                 break;
                             }
                         }
