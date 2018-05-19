@@ -213,6 +213,8 @@ namespace NoeSbot.Modules
 
         private async Task<string> GetProfileImageAsync(SocketGuildUser user)
         {
+            //TODO: Clean this up
+
             var tmpUrl = $"{_tempDir}\\Profile{user.Id}.jpg";
             var defaultAvatarUrl = @"Images\Profile\default.png";
             var tmpAvatarUrl = $"{_tempDir}\\Avatar{user.Id}.jpg";
@@ -242,68 +244,31 @@ namespace NoeSbot.Modules
             var favGame = "n/a";
             var streaming = "n/a";
             var summary = "n/a";
+            Bitmap bitmap = null;
 
             if (profile != null && profile.Items.Any())
             {
+                var fGame = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Game);
+
                 age = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Age)?.Value ?? "n/a";
                 birthdate = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Birthdate)?.Value;
                 location = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Location)?.Value ?? "n/a";
-                favGame = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Game)?.Value ?? "n/a";
+                favGame = fGame?.Value ?? "n/a";
                 streaming = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Streaming)?.Value ?? "n/a";
                 summary = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Summary)?.Value ?? "n/a";
 
-                var input = favGame.ToLowerInvariant().Replace(" ", "");
-                var keys = new string[] { "dota", "dota2", "defenseoftheancients", "defenseoftheancients2", "darksouls", "darksouls2", "darksouls3", "bloodborne", "demonsouls", "gta", "gta5", "grandtheftauto", "grandtheftauto5", "pubg",
-                                          "battlegrounds", "playerunknownbattlegrounds", "tf2", "tf", "teamfortress", "teamfortress2", "witcher", "witcher3", "gwent", "gwentsimulator", "gwentsimulator3" };
-                var sKeyResult = keys.FirstOrDefault(s => input.Contains(s));
+                
+                var custom = await _profileService.RetrieveProfileBackground((long)user.Guild.Id, (long)user.Id, favGame);
+                if (custom != null)
+                    bitmap = await DownloadHelper.DownloadBitmapImage(custom.Value);
 
-                switch (sKeyResult)
-                {
-                    case "dota":
-                    case "dota2":
-                    case "defenseoftheancients":
-                    case "defenseoftheancients2":
-                        imageFilePath = @"Images\Profile\profile_bg_dota.jpg";
-                        break;
-                    case "darksouls":
-                    case "darksouls2":
-                    case "darksouls3":
-                    case "bloodborne":
-                    case "demonsouls":
-                        imageFilePath = @"Images\Profile\profile_bg_darksouls.jpg";
-                        break;
-                    case "gta":
-                    case "gta5":
-                    case "grandtheftauto":
-                    case "grandtheftauto5":
-                        imageFilePath = @"Images\Profile\profile_bg_gta.jpg";
-                        break;
-                    case "pubg":
-                    case "battlegrounds":
-                    case "playerunknownbattlegrounds":
-                        imageFilePath = @"Images\Profile\profile_bg_pubg.jpg";
-                        break;
-                    case "tf2":
-                    case "tf":
-                    case "teamfortress":
-                    case "teamfortress2":
-                        imageFilePath = @"Images\Profile\profile_bg_tf2.jpg";
-                        break;
-                    case "witcher":
-                    case "witcher3":
-                    case "gwent":
-                    case "gwentsimulator":
-                    case "gwentsimulator3":
-                        imageFilePath = @"Images\Profile\profile_bg_witcher.jpg";
-                        break;
-                    default:
-                        if (File.Exists(@"Images\Profile\profile_bg_" + $"{favGame.ToLowerInvariant()}.jpg"))
-                            imageFilePath = @"Images\Profile\profile_bg_" + $"{favGame.ToLowerInvariant()}.jpg";
-                        break;
-                }
+                imageFilePath = GetDefaultBackgrounds(favGame, imageFilePath);
             }
 
-            using (var bitmap = new Bitmap(System.Drawing.Image.FromFile(imageFilePath)))
+            if (bitmap == null)
+                bitmap = new Bitmap(System.Drawing.Image.FromFile(imageFilePath));
+            
+            using (bitmap)
             {
                 using (var bitmapCore = new Bitmap(System.Drawing.Image.FromFile(imageCorePath)))
                 {
@@ -406,6 +371,60 @@ namespace NoeSbot.Modules
             }
 
             return tmpUrl;
+        }
+
+        private string GetDefaultBackgrounds(string favGame, string imageFilePath)
+        {
+            var input = favGame.ToLowerInvariant().Replace(" ", "");
+            var keys = new string[] { "dota", "dota2", "defenseoftheancients", "defenseoftheancients2", "darksouls", "darksouls2", "darksouls3", "bloodborne", "demonsouls", "gta", "gta5", "grandtheftauto", "grandtheftauto5", "pubg",
+                                                  "battlegrounds", "playerunknownbattlegrounds", "tf2", "tf", "teamfortress", "teamfortress2", "witcher", "witcher3", "gwent", "gwentsimulator", "gwentsimulator3" };
+            var sKeyResult = keys.FirstOrDefault(s => input.Contains(s));
+
+            switch (sKeyResult)
+            {
+                case "dota":
+                case "dota2":
+                case "defenseoftheancients":
+                case "defenseoftheancients2":
+                    imageFilePath = @"Images\Profile\profile_bg_dota.jpg";
+                    break;
+                case "darksouls":
+                case "darksouls2":
+                case "darksouls3":
+                case "bloodborne":
+                case "demonsouls":
+                    imageFilePath = @"Images\Profile\profile_bg_darksouls.jpg";
+                    break;
+                case "gta":
+                case "gta5":
+                case "grandtheftauto":
+                case "grandtheftauto5":
+                    imageFilePath = @"Images\Profile\profile_bg_gta.jpg";
+                    break;
+                case "pubg":
+                case "battlegrounds":
+                case "playerunknownbattlegrounds":
+                    imageFilePath = @"Images\Profile\profile_bg_pubg.jpg";
+                    break;
+                case "tf2":
+                case "tf":
+                case "teamfortress":
+                case "teamfortress2":
+                    imageFilePath = @"Images\Profile\profile_bg_tf2.jpg";
+                    break;
+                case "witcher":
+                case "witcher3":
+                case "gwent":
+                case "gwentsimulator":
+                case "gwentsimulator3":
+                    imageFilePath = @"Images\Profile\profile_bg_witcher.jpg";
+                    break;
+                default:
+                    if (File.Exists(@"Images\Profile\profile_bg_" + $"{favGame.ToLowerInvariant()}.jpg"))
+                        imageFilePath = @"Images\Profile\profile_bg_" + $"{favGame.ToLowerInvariant()}.jpg";
+                    break;
+            }
+            return imageFilePath;
         }
 
         private void DeleteTmpImage(ulong userId)

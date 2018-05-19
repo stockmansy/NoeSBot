@@ -22,7 +22,7 @@ namespace NoeSbot.Database.Services
             _logger = loggerFactory.CreateLogger<ConfigurationService>();
         }
 
-        #region Config
+        #region ProfileItem
         
         public async Task<bool> AddProfileItem(long guildId, long userId, int profileItemTypeId, string value)
         {
@@ -129,6 +129,108 @@ namespace NoeSbot.Database.Services
             {
                 _logger.LogError($"Error in Retrieve All Profile items: {ex.Message}");
                 return new Profile();
+            }
+        }
+
+        #endregion
+
+        #region Profile background
+        
+        public async Task<bool> AddOrUpdateProfileBackground(long guildId, ProfileBackground.ProfileBackgroundSetting setting, string value, long userId, IEnumerable<string> aliases = null)
+        {
+            try
+            {
+                ProfileBackground existing = null;
+                if (setting.Equals(ProfileBackground.ProfileBackgroundSetting.Custom))
+                {
+                    existing = await _context.ProfileBackgroundEntities.Include(zx => zx.Aliases).Where(x => x.UserId == userId && x.ProfileBackgroundSettingId == ProfileBackground.ProfileBackgroundSetting.Custom && x.GuildId == guildId).SingleOrDefaultAsync();
+                } else // Game
+                {
+                    var allBgs = await _context.ProfileBackgroundEntities.Include(zx => zx.Aliases).ToListAsync();
+                    if (aliases == null)
+                        throw new Exception("No alliases provided");
+
+                    var matches = aliases.SelectMany(x =>
+                    {
+                        return allBgs.Select(y =>
+                        {
+                            if (y.Aliases.Select(z => z.Alias).ToList().Contains(x))
+                                return y;
+                            return null;
+                        });
+                    }).Where(x => x != null);
+
+                    existing = matches.FirstOrDefault();
+                }
+
+                var newAliases = new List<ProfileBackground.ProfileBackgroundAlias>();
+
+                if (existing == null)
+                {
+                    if (aliases != null)
+                        aliases.ForEach(a =>
+                        {
+                            newAliases.Add(new ProfileBackground.ProfileBackgroundAlias
+                            {
+                                Alias = a
+                            });
+                        });
+
+                    await _context.ProfileBackgroundEntities.AddAsync(new ProfileBackground
+                    {
+                        GuildId = guildId,
+                        Aliases = newAliases,
+                        UserId = userId,
+                        ProfileBackgroundSettingId = setting,
+                        Value = value
+                    });
+                } else
+                {
+                    if (aliases != null) { 
+                        aliases.ForEach(a =>
+                        {
+                            if (existing.Aliases == null)
+                                existing.Aliases = new List<ProfileBackground.ProfileBackgroundAlias>();
+
+                            var exist = existing.Aliases.Where(x => x.Alias.Equals(a, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+                            if (exist == null)
+                            {
+                                existing.Aliases.Add(new ProfileBackground.ProfileBackgroundAlias
+                                {
+                                    Alias = a
+                                });
+                            }
+                        });
+                    }
+                    
+                    existing.UserId = userId;
+                    existing.Value = value;
+                }
+
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Add or Update Profile Background: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<ProfileBackground> RetrieveProfileBackground(long guildId, long? userId, string alias = null)
+        {
+            if (alias == null && userId == null)
+                throw new Exception("Invalid request");
+
+            try
+            {
+               return await _context.ProfileBackgroundEntities.Include(zx => zx.Aliases).Where(x => x.GuildId == guildId && ((x.UserId == userId && x.ProfileBackgroundSettingId == ProfileBackground.ProfileBackgroundSetting.Custom) || (x.Aliases.Select(al => al.Alias).Contains(alias)))).FirstOrDefaultAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error in Retrieve Profile Background: {ex.Message}");
+                return null;
             }
         }
 

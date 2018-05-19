@@ -23,12 +23,14 @@ namespace NoeSbot.Modules
     {
         private readonly DiscordSocketClient _client;
         private readonly IPunishedService _punishedService;
+        private readonly IProfileService _profileService;
         private IMemoryCache _cache;
 
-        public CustomizeModule(DiscordSocketClient client, IPunishedService punishedService, IMemoryCache memoryCache)
+        public CustomizeModule(DiscordSocketClient client, IPunishedService punishedService, IProfileService profileService, IMemoryCache memoryCache)
         {
             _client = client;
             _punishedService = punishedService;
+            _profileService = profileService;
             _cache = memoryCache;
         }
 
@@ -111,6 +113,60 @@ namespace NoeSbot.Modules
                         }
                         break;
                 }
+            }
+        }
+
+        #endregion
+
+        #region Add Custom Profile Background
+
+        [Command(Labels.Customize_AddCustomProfileBackground_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task AddCustomProfileBackground()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomProfileBackground_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Customize_AddCustomProfileBackground_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task AddCustomProfileBackground(SocketGuildUser user,
+                                                     string url)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var success = await _profileService.AddOrUpdateProfileBackground((long)Context.Guild.Id, Database.Models.ProfileBackground.ProfileBackgroundSetting.Custom, url, (long)user.Id);
+                if (success)
+                    await ReplyAsync($"Successfully added a custom background for {user.Nickname}");
+                else
+                    await ReplyAsync($"Failed to add a custom background for {user.Nickname}");
+            }
+        }
+
+        [Command(Labels.Customize_AddCustomProfileBackground_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task AddCustomProfileBackground(string customtype,
+                                                    string url,
+                                                    [Remainder] string aliases)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                if (!customtype.Equals("game", StringComparison.OrdinalIgnoreCase))
+                {
+                    await ReplyAsync($"Invalid custom type");
+                    return;
+                }
+
+                var aliasesList = aliases.Trim().Split(' ').ToList();
+
+                var success = await _profileService.AddOrUpdateProfileBackground((long)Context.Guild.Id, Database.Models.ProfileBackground.ProfileBackgroundSetting.Game, url, (long)Context.User.Id, aliasesList);
+                if (success)
+                    await ReplyAsync($"Successfully added a custom background for a game");
+                else
+                    await ReplyAsync($"Failed to add a custom background for a game");
             }
         }
 

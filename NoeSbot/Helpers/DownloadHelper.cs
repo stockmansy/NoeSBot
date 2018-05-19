@@ -8,6 +8,8 @@ using NoeSbot.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -266,6 +268,73 @@ namespace NoeSbot.Helpers
                 return "";// throw new Exception("youtube-dl failed to download the file!");
 
             return result.Replace("\n", "").Replace(Environment.NewLine, "");
+        }
+
+        internal static async Task<Bitmap> DownloadBitmapImage(string url)
+        {
+            try
+            {
+                return await GetScaledImage(url);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static async Task<Bitmap> GetScaledImage(string url)
+        {
+            var file = await DownloadFile(url);
+            Bitmap bitmap = null;
+
+            using (var ms = new MemoryStream(file))
+            {
+                float width = 500;
+                float height = 340;
+
+                var brush = new SolidBrush(System.Drawing.Color.Transparent);
+                var rawImage = System.Drawing.Image.FromStream(ms);
+                float scale = Math.Min(width / rawImage.Width, height / rawImage.Height);
+                var scaleWidth = (int)(rawImage.Width * scale);
+                var scaleHeight = (int)(rawImage.Height * scale);
+                var scaledBitmap = new Bitmap((int)width, (int)height);
+                Graphics graph = Graphics.FromImage(scaledBitmap);
+                graph.InterpolationMode = InterpolationMode.High;
+                graph.CompositingQuality = CompositingQuality.HighQuality;
+                graph.SmoothingMode = SmoothingMode.AntiAlias;
+                graph.FillRectangle(brush, new RectangleF(0, 0, width, height));
+
+                var stw = 0;
+                var sth = 0;
+
+                if (scaleWidth < width)
+                    stw = ((int)width - scaleWidth) / 2;
+
+                if (scaleHeight < height)
+                    sth = ((int)height - scaleHeight) / 2;
+
+                graph.DrawImage(rawImage, new Rectangle(stw, sth, scaleWidth, scaleHeight));
+
+                bitmap =  scaledBitmap;
+            }
+
+            return bitmap;
+        }
+
+        private static async Task<byte[]> DownloadFile(string url)
+        {
+            using (var client = new HttpClient())
+            {
+                using (var result = await client.GetAsync(url))
+                {
+                    if (result.IsSuccessStatusCode)
+                    {
+                        return await result.Content.ReadAsByteArrayAsync();
+                    }
+
+                }
+            }
+            return null;
         }
 
         #endregion

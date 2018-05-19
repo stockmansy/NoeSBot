@@ -1198,4 +1198,30 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
    {example}{0}{1} Help: siteurl{/example}
 {/examples}</value>
   </data>
+  <data name="customizemodule_addcustomprofilebackground_name" xml:space="preserve">
+    <value>Add Customer Profile Command:</value>
+  </data>
+  <data name="customizemodule_addcustomprofilebackground_summary" xml:space="preserve">
+    <value>You can add a custom background based on the game in the profile or specific for the user:
+
+{fields}
+   {field}
+      {name}Parameter: game or user{/name}
+      {value}Specify the type of background game of custom for a user{/value}
+   {/field}
+   {field}
+      {name}Parameter: background url{/name}
+      {value}Specify the background url{/value}
+   {/field}
+   {field}
+      {name}Optional Parameter: aliases{/name}
+      {value}Specify the aliases in case of game{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @MensAap "https://somewitcherbackgroundurl"{/example}
+   {example}{0}{1} game "https://somewitcherbackgroundurl" witcher bestgame amazinggame{/example}
+{/examples}</value>
+  </data>
 </root>

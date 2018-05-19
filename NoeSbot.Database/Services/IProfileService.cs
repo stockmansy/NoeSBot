@@ -16,5 +16,7 @@ namespace NoeSbot.Database.Services
         Task<bool> RemoveProfileItem(long guildId, long userId, int profileItemTypeId);
         Task<List<Profile>> RetrieveAllProfilesAsync();
         Task<Profile> RetrieveProfileAsync(long guildId, long userId);
+        Task<bool> AddOrUpdateProfileBackground(long guildId, ProfileBackground.ProfileBackgroundSetting setting, string value, long userId, IEnumerable<string> aliases = null);
+        Task<ProfileBackground> RetrieveProfileBackground(long guildId, long? userId, string alias = null);
     }
 }

@@ -54,6 +54,8 @@ namespace NoeSbot.Database
 
         public DbSet<EventItem> EventItemEntities { get; set; }
 
+        public DbSet<ProfileBackground> ProfileBackgroundEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -65,6 +67,7 @@ namespace NoeSbot.Database
             modelBuilder.Entity<ProfileItem>();
             modelBuilder.Entity<NotifyItem>();
             modelBuilder.Entity<EventItem>();
+            modelBuilder.Entity<ProfileBackground>();
         }
     }
 

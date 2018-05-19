@@ -146,6 +146,10 @@ namespace NoeSbot.Resources
         public const string Customize_AddCustom_Name = "customizemodule_addcustom_name";
         public const string Customize_AddCustom_Summary = "customizemodule_addcustom_summary";
 
+        public const string Customize_AddCustomProfileBackground_Command = "addcustomprofilebackground";
+        public const string Customize_AddCustomProfileBackground_Name = "customizemodule_addcustomprofilebackground_name";
+        public const string Customize_AddCustomProfileBackground_Summary = "customizemodule_addcustomprofilebackground_summary";
+
         public const string Customize_GetCustomPunish_Command = "getcustompunish";
         public const string Customize_GetCustomPunish_Name = "customizemodule_getcustompunish_name";
         public const string Customize_GetCustomPunish_Summary = "customizemodule_getcustompunish_summary";

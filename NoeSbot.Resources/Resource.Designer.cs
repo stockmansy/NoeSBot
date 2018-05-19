@@ -498,6 +498,39 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Customer Profile Command:.
+        /// </summary>
+        internal static string customizemodule_addcustomprofilebackground_name {
+            get {
+                return ResourceManager.GetString("customizemodule_addcustomprofilebackground_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can add a custom background based on the game in the profile or specific for the user:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: game or user{/name}
+        ///      {value}Specify the type of background game of custom for a user{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: background url{/name}
+        ///      {value}Specify the background url{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Optional Parameter: aliases{/name}
+        ///      {value}Specify the aliases in case of game{/value}
+        ///   {/field}
+        ///{/fields} [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string customizemodule_addcustomprofilebackground_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_addcustomprofilebackground_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Custom Punish Command.
         /// </summary>
         internal static string customizemodule_addcustompunish_name {
