@@ -154,7 +154,7 @@ namespace NoeSbot.Database.Services
                     {
                         return allBgs.Select(y =>
                         {
-                            if (y.Aliases.Select(z => z.Alias).ToList().Contains(x))
+                            if (y.Aliases.Select(z => z.Alias).ToList().Contains(x.Replace(" ", "")))
                                 return y;
                             return null;
                         });
@@ -172,7 +172,7 @@ namespace NoeSbot.Database.Services
                         {
                             newAliases.Add(new ProfileBackground.ProfileBackgroundAlias
                             {
-                                Alias = a
+                                Alias = a.Replace(" ", "")
                             });
                         });
 
@@ -192,12 +192,12 @@ namespace NoeSbot.Database.Services
                             if (existing.Aliases == null)
                                 existing.Aliases = new List<ProfileBackground.ProfileBackgroundAlias>();
 
-                            var exist = existing.Aliases.Where(x => x.Alias.Equals(a, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+                            var exist = existing.Aliases.Where(x => x.Alias.Replace(" ", "").Equals(a, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
                             if (exist == null)
                             {
                                 existing.Aliases.Add(new ProfileBackground.ProfileBackgroundAlias
                                 {
-                                    Alias = a
+                                    Alias = a.Replace(" ", "")
                                 });
                             }
                         });
@@ -225,7 +225,7 @@ namespace NoeSbot.Database.Services
 
             try
             {
-               return await _context.ProfileBackgroundEntities.Include(zx => zx.Aliases).Where(x => x.GuildId == guildId && ((x.UserId == userId && x.ProfileBackgroundSettingId == ProfileBackground.ProfileBackgroundSetting.Custom) || (x.Aliases.Select(al => al.Alias).Contains(alias)))).FirstOrDefaultAsync();
+               return await _context.ProfileBackgroundEntities.Include(zx => zx.Aliases).Where(x => x.GuildId == guildId && ((x.UserId == userId && x.ProfileBackgroundSettingId == ProfileBackground.ProfileBackgroundSetting.Custom) || (x.Aliases.Select(al => al.Alias).Contains(alias.Replace(" ", ""))))).FirstOrDefaultAsync();
             }
             catch (DbUpdateException ex)
             {
