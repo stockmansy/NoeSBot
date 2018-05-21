@@ -134,7 +134,7 @@ namespace NoeSbot.Modules
                 audioplayer.SetVolume(volume);
             }
 
-            var success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.GeneralChannel, volume.ToString());
+            var success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.AudioVolume, volume.ToString());
 
             await Configuration.LoadAsync(_service);
 
