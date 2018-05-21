@@ -77,12 +77,18 @@ namespace NoeSbot.Logic
                 _cache.Set(CacheEnum.CustomCommmands, customCommands, cacheEntryOptions);
             }
 
+            var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
+
             foreach (var custom in customCommands)
             {
                 if (customCommandName.Equals(custom.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     var parms = new List<object>();
                     IResult res = null;
+
+                    // Punish section
+                    if (!loadedModules.Contains((int)ModuleEnum.Punish))
+                        continue;
 
                     if (custom.PunishCommand != null)
                     {
