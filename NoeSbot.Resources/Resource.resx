@@ -1224,4 +1224,73 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
    {example}{0}{1} game "https://somewitcherbackgroundurl" witcher bestgame amazinggame{/example}
 {/examples}</value>
   </data>
+  <data name="customizemodule_addcustompunishcommand_name" xml:space="preserve">
+    <value>Add Custom Punish Command</value>
+  </data>
+  <data name="customizemodule_addcustompunishcommand_summary" xml:space="preserve">
+    <value>You can create a custom punish command:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}Specify a custom command name{/value}
+   {/field}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Specify a user{/value}
+   {/field}
+   {field}
+      {name}(Optional) Parameter: duration{/name}
+      {value}Specify a duration{/value}
+   {/field}
+   {field}
+      {name}(Optional) Parameter: reason{/name}
+      {value}Specify a reason{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} customtest @MensAap{/example}
+   {example}{0}{1} customtest @MensAap 10m{/example}
+   {example}{0}{1} customtest @MensAap 10m Because it's a test{/example}
+{/examples}</value>
+  </data>
+  <data name="customizemodule_addcustomunpunishcommand_name" xml:space="preserve">
+    <value>Add Custom Unpunish Command</value>
+  </data>
+  <data name="customizemodule_addcustomunpunishcommand_summary" xml:space="preserve">
+    <value>You can create a custom unpunish command:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}Specify a custom command name{/value}
+   {/field}
+   {field}
+      {name}Parameter: user{/name}
+      {value}Specify a user{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} customtest @MensAap{/example}
+{/examples}</value>
+  </data>
+  <data name="customizemodule_removecustomcommand_name" xml:space="preserve">
+    <value>Remove Custom Command</value>
+  </data>
+  <data name="customizemodule_removecustomcommand_summary" xml:space="preserve">
+    <value>You can remove a custom command:
+
+{fields}
+   {field}
+      {name}Parameter: name{/name}
+      {value}Specify a custom command name{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} testcustom{/example}
+{/examples}</value>
+  </data>
 </root>

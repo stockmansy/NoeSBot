@@ -565,6 +565,78 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Custom Punish Command.
+        /// </summary>
+        internal static string customizemodule_addcustompunishcommand_name {
+            get {
+                return ResourceManager.GetString("customizemodule_addcustompunishcommand_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can create a custom punish command:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}Specify a custom command name{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Specify a user{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}(Optional) Parameter: duration{/name}
+        ///      {value}Specify a duration{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}(Optional) Parameter: reason{/name}
+        ///      {value}Specify a reason{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{exam [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string customizemodule_addcustompunishcommand_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_addcustompunishcommand_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Custom Unpunish Command.
+        /// </summary>
+        internal static string customizemodule_addcustomunpunishcommand_name {
+            get {
+                return ResourceManager.GetString("customizemodule_addcustomunpunishcommand_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can create a custom unpunish command:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}Specify a custom command name{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter: user{/name}
+        ///      {value}Specify a user{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} customtest @MensAap{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string customizemodule_addcustomunpunishcommand_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_addcustomunpunishcommand_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Get Custom Command.
         /// </summary>
         internal static string customizemodule_getcustom_name {
@@ -731,6 +803,35 @@ namespace NoeSbot.Resources {
         internal static string customizemodule_removecustom_summary {
             get {
                 return ResourceManager.GetString("customizemodule_removecustom_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Custom Command.
+        /// </summary>
+        internal static string customizemodule_removecustomcommand_name {
+            get {
+                return ResourceManager.GetString("customizemodule_removecustomcommand_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can remove a custom command:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: name{/name}
+        ///      {value}Specify a custom command name{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} testcustom{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string customizemodule_removecustomcommand_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_removecustomcommand_summary", resourceCulture);
             }
         }
         

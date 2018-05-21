@@ -24,14 +24,16 @@ namespace NoeSbot.Modules
         private readonly DiscordSocketClient _client;
         private readonly IPunishedService _punishedService;
         private readonly IProfileService _profileService;
+        private readonly ICustomCommandService _customCommandService;
         private IMemoryCache _cache;
 
-        public CustomizeModule(DiscordSocketClient client, IPunishedService punishedService, IProfileService profileService, IMemoryCache memoryCache)
+        public CustomizeModule(DiscordSocketClient client, IPunishedService punishedService, IProfileService profileService, ICustomCommandService customCommandService, IMemoryCache memoryCache)
         {
             _client = client;
             _punishedService = punishedService;
             _profileService = profileService;
             _cache = memoryCache;
+            _customCommandService = customCommandService;
         }
 
         #region Commands
@@ -167,6 +169,91 @@ namespace NoeSbot.Modules
                     await ReplyAsync($"Successfully added a custom background for a game");
                 else
                     await ReplyAsync($"Failed to add a custom background for a game");
+            }
+        }
+
+        #endregion
+
+        #region Add Custom Punish Command
+
+        [Command(Labels.Customize_AddCustomPunishCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task AddCustomPunishedCommand()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomPunishCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Customize_AddCustomPunishCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task AddCustomPunishCommand(string customCommand, 
+                                                   SocketGuildUser user)
+        {
+            await AddCustomPunishCommand(customCommand, user, "5m");
+        }
+
+        [Command(Labels.Customize_AddCustomPunishCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task AddCustomPunishCommand(string customCommand, 
+                                                   SocketGuildUser user,
+                                                   string time)
+        {
+            await AddCustomPunishCommand(customCommand, user, time, "No reason given");
+        }
+
+        [Command(Labels.Customize_AddCustomPunishCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task AddCustomPunishCommand(string customCommand, 
+                                                   SocketGuildUser user,
+                                                   string time, 
+                                                   [Remainder] string reason)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+
+                var success = await _customCommandService.SaveCustomPunishCommandAsync(customCommand, (long)Context.Guild.Id, (long)user.Id, durationInSecs, reason);
+                if (success)
+                {
+                    await ReplyAsync($"Successfully created the custom punish command");
+                }
+
+                RemoveCache();
+            }
+        }
+
+        #endregion
+
+        #region Add Custom Unpunish Command
+
+        [Command(Labels.Customize_AddCustomUnpunishCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task AddCustomUnpunishCommand()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomUnpunishCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Customize_AddCustomUnpunishCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task AddCustomUnpunishCommand(string customCommand,
+                                                   SocketGuildUser user)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var success = await _customCommandService.SaveCustomUnpunishCommandAsync(customCommand, (long)Context.Guild.Id, (long)user.Id);
+                if (success)
+                {
+                    await ReplyAsync($"Successfully created the custom unpunish command");
+                }
+
+                RemoveCache();
             }
         }
 
@@ -386,6 +473,46 @@ namespace NoeSbot.Modules
         }
 
         #endregion
+
+        #region Remove Custom Command
+
+        [Command(Labels.Customize_RemoveCustomCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task RemoveCustomCommand()
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var user = Context.User as SocketGuildUser;
+                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustomCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            }
+        }
+
+        [Command(Labels.Customize_RemoveCustomCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        public async Task RemoveCustomCommand(string customCommand)
+        {
+            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            {
+                var success = await _customCommandService.RemoveCustomCommandAsync(customCommand);
+                if (success)
+                {
+                    await ReplyAsync($"Successfully removed the custom command");
+                }
+
+                RemoveCache();
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Private 
+
+        public void RemoveCache()
+        {
+            _cache.Remove(CacheEnum.CustomCommmands);
+        }
 
         #endregion
     }

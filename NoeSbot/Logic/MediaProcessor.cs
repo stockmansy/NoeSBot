@@ -13,33 +13,26 @@ namespace NoeSbot.Logic
 {
     public class MediaProcessor
     {
-        private CommandContext _context;
-
-        public MediaProcessor(CommandContext context)
+        public async Task Process(ICommandContext context)
         {
-            _context = context;
-        }
-
-        public async Task Process()
-        {
-            if (!_context.Channel.Name.Equals(Configuration.Load(_context.Guild.Id).GeneralChannel))
+            if (!context.Channel.Name.Equals(Configuration.Load(context.Guild.Id).GeneralChannel))
                 return;
 
-            var matches = Regex.Matches(_context.Message.Content, @"(www.+|http.+)([\s]|$)");
-            if (matches.Count <= 0 && !_context.Message.Attachments.Any())
+            var matches = Regex.Matches(context.Message.Content, @"(www.+|http.+)([\s]|$)");
+            if (matches.Count <= 0 && !context.Message.Attachments.Any())
                 return;
 
-            var channels = await _context.Guild.GetChannelsAsync();
-            var mediaChannel = channels.Where(x => x.Name.Equals(Configuration.Load(_context.Guild.Id).MediaChannel, StringComparison.OrdinalIgnoreCase)).SingleOrDefault() as IMessageChannel;
+            var channels = await context.Guild.GetChannelsAsync();
+            var mediaChannel = channels.Where(x => x.Name != null && x.Name.Equals(Configuration.Load(context.Guild.Id).MediaChannel, StringComparison.OrdinalIgnoreCase)).SingleOrDefault() as IMessageChannel;
 
             var messages = mediaChannel.GetMessagesAsync(100, CacheMode.AllowDownload);
             var flatten = await messages.Flatten();
 
-            var user = _context.User as SocketGuildUser;
+            var user = context.User as SocketGuildUser;
 
-            if (_context.Message.Attachments.Any())
+            if (context.Message.Attachments.Any())
             {
-                foreach (var attach in _context.Message.Attachments)
+                foreach (var attach in context.Message.Attachments)
                 {
                     await ProcessMediaAsync(flatten, attach.Url, user, mediaChannel);
                 }
@@ -50,7 +43,7 @@ namespace NoeSbot.Logic
 
             foreach (Match match in matches)
             {
-                if (CheckForEmbed())//CheckForMedia(match.Value))            
+                if (context.Message.Embeds.Any())//CheckForMedia(match.Value))            
                     await ProcessMediaAsync(flatten, match.Value, user, mediaChannel);
             }
         }
@@ -106,13 +99,6 @@ namespace NoeSbot.Logic
             if (matches.Count > 0)
                 return true;
 
-            return false;
-        }
-
-        private bool CheckForEmbed()
-        {
-            if (_context.Message.Embeds.Any())
-                return true;
             return false;
         }
 

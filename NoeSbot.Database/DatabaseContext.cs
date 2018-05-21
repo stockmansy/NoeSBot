@@ -56,6 +56,8 @@ namespace NoeSbot.Database
 
         public DbSet<ProfileBackground> ProfileBackgroundEntities { get; set; }
 
+        public DbSet<CustomCommand> CustomCommandEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -68,6 +70,7 @@ namespace NoeSbot.Database
             modelBuilder.Entity<NotifyItem>();
             modelBuilder.Entity<EventItem>();
             modelBuilder.Entity<ProfileBackground>();
+            modelBuilder.Entity<CustomCommand>();
         }
     }
 

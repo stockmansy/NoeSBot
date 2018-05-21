@@ -11,6 +11,7 @@ using NoeSbot.Logic;
 using NoeSbot.Database.Services;
 using System.Threading;
 using NoeSbot.Resources;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace NoeSbot.Handlers
 {
@@ -27,8 +28,11 @@ namespace NoeSbot.Handlers
         private EventLogic _eventLogic;
         private bool _notifyTaskRunning;
         private CancellationTokenSource _tokenSource;
+        private CustomCommandLogic _customCommandLogic;
+        private MediaProcessor _mediaProcessor;
+        private MessageTriggers _messageTriggers;
 
-        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs, ModLogic modLogic, PunishLogic punishLogic, NotifyLogic notifyLogic, EventLogic eventLogic)
+        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs, MediaProcessor mediaProcessor, MessageTriggers messageTriggers, ModLogic modLogic, PunishLogic punishLogic, NotifyLogic notifyLogic, EventLogic eventLogic, CustomCommandLogic customCommandLogic)
         {
             _commands = commands;
             _client = client;
@@ -38,6 +42,9 @@ namespace NoeSbot.Handlers
             _punishLogic = punishLogic;
             _notifyLogic = notifyLogic;
             _eventLogic = eventLogic;
+            _customCommandLogic = customCommandLogic;
+            _mediaProcessor = mediaProcessor;
+            _messageTriggers = messageTriggers;
             _tokenSource = new CancellationTokenSource();
         }
 
@@ -98,6 +105,18 @@ namespace NoeSbot.Handlers
 
             if (!result.IsSuccess)
             {
+                // Execute custom commmands
+                try
+                {
+                    var success = await _customCommandLogic.Process(context, _commands.Commands, context.Message.Content.Substring(argPos).Trim(), _provider);
+                    if (success)
+                        return;
+                }
+                catch (Exception ex)
+                {
+                    await context.Channel.SendMessageAsync(ex.Message);
+                    return;
+                }
 #if DEBUG
                 await context.Channel.SendMessageAsync(result.ErrorReason);
 #endif
@@ -129,14 +148,12 @@ namespace NoeSbot.Handlers
 
                 if (loadedModules.Contains((int)ModuleEnum.Media))
                 {
-                    var mediaProcessor = new MediaProcessor(context);
-                    await mediaProcessor.Process();
+                    await _mediaProcessor.Process(context);
                 }
 
                 if (loadedModules.Contains((int)ModuleEnum.MessageTrigger))
                 {
-                    var messageProcessor = new MessageTriggers(context, _msgTrgSrvs);
-                    await messageProcessor.Process();
+                    await _messageTriggers.Process(context);
                 }
 
                 return true;
@@ -167,8 +184,7 @@ namespace NoeSbot.Handlers
                         var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
                         if (loadedModules.Contains((int)ModuleEnum.Media))
                         {
-                            var mediaProcessor = new MediaProcessor(context);
-                            await mediaProcessor.Process();
+                            await _mediaProcessor.Process(context);
                         }
                     }
                 }

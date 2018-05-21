@@ -146,6 +146,14 @@ namespace NoeSbot.Resources
         public const string Customize_AddCustom_Name = "customizemodule_addcustom_name";
         public const string Customize_AddCustom_Summary = "customizemodule_addcustom_summary";
 
+        public const string Customize_AddCustomPunishCommand_Command = "addcustompunishcommand";
+        public const string Customize_AddCustomPunishCommand_Name = "customizemodule_addcustompunishcommand_name";
+        public const string Customize_AddCustomPunishCommand_Summary = "customizemodule_addcustompunishcommand_summary";
+
+        public const string Customize_AddCustomUnpunishCommand_Command = "addcustomunpunishcommand";
+        public const string Customize_AddCustomUnpunishCommand_Name = "customizemodule_addcustomunpunishcommand_name";
+        public const string Customize_AddCustomUnpunishCommand_Summary = "customizemodule_addcustomunpunishcommand_summary";
+
         public const string Customize_AddCustomProfileBackground_Command = "addcustomprofilebackground";
         public const string Customize_AddCustomProfileBackground_Name = "customizemodule_addcustomprofilebackground_name";
         public const string Customize_AddCustomProfileBackground_Summary = "customizemodule_addcustomprofilebackground_summary";
@@ -173,6 +181,10 @@ namespace NoeSbot.Resources
         public const string Customize_RemoveCustom_Command = "removecustom";
         public const string Customize_RemoveCustom_Name = "customizemodule_removecustom_name";
         public const string Customize_RemoveCustom_Summary = "customizemodule_removecustom_summary";
+
+        public const string Customize_RemoveCustomCommand_Command = "removecustomcommand";
+        public const string Customize_RemoveCustomCommand_Name = "customizemodule_removecustomcommand_name";
+        public const string Customize_RemoveCustomCommand_Summary = "customizemodule_removecustomcommand_summary";
 
         #endregion
 

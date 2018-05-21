@@ -8,6 +8,8 @@ namespace NoeSbot.Enums
     {
         PunishedRoles,
         PunishedUsers,
-        NotifyMessages
+        NotifyMessages,
+        MessageTriggers,
+        CustomCommmands
     }
 }

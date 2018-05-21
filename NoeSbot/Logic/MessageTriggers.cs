@@ -22,23 +22,31 @@ namespace NoeSbot.Logic
     public class MessageTriggers
     {
         private readonly IMessageTriggerService _database;
-        private CommandContext _context;
+        private IMemoryCache _cache;
 
-        public MessageTriggers(CommandContext context, IMessageTriggerService database)
+        public MessageTriggers(IMessageTriggerService database, IMemoryCache memoryCache)
         {
-            _context = context;
             _database = database;
+            _cache = memoryCache;
         }
 
-        public async Task Process()
+        public async Task Process(ICommandContext context)
         {
-            List<MessageTrigger> triggerList = await _database.RetriveAllMessageTriggers((long)_context.Guild.Id);
-
-            foreach(MessageTrigger trig in triggerList)
+            if (!_cache.TryGetValue(CacheEnum.MessageTriggers, out IEnumerable<MessageTrigger> triggerList))
             {
-                if (Regex.Matches(_context.Message.Content.ToLower(), @"(\s|^)" + trig.Trigger + @"(\s|$)").Count > 0)
+                triggerList = await _database.RetriveAllMessageTriggers((long)context.Guild.Id);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(10));
+
+                _cache.Set(CacheEnum.MessageTriggers, triggerList, cacheEntryOptions);
+            }
+
+            foreach(var trig in triggerList)
+            {
+                if (Regex.Matches(context.Message.Content.ToLower(), @"(\s|^)" + trig.Trigger + @"(\s|$)").Count > 0)
                 {
-                    await _context.Message.Channel.SendMessageAsync(trig.Message, trig.Tts);
+                    await context.Message.Channel.SendMessageAsync(trig.Message, trig.Tts);
                 }
             }
         }
