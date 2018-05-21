@@ -25,8 +25,7 @@ namespace NoeSbot.Logic
             var channels = await context.Guild.GetChannelsAsync();
             var mediaChannel = channels.Where(x => x.Name != null && x.Name.Equals(Configuration.Load(context.Guild.Id).MediaChannel, StringComparison.OrdinalIgnoreCase)).SingleOrDefault() as IMessageChannel;
 
-            var messages = mediaChannel.GetMessagesAsync(100, CacheMode.AllowDownload);
-            var flatten = await messages.Flatten();
+            var messages = await mediaChannel.GetMessagesAsync(80).Flatten();
 
             var user = context.User as SocketGuildUser;
 
@@ -34,28 +33,28 @@ namespace NoeSbot.Logic
             {
                 foreach (var attach in context.Message.Attachments)
                 {
-                    await ProcessMediaAsync(flatten, attach.Url, user, mediaChannel);
+                    await ProcessMediaAsync(messages, attach.Url, user, mediaChannel);
                 }
             }
 
             if (matches.Count <= 0 || mediaChannel == null)
                 return;
-
+            
             foreach (Match match in matches)
             {
                 if (context.Message.Embeds.Any())//CheckForMedia(match.Value))            
-                    await ProcessMediaAsync(flatten, match.Value, user, mediaChannel);
+                    await ProcessMediaAsync(messages, match.Value, user, mediaChannel);
             }
         }
 
         #region Private
 
-        private async Task ProcessMediaAsync(IEnumerable<IMessage> flatten, string input, SocketGuildUser user, IMessageChannel mediaChannel)
+        private async Task ProcessMediaAsync(IEnumerable<IMessage> messages, string input, SocketGuildUser user, IMessageChannel mediaChannel)
         {
             var builder = new StringBuilder();
 
             var isRepost = false;
-            foreach (var f in flatten)
+            foreach (var f in messages)
             {
                 var flattenMsg = Regex.Matches(f.Content, @"(www.+|http.+)([\s]|$)");
                 if (flattenMsg.Count <= 0)

@@ -62,17 +62,19 @@ namespace NoeSbot.Handlers
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 
-        public async Task Ready()
+        public Task Ready()
         {
             if (!_notifyTaskRunning)
             {
                 // TODO Maybe change this...
-                await Task.Run(async () => await _notifyLogic.Run(_tokenSource.Token));
+                var run = Task.Run(async () => await _notifyLogic.Run(_tokenSource.Token));
                 _notifyTaskRunning = true;
             }
 
             _client.ReactionAdded -= _eventLogic.OnReactionAdded;
             _client.ReactionAdded += _eventLogic.OnReactionAdded;
+
+            return Task.CompletedTask;
         }
 
         public async Task MessageReceivedHandler(SocketMessage messageParam)
