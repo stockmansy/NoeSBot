@@ -24,7 +24,7 @@ namespace NoeSbot.Modules
     {
         private readonly DiscordSocketClient _client;
         private IMemoryCache _cache;
-        private Random _random = new Random();        
+        private Random _random = new Random();
         private IEventService _eventService;
         private EventLogic _eventLogic;
 
@@ -39,7 +39,7 @@ namespace NoeSbot.Modules
         }
 
         #endregion
-        
+
 
         #region Commands
 
@@ -47,84 +47,81 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Event_StartEvent_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task StartEvent()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_StartEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_StartEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
 
         [Command(Labels.Event_StartEvent_Command)]
         [Alias(Labels.Event_StartEvent_Alias_1)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task StartEvent(string eventtype, string uniqueidentifier, string name, string description, string datetime)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var user = Context.User as SocketGuildUser;
+            EventEmum type;
+
+            try
             {
-                var user = Context.User as SocketGuildUser;
-                EventEmum type;
+                if (string.IsNullOrWhiteSpace(uniqueidentifier.Trim()))
+                    throw new Exception("Invalid unique identifier");
 
-                try
+                DateTime? matchdate = null;
+
+                var date = CommonHelper.GetDate(datetime);
+                if (!date.HasValue)
+                    throw new Exception("Invalid date");
+
+                var dt = date.Value;
+
+                if (dt <= DateTime.Now)
+                    throw new Exception("Date in the past");
+
+                switch (eventtype.ToLowerInvariant())
                 {
-                    if (string.IsNullOrWhiteSpace(uniqueidentifier.Trim()))
-                        throw new Exception("Invalid unique identifier");
-
-                    DateTime? matchdate = null;
-                    
-                    var date = CommonHelper.GetDate(datetime);
-                    if (!date.HasValue)
-                        throw new Exception("Invalid date");
-                    
-                    var dt = date.Value;
-
-                    if (dt <= DateTime.Now)
-                        throw new Exception("Date in the past");
-
-                    switch (eventtype.ToLowerInvariant())
-                    {
-                        case "ss":
-                        case "secretsanta":
-                        case "secret santa":
-                            type = EventEmum.SecretSanta;
-                            matchdate = dt.AddDays(-7);
-                            if (matchdate <= DateTime.Now) { 
-                                var diff = dt - DateTime.Now;
-                                matchdate = dt.AddTicks(diff.Ticks / 2);
-                            }
-                            break;
-                        default:
-                            throw new Exception("Invalid type");
-                    }
-
-                    var descr = description.Replace("###", Environment.NewLine);
-
-                    var eventItem = new EventItem
-                    {
-                        Name = name,
-                        Description = descr,
-                        UniqueIdentifier = uniqueidentifier,
-                        Type = type,
-                        Date = dt,
-                        MatchDate = matchdate
-                    };
-                    
-                    await _eventService.AddEventItem((long)Context.Guild.Id, (long)user.Id, uniqueidentifier, name, descr, (int)type, dt.ToUniversalTime(), matchdate);
-
-                    await PrintEventNotification(eventItem);
+                    case "ss":
+                    case "secretsanta":
+                    case "secret santa":
+                        type = EventEmum.SecretSanta;
+                        matchdate = dt.AddDays(-7);
+                        if (matchdate <= DateTime.Now)
+                        {
+                            var diff = dt - DateTime.Now;
+                            matchdate = dt.AddTicks(diff.Ticks / 2);
+                        }
+                        break;
+                    default:
+                        throw new Exception("Invalid type");
                 }
-                catch (Exception ex)
+
+                var descr = description.Replace("###", Environment.NewLine);
+
+                var eventItem = new EventItem
                 {
-                    var builder = new EmbedBuilder()
-                    {
-                        Color = user.GetColor(),
-                        Description = "You didn't start the event properly, make sure you have a unique id. Refer to the help text"
-                    };
+                    Name = name,
+                    Description = descr,
+                    UniqueIdentifier = uniqueidentifier,
+                    Type = type,
+                    Date = dt,
+                    MatchDate = matchdate
+                };
 
-                    await Context.Channel.SendMessageAsync("", false, builder.Build());
-                }
+                await _eventService.AddEventItem((long)Context.Guild.Id, (long)user.Id, uniqueidentifier, name, descr, (int)type, dt.ToUniversalTime(), matchdate);
+
+                await PrintEventNotification(eventItem);
+            }
+            catch (Exception ex)
+            {
+                var builder = new EmbedBuilder()
+                {
+                    Color = user.GetColor(),
+                    Description = "You didn't start the event properly, make sure you have a unique id. Refer to the help text"
+                };
+
+                await Context.Channel.SendMessageAsync("", false, builder.Build());
             }
         }
 
@@ -134,73 +131,70 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Event_UpdateEvent_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task UpdateEvent()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_UpdateEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_UpdateEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Event_UpdateEvent_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task UpdateEvent(string uniqueidentifier, string name, string description, string datetime)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var user = Context.User as SocketGuildUser;
+
+            try
             {
-                var user = Context.User as SocketGuildUser;
+                if (string.IsNullOrWhiteSpace(uniqueidentifier.Trim()))
+                    throw new Exception("Invalid unique identifier");
 
-                try
+                DateTime? matchdate = null;
+
+                var date = CommonHelper.GetDate(datetime);
+                if (!date.HasValue)
+                    throw new Exception("Invalid date");
+
+                var dt = date.Value;
+
+                if (dt <= DateTime.Now)
+                    throw new Exception("Date in the past");
+
+                if (matchdate != null)
                 {
-                    if (string.IsNullOrWhiteSpace(uniqueidentifier.Trim()))
-                        throw new Exception("Invalid unique identifier");
-
-                    DateTime? matchdate = null;
-
-                    var date = CommonHelper.GetDate(datetime);
-                    if (!date.HasValue)
-                        throw new Exception("Invalid date");
-
-                    var dt = date.Value;
-
-                    if (dt <= DateTime.Now)
-                        throw new Exception("Date in the past");
-
-                    if (matchdate != null) { 
-                        matchdate = dt.AddDays(-7);
-                        if (matchdate <= DateTime.Now)
-                        {
-                            var diff = dt - DateTime.Now;
-                            matchdate = dt.AddTicks(diff.Ticks / 2);
-                        }
+                    matchdate = dt.AddDays(-7);
+                    if (matchdate <= DateTime.Now)
+                    {
+                        var diff = dt - DateTime.Now;
+                        matchdate = dt.AddTicks(diff.Ticks / 2);
                     }
-
-                    var descr = description.Replace("###", Environment.NewLine);
-
-                    var eventItem = new EventItem
-                    {
-                        Name = name,
-                        Description = descr,
-                        UniqueIdentifier = uniqueidentifier,
-                        Date = dt,
-                        MatchDate = matchdate
-                    };
-
-                    await _eventService.UpdateEventItem((long)Context.Guild.Id, (long)user.Id, uniqueidentifier, name, descr, dt.ToUniversalTime(), matchdate);
-
-                    await PrintEventNotification(eventItem);
                 }
-                catch
+
+                var descr = description.Replace("###", Environment.NewLine);
+
+                var eventItem = new EventItem
                 {
-                    var builder = new EmbedBuilder()
-                    {
-                        Color = user.GetColor(),
-                        Description = "You didn't update the event properly, make sure you have the correct unique id. Refer to the help text"
-                    };
+                    Name = name,
+                    Description = descr,
+                    UniqueIdentifier = uniqueidentifier,
+                    Date = dt,
+                    MatchDate = matchdate
+                };
 
-                    await Context.Channel.SendMessageAsync("", false, builder.Build());
-                }
+                await _eventService.UpdateEventItem((long)Context.Guild.Id, (long)user.Id, uniqueidentifier, name, descr, dt.ToUniversalTime(), matchdate);
+
+                await PrintEventNotification(eventItem);
+            }
+            catch
+            {
+                var builder = new EmbedBuilder()
+                {
+                    Color = user.GetColor(),
+                    Description = "You didn't update the event properly, make sure you have the correct unique id. Refer to the help text"
+                };
+
+                await Context.Channel.SendMessageAsync("", false, builder.Build());
             }
         }
 
@@ -210,41 +204,38 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Event_StopEvent_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task StopEvent()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_StopEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_StopEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Event_StopEvent_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task StopEvent(string uniqueidentifier)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var user = Context.User as SocketGuildUser;
+
+            try
             {
-                var user = Context.User as SocketGuildUser;
-
-                try
+                if (await _eventService.DisableEventItem((long)Context.Guild.Id, uniqueidentifier))
                 {
-                    if (await _eventService.DisableEventItem((long)Context.Guild.Id, uniqueidentifier)) {
-                        await user.SendMessageAsync("Succesfully stopped the event");
-                    } 
-                    else 
-                        throw new Exception("Failed to stop the event");
+                    await user.SendMessageAsync("Succesfully stopped the event");
                 }
-                catch
+                else
+                    throw new Exception("Failed to stop the event");
+            }
+            catch
+            {
+                var builder = new EmbedBuilder()
                 {
-                    var builder = new EmbedBuilder()
-                    {
-                        Color = user.GetColor(),
-                        Description = "Failed to stop the event"
-                    };
+                    Color = user.GetColor(),
+                    Description = "Failed to stop the event"
+                };
 
-                    await user.SendMessageAsync("", false, builder.Build());
-                }
+                await user.SendMessageAsync("", false, builder.Build());
             }
         }
 
@@ -254,112 +245,108 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Event_TriggerEvent_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task TriggerEvent()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_TriggerEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_TriggerEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Event_TriggerEvent_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task TriggerEvent(string uniqueidentifier)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var user = Context.User as SocketGuildUser;
+
+            try
             {
-                var user = Context.User as SocketGuildUser;
-
-                try
+                var eventItem = await _eventService.RetrieveEventAsync((long)Context.Guild.Id, uniqueidentifier);
+                if (eventItem != null)
                 {
-                    var eventItem = await _eventService.RetrieveEventAsync((long)Context.Guild.Id, uniqueidentifier);
-                    if (eventItem != null)
+                    await Context.Message.DeleteAsync();
+
+                    switch (eventItem.Type)
                     {
-                        await Context.Message.DeleteAsync();
+                        case (int)EventEmum.SecretSanta:
+                            var partsTasks = eventItem.Participants.Select(async x =>
+                            {
+                                return await Context.Channel.GetUserAsync((ulong)x.UserId);
+                            });
+                            var parts = await Task.WhenAll(partsTasks);
+                            var participants = parts.ToList();
 
-                        switch(eventItem.Type)
-                        {
-                            case (int)EventEmum.SecretSanta:
-                                var partsTasks = eventItem.Participants.Select(async x =>
+                            //TODO fix this silly holiday mindset logic
+                            var pooled = true;
+                            var users = new List<EventUser>();
+                            do
+                            {
+                                users.Clear();
+
+                                foreach (var p in CommonHelper.Shuffle(parts))
                                 {
-                                    return await Context.Channel.GetUserAsync((ulong)x.UserId);
-                                });
-                                var parts = await Task.WhenAll(partsTasks);
-                                var participants = parts.ToList();
-
-                                //TODO fix this silly holiday mindset logic
-                                var pooled = true;
-                                var users = new List<EventUser>();
-                                do
-                                {
-                                    users.Clear();
-
-                                    foreach (var p in CommonHelper.Shuffle(parts))
+                                    var found = false;
+                                    var random = -1;
+                                    IUser ss = null;
+                                    while (!found)
                                     {
-                                        var found = false;
-                                        var random = -1;
-                                        IUser ss = null;
-                                        while (!found)
+                                        random = _random.Next(participants.Count);
+                                        ss = participants.ElementAt(random);
+                                        if (ss.Id != p.Id)
+                                            found = true;
+                                        else if (participants.Count <= 1)
                                         {
-                                            random = _random.Next(participants.Count);
-                                            ss = participants.ElementAt(random);
-                                            if (ss.Id != p.Id)
-                                                found = true;
-                                            else if (participants.Count <= 1)
-                                            {
-                                                pooled = false;
-                                                break;
-                                            }
+                                            pooled = false;
+                                            break;
                                         }
-
-                                        participants.RemoveAt(random);
-
-                                        users.Add(new EventUser
-                                        {
-                                            User = p,
-                                            SecretSanta = ss
-                                        });
                                     }
-                                } while (!pooled);
 
-                                var orgsTasks = eventItem.Organisers.Select(async x =>
-                                {
-                                    return await Context.Channel.GetUserAsync((ulong)x.UserId);
-                                });
-                                var orgs = await Task.WhenAll(orgsTasks);
+                                    participants.RemoveAt(random);
 
-                                var embed = GetSecretSantaAuthorEmbed(eventItem.Name, eventItem.Description, users);
-                                foreach (var o in orgs)
-                                {
-                                    await o.SendMessageAsync("", false, embed);
+                                    users.Add(new EventUser
+                                    {
+                                        User = p,
+                                        SecretSanta = ss
+                                    });
                                 }
+                            } while (!pooled);
 
-                                foreach (var u in users)
-                                {
-                                    var msg = GetSecretSantaMatchEmbed(eventItem.Name, u);
-                                    await u.User.SendMessageAsync("", false, msg);
-                                }
+                            var orgsTasks = eventItem.Organisers.Select(async x =>
+                            {
+                                return await Context.Channel.GetUserAsync((ulong)x.UserId);
+                            });
+                            var orgs = await Task.WhenAll(orgsTasks);
 
-                                break;
-                        }
+                            var embed = GetSecretSantaAuthorEmbed(eventItem.Name, eventItem.Description, users);
+                            foreach (var o in orgs)
+                            {
+                                await o.SendMessageAsync("", false, embed);
+                            }
 
-                        
+                            foreach (var u in users)
+                            {
+                                var msg = GetSecretSantaMatchEmbed(eventItem.Name, u);
+                                await u.User.SendMessageAsync("", false, msg);
+                            }
 
-                        //var embed = GetParticipantsEmbed(parts, item);
-                        //await userAdjusting.SendMessageAsync("", false, embed);
+                            break;
                     }
-                }
-                catch
-                {
-                    var builder = new EmbedBuilder()
-                    {
-                        Color = user.GetColor(),
-                        Description = "Failed to trigger the event"
-                    };
 
-                    await user.SendMessageAsync("", false, builder.Build());
+
+
+                    //var embed = GetParticipantsEmbed(parts, item);
+                    //await userAdjusting.SendMessageAsync("", false, embed);
                 }
+            }
+            catch
+            {
+                var builder = new EmbedBuilder()
+                {
+                    Color = user.GetColor(),
+                    Description = "Failed to trigger the event"
+                };
+
+                await user.SendMessageAsync("", false, builder.Build());
             }
         }
 
@@ -377,7 +364,7 @@ namespace NoeSbot.Modules
                 Color = user.GetColor(),
                 Description = $"{user.Nickname} has started an event",
                 Footer = new EmbedFooterBuilder { Text = $"Click the icons below to register/unregister/view participants {{u:{item.UniqueIdentifier}}}" }
-            };            
+            };
 
             builder.AddField(x =>
             {
@@ -405,7 +392,7 @@ namespace NoeSbot.Modules
 
             if (Context.Guild.IconUrl != null)
                 builder.WithThumbnailUrl(Context.Guild.IconUrl);
-            
+
             var message = await Context.Channel.SendMessageAsync("", false, builder.Build());
 
             await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.Bell));

@@ -55,7 +55,7 @@ namespace NoeSbot.Modules
         {
             _client = client;
             _cache = memoryCache;
-            
+
             _polls = new Dictionary<ulong, PollModel>();
         }
 
@@ -81,7 +81,7 @@ namespace NoeSbot.Modules
                     await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
                     return;
                 }
-                    
+
                 var chosenOption = _reactions.Where(pair => pair.Value == reaction.Emote.Name)
                                     .Select(pair => pair.Key)
                                     .FirstOrDefault();
@@ -94,101 +94,100 @@ namespace NoeSbot.Modules
         }
 
         #endregion
-        
+
         #region Commands
 
         [Command(Labels.Poll_Poll_Command)]
         [Alias(Labels.Poll_Poll_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task QuickPoll()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Poll_Poll_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Poll_Poll_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Poll_Poll_Command)]
         [Alias(Labels.Poll_Poll_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task QuickPoll([Remainder] string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook) { 
-                var reg = new Regex("\".*?\"");
-                var matches = reg.Matches(input);
+            var reg = new Regex("\".*?\"");
+            var matches = reg.Matches(input);
 
-                if (matches.Count < 3)
+            if (matches.Count < 3)
+            {
+                await ReplyAsync("Not enough options");
+                await QuickPoll();
+                return;
+            }
+
+            var poll = new PollModel();
+
+            // Get poll settings
+            var index = input.IndexOf('"');
+            if (index > 0)
+            {
+                var options = input.Substring(0, index).Trim();
+                var split = options.Split(' ');
+
+                if (split.Length > 1)
                 {
-                    await ReplyAsync("Not enough options");
-                    await QuickPoll();
-                    return;
+                    var nDuration = CommonHelper.GetTimeInSeconds(split[1]);
+                    if (nDuration > 0)
+                        poll.Duration = nDuration;
                 }
 
-                var poll = new PollModel();
-
-                // Get poll settings
-                var index = input.IndexOf('"');
-                if (index > 0) {
-                    var options = input.Substring(0, index).Trim();
-                    var split = options.Split(' ');
-
-                    if (split.Length > 1)
-                    {
-                        var nDuration = CommonHelper.GetTimeInSeconds(split[1]);
+                switch (split[0].ToLowerInvariant())
+                {
+                    case "1":
+                    case "true":
+                    case "yes":
+                        poll.ShowWhoVoted = true;
+                        break;
+                    default:
+                        var nDuration = CommonHelper.GetTimeInSeconds(split[0]);
                         if (nDuration > 0)
                             poll.Duration = nDuration;
-                    }
-
-                    switch (split[0].ToLowerInvariant())
-                    {
-                        case "1":
-                        case "true":
-                        case "yes":
-                            poll.ShowWhoVoted = true;
-                            break;
-                        default:
-                            var nDuration = CommonHelper.GetTimeInSeconds(split[0]);
-                            if (nDuration > 0)
-                                poll.Duration = nDuration;
-                            break;
-                    }                    
-                }
-
-                var count = 1;
-                foreach (Match item in matches)
-                {
-                    if (string.IsNullOrWhiteSpace(poll.Question)) { 
-                        poll.Question = item.Value;
-                        continue;
-                    }
-
-                    if (count == 20) // Max questions
                         break;
-
-                    poll.Options.Add(count, item.Value);
-                    poll.Votes.Add(count, 0);
-                    count++;
                 }
-
-                var message = await ReplyAsync("", false, GeneratePollStart(poll));
-
-                for (var j = 1; j <= poll.Options.Count; j++)
-                {
-                    await message.AddReactionAsync(IconHelper.GetEmote(_reactions[j]));
-                    await Task.Delay(1250);
-                }
-
-                await message.ModifyAsync(x => x.Embed = GeneratePollEmbed(poll));
-
-                if (_polls.Count <= 0)
-                    _client.ReactionAdded += OnReactionAdded;
-
-                _polls.Add(message.Id, poll);
-
-                Action endPoll = async () => await EndPoll(message.Id);
-                endPoll.DelayFor(TimeSpan.FromSeconds(poll.Duration));
             }
+
+            var count = 1;
+            foreach (Match item in matches)
+            {
+                if (string.IsNullOrWhiteSpace(poll.Question))
+                {
+                    poll.Question = item.Value;
+                    continue;
+                }
+
+                if (count == 20) // Max questions
+                    break;
+
+                poll.Options.Add(count, item.Value);
+                poll.Votes.Add(count, 0);
+                count++;
+            }
+
+            var message = await ReplyAsync("", false, GeneratePollStart(poll));
+
+            for (var j = 1; j <= poll.Options.Count; j++)
+            {
+                await message.AddReactionAsync(IconHelper.GetEmote(_reactions[j]));
+                await Task.Delay(1250);
+            }
+
+            await message.ModifyAsync(x => x.Embed = GeneratePollEmbed(poll));
+
+            if (_polls.Count <= 0)
+                _client.ReactionAdded += OnReactionAdded;
+
+            _polls.Add(message.Id, poll);
+
+            Action endPoll = async () => await EndPoll(message.Id);
+            endPoll.DelayFor(TimeSpan.FromSeconds(poll.Duration));
         }
 
         #endregion
@@ -240,13 +239,13 @@ namespace NoeSbot.Modules
             for (var i = 1; i <= poll.Options.Count; i++)
             {
                 var text = poll.Options[i];
-                
+
                 if (poll.Votes[i] > 0)
                 {
                     text += $"{Environment.NewLine}";
                     text += $"Current votes: {poll.Votes[i]}";
                     if (poll.ShowWhoVoted)
-                    {                        
+                    {
                         text += " (";
                         var usrs = poll.UsersWhoVoted.Where(x => x.Value == i).Distinct().ToList();
                         foreach (var userWhoVoted in usrs)
@@ -288,7 +287,7 @@ namespace NoeSbot.Modules
                 });
                 return builder.Build();
             }
-            
+
             if (mostVotes.Count() == 1)
             {
                 var option = poll.Options[mostVotes.First().Key];

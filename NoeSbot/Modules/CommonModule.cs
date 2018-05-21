@@ -33,25 +33,21 @@ namespace NoeSbot.Modules
         [Command(Labels.Common_Say_Command)]
         [Alias(Labels.Common_Say_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Say()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Common_Say_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Common_Say_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Common_Say_Command)]
         [Alias(Labels.Common_Say_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Say([Remainder] string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                await Context.Message.DeleteAsync();
-                await ReplyAsync(input);
-            }
+            await Context.Message.DeleteAsync();
+            await ReplyAsync(input);
         }
 
         #endregion
@@ -61,49 +57,43 @@ namespace NoeSbot.Modules
         [Command(Labels.Common_SayTTS_Command)]
         [Alias(Labels.Common_SayTTS_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task SayTTS()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Common_SayTTS_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Common_SayTTS_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Common_SayTTS_Command)]
         [Alias(Labels.Common_SayTTS_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task SayTTS([Remainder] string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                await Context.Message.DeleteAsync();
-                await ReplyAsync(input, true);
-            }
+            await Context.Message.DeleteAsync();
+            await ReplyAsync(input, true);
         }
 
         #endregion
 
         [Command(Labels.Common_Info_Command)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Info()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var application = await Context.Client.GetApplicationInfoAsync();
-                await ReplyAsync(
-                    $"{Format.Bold("Info")}\n" +
-                    $"- Library: Discord.Net ({DiscordConfig.Version})\n" +
-                    $"- Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}\n" +
-                    $"- Uptime: {GetUptime()}\n\n" +
+            var application = await Context.Client.GetApplicationInfoAsync();
+            await ReplyAsync(
+                $"{Format.Bold("Info")}\n" +
+                $"- Library: Discord.Net ({DiscordConfig.Version})\n" +
+                $"- Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}\n" +
+                $"- Uptime: {GetUptime()}\n\n" +
 
-                    $"{Format.Bold("Stats")}\n" +
-                    $"- Heap Size: {GetHeapSize()} MB\n" +
-                    $"- Guilds: {(Context.Client as DiscordSocketClient).Guilds.Count}\n" +
-                    $"- Channels: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}" +
-                    $"- Users: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}"
-                );
-            }
+                $"{Format.Bold("Stats")}\n" +
+                $"- Heap Size: {GetHeapSize()} MB\n" +
+                $"- Guilds: {(Context.Client as DiscordSocketClient).Guilds.Count}\n" +
+                $"- Channels: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}" +
+                $"- Users: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}"
+            );
         }
 
         #region Private

@@ -42,17 +42,16 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_AddCustomPunish_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustomPunish()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_AddCustomPunish_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustomPunish([Summary("The user")] SocketGuildUser user,
                                         [Remainder] string input)
         {
@@ -65,56 +64,52 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_AddCustom_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustom()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_AddCustom_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustom([Summary("Name of the module")] string moduleName,
                                     [Summary("The user")] SocketGuildUser user,
                                     [Remainder] string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            switch (moduleName)
             {
-                switch (moduleName)
-                {
-                    case "punish":
-                        var reason = input;
-                        var delaymessage = "";
-                        var lastIndex = input.LastIndexOf('"');
-                        if (input.StartsWith("\"") && lastIndex > 0)
-                        {
-                            reason = input.Substring(1, lastIndex - 1);
-                            delaymessage = input.Substring(lastIndex + 1);
-                        }
+                case "punish":
+                    var reason = input;
+                    var delaymessage = "";
+                    var lastIndex = input.LastIndexOf('"');
+                    if (input.StartsWith("\"") && lastIndex > 0)
+                    {
+                        reason = input.Substring(1, lastIndex - 1);
+                        delaymessage = input.Substring(lastIndex + 1);
+                    }
 
-                        var hasDelayMsg = !string.IsNullOrWhiteSpace(delaymessage);
+                    var hasDelayMsg = !string.IsNullOrWhiteSpace(delaymessage);
 
-                        var success = await _punishedService.SaveCustomPunishedAsync((long)user.Id, reason, delaymessage);
-                        if (success)
+                    var success = await _punishedService.SaveCustomPunishedAsync((long)user.Id, reason, delaymessage);
+                    if (success)
+                    {
+                        var result = $"Added a custom punish message for {user.Mention}{Environment.NewLine}";
+                        result += $"Custom message:{Environment.NewLine}{reason.GetProcessedString()}{Environment.NewLine}{Environment.NewLine}";
+                        await ReplyAsync(result);
+
+                        if (hasDelayMsg)
                         {
-                            var result = $"Added a custom punish message for {user.Mention}{Environment.NewLine}";
-                            result += $"Custom message:{Environment.NewLine}{reason.GetProcessedString()}{Environment.NewLine}{Environment.NewLine}";
+                            result = $"Custom delay message:{Environment.NewLine}{delaymessage.GetProcessedString()}";
                             await ReplyAsync(result);
-
-                            if (hasDelayMsg)
-                            {
-                                result = $"Custom delay message:{Environment.NewLine}{delaymessage.GetProcessedString()}";
-                                await ReplyAsync(result);
-                            }
                         }
-                        else
-                        {
-                            await ReplyAsync("Failed to save the custom punish rule");
-                        }
-                        break;
-                }
+                    }
+                    else
+                    {
+                        await ReplyAsync("Failed to save the custom punish rule");
+                    }
+                    break;
             }
         }
 
@@ -124,52 +119,46 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_AddCustomProfileBackground_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustomProfileBackground()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomProfileBackground_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomProfileBackground_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_AddCustomProfileBackground_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustomProfileBackground(SocketGuildUser user,
                                                      string url)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var success = await _profileService.AddOrUpdateProfileBackground((long)Context.Guild.Id, Database.Models.ProfileBackground.ProfileBackgroundSetting.Custom, url, (long)user.Id);
-                if (success)
-                    await ReplyAsync($"Successfully added a custom background for {user.Nickname}");
-                else
-                    await ReplyAsync($"Failed to add a custom background for {user.Nickname}");
-            }
+            var success = await _profileService.AddOrUpdateProfileBackground((long)Context.Guild.Id, Database.Models.ProfileBackground.ProfileBackgroundSetting.Custom, url, (long)user.Id);
+            if (success)
+                await ReplyAsync($"Successfully added a custom background for {user.Nickname}");
+            else
+                await ReplyAsync($"Failed to add a custom background for {user.Nickname}");
         }
 
         [Command(Labels.Customize_AddCustomProfileBackground_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustomProfileBackground(string customtype,
                                                     string url,
                                                     [Remainder] string aliases)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            if (!customtype.Equals("game", StringComparison.OrdinalIgnoreCase))
             {
-                if (!customtype.Equals("game", StringComparison.OrdinalIgnoreCase))
-                {
-                    await ReplyAsync($"Invalid custom type");
-                    return;
-                }
-
-                var aliasesList = aliases.Trim().Split(' ').ToList();
-
-                var success = await _profileService.AddOrUpdateProfileBackground((long)Context.Guild.Id, Database.Models.ProfileBackground.ProfileBackgroundSetting.Game, url, (long)Context.User.Id, aliasesList);
-                if (success)
-                    await ReplyAsync($"Successfully added a custom background for a game");
-                else
-                    await ReplyAsync($"Failed to add a custom background for a game");
+                await ReplyAsync($"Invalid custom type");
+                return;
             }
+
+            var aliasesList = aliases.Trim().Split(' ').ToList();
+
+            var success = await _profileService.AddOrUpdateProfileBackground((long)Context.Guild.Id, Database.Models.ProfileBackground.ProfileBackgroundSetting.Game, url, (long)Context.User.Id, aliasesList);
+            if (success)
+                await ReplyAsync($"Successfully added a custom background for a game");
+            else
+                await ReplyAsync($"Failed to add a custom background for a game");
         }
 
         #endregion
@@ -178,18 +167,17 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_AddCustomPunishCommand_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustomPunishedCommand()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomPunishCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomPunishCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_AddCustomPunishCommand_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
-        public async Task AddCustomPunishCommand(string customCommand, 
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task AddCustomPunishCommand(string customCommand,
                                                    SocketGuildUser user)
         {
             await AddCustomPunishCommand(customCommand, user, "5m");
@@ -197,7 +185,8 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_AddCustomPunishCommand_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
-        public async Task AddCustomPunishCommand(string customCommand, 
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task AddCustomPunishCommand(string customCommand,
                                                    SocketGuildUser user,
                                                    string time)
         {
@@ -206,23 +195,21 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_AddCustomPunishCommand_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
-        public async Task AddCustomPunishCommand(string customCommand, 
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task AddCustomPunishCommand(string customCommand,
                                                    SocketGuildUser user,
-                                                   string time, 
+                                                   string time,
                                                    [Remainder] string reason)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+
+            var success = await _customCommandService.SaveCustomPunishCommandAsync(customCommand, (long)Context.Guild.Id, (long)user.Id, durationInSecs, reason);
+            if (success)
             {
-                var durationInSecs = CommonHelper.GetTimeInSeconds(time);
-
-                var success = await _customCommandService.SaveCustomPunishCommandAsync(customCommand, (long)Context.Guild.Id, (long)user.Id, durationInSecs, reason);
-                if (success)
-                {
-                    await ReplyAsync($"Successfully created the custom punish command");
-                }
-
-                RemoveCache();
+                await ReplyAsync($"Successfully created the custom punish command");
             }
+
+            RemoveCache();
         }
 
         #endregion
@@ -231,30 +218,26 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_AddCustomUnpunishCommand_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustomUnpunishCommand()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomUnpunishCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomUnpunishCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_AddCustomUnpunishCommand_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustomUnpunishCommand(string customCommand,
                                                    SocketGuildUser user)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var success = await _customCommandService.SaveCustomUnpunishCommandAsync(customCommand, (long)Context.Guild.Id, (long)user.Id);
+            if (success)
             {
-                var success = await _customCommandService.SaveCustomUnpunishCommandAsync(customCommand, (long)Context.Guild.Id, (long)user.Id);
-                if (success)
-                {
-                    await ReplyAsync($"Successfully created the custom unpunish command");
-                }
-
-                RemoveCache();
+                await ReplyAsync($"Successfully created the custom unpunish command");
             }
+
+            RemoveCache();
         }
 
         #endregion
@@ -263,17 +246,16 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_GetCustomPunish_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task GetCustomPunish()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_GetCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_GetCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_GetCustomPunish_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task GetCustomPunish([Summary("The user")] SocketGuildUser user)
         {
             await GetCustom("punish", user);
@@ -285,66 +267,62 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_GetCustom_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task GetCustom()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_GetCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_GetCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_GetCustom_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task GetCustom([Summary("Name of the module")] string moduleName,
                                     [Summary("The user")] SocketGuildUser user)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            switch (moduleName)
             {
-                switch (moduleName)
-                {
-                    case "punish":
-                        var existing = await _punishedService.RetrieveAllCustomPunishedAsync((long)user.Id);
-                        if (existing == null || existing.Count() == 0)
-                        {
-                            await ReplyAsync("This user does not have any custom rules");
-                            return;
-                        }
+                case "punish":
+                    var existing = await _punishedService.RetrieveAllCustomPunishedAsync((long)user.Id);
+                    if (existing == null || existing.Count() == 0)
+                    {
+                        await ReplyAsync("This user does not have any custom rules");
+                        return;
+                    }
 
-                        var builder = new EmbedBuilder()
-                        {
-                            Color = user.GetColor(),
-                            Description = "This user has the following custom rules:"
-                        };
+                    var builder = new EmbedBuilder()
+                    {
+                        Color = user.GetColor(),
+                        Description = "This user has the following custom rules:"
+                    };
 
-                        var i = 1;
-                        foreach (var custom in existing)
+                    var i = 1;
+                    foreach (var custom in existing)
+                    {
+                        var description = custom.Reason;
+                        builder.AddField(x =>
                         {
-                            var description = custom.Reason;
+                            x.Name = $"Custom {i} reason";
+                            x.Value = description.GetProcessedString();
+                            x.IsInline = false;
+                        });
+
+                        if (!string.IsNullOrWhiteSpace(custom.DelayMessage))
+                        {
+                            description = custom.DelayMessage;
                             builder.AddField(x =>
                             {
-                                x.Name = $"Custom {i} reason";
+                                x.Name = $"Custom {i} delay message";
                                 x.Value = description.GetProcessedString();
                                 x.IsInline = false;
                             });
-
-                            if (!string.IsNullOrWhiteSpace(custom.DelayMessage))
-                            {
-                                description = custom.DelayMessage;
-                                builder.AddField(x =>
-                                {
-                                    x.Name = $"Custom {i} delay message";
-                                    x.Value = description.GetProcessedString();
-                                    x.IsInline = false;
-                                });
-                            }
-                            i++;
                         }
+                        i++;
+                    }
 
-                        await ReplyAsync("", false, builder.Build());
+                    await ReplyAsync("", false, builder.Build());
 
-                        break;
-                }
+                    break;
             }
         }
 
@@ -354,17 +332,16 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_RemoveAllCustomPunish_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveAllCustomPunish()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveAllCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveAllCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_RemoveAllCustomPunish_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveCustomPunish([Summary("The user")] SocketGuildUser user)
         {
             await RemoveCustom("punish", user);
@@ -376,21 +353,20 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_RemoveAllCustom_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveCustom()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveAllCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveAllCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_RemoveAllCustom_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveCustom([Summary("Name of the module")] string moduleName,
                                     [Summary("The user")] SocketGuildUser user)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook && !(Context.User.Id == user.Id))
+            if (!(Context.User.Id == user.Id))
             {
                 switch (moduleName)
                 {
@@ -415,17 +391,16 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_RemoveCustomPunish_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveCustomPunish()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_RemoveCustomPunish_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveCustomPunish([Summary("The user")] SocketGuildUser user,
                                         [Summary("The index")] int index)
         {
@@ -438,22 +413,21 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_RemoveCustom_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveSpecificCustomPunish()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_RemoveCustom_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveCustom([Summary("Name of the module")] string moduleName,
                                     [Summary("The user")] SocketGuildUser user,
                                     [Summary("The index")] int index)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook && !(Context.User.Id == user.Id))
+            if (!(Context.User.Id == user.Id))
             {
                 switch (moduleName)
                 {
@@ -478,29 +452,25 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Customize_RemoveCustomCommand_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveCustomCommand()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustomCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustomCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Customize_RemoveCustomCommand_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveCustomCommand(string customCommand)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var success = await _customCommandService.RemoveCustomCommandAsync(customCommand);
+            if (success)
             {
-                var success = await _customCommandService.RemoveCustomCommandAsync(customCommand);
-                if (success)
-                {
-                    await ReplyAsync($"Successfully removed the custom command");
-                }
-
-                RemoveCache();
+                await ReplyAsync($"Successfully removed the custom command");
             }
+
+            RemoveCache();
         }
 
         #endregion

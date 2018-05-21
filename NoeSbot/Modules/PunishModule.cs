@@ -42,18 +42,17 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Punish_Command)]
         [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punish()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Punish_Punish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Punish_Punish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Punish_Punish_Command)]
         [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user)
         {
             await Punish(user, "5m", "No reason given");
@@ -62,6 +61,7 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Punish_Command)]
         [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user,
                                  [Summary("The punish time")]string time)
         {
@@ -71,11 +71,12 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Punish_Command)]
         [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user,
                                  [Summary("The punish time")]string time,
                                  [Remainder, Summary("The punish reason")]string reason)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook && !user.IsBot)
+            if (!user.IsBot)
             {
                 try
                 {
@@ -116,36 +117,34 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Punished_Command)]
         [Alias(Labels.Punish_Punished_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punished()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var allPunished = await _logic.GetPunished(Context);
+
+            var user = Context.User as SocketGuildUser;
+            var count = allPunished.Count();
+            var end = (count <= 0) ? $"{Environment.NewLine}None" : "";
+            var builder = new EmbedBuilder()
             {
-                var allPunished = await _logic.GetPunished(Context);
+                Color = user.GetColor(),
+                Description = $"The following users were punished:{end}"
+            };
 
-                var user = Context.User as SocketGuildUser;
-                var count = allPunished.Count();
-                var end = (count <= 0) ? $"{Environment.NewLine}None" : "";
-                var builder = new EmbedBuilder()
+            foreach (var pun in allPunished)
+            {
+                var punUser = await Context.Client.GetUserAsync((ulong)pun.UserId);
+                var punishTime = CommonHelper.GetTimeString(pun.TimeOfPunishment, pun.Duration);
+
+                builder.AddField(x =>
                 {
-                    Color = user.GetColor(),
-                    Description = $"The following users were punished:{end}"
-                };
-
-                foreach (var pun in allPunished)
-                {
-                    var punUser = await Context.Client.GetUserAsync((ulong)pun.UserId);
-                    var punishTime = CommonHelper.GetTimeString(pun.TimeOfPunishment, pun.Duration);
-
-                    builder.AddField(x =>
-                    {
-                        x.Name = punUser.Username;
-                        x.Value = $"Punished for: {punishTime}";
-                        x.IsInline = false;
-                    });
-                }
-
-                await ReplyAsync("", false, builder.Build());
+                    x.Name = punUser.Username;
+                    x.Value = $"Punished for: {punishTime}";
+                    x.IsInline = false;
+                });
             }
+
+            await ReplyAsync("", false, builder.Build());
         }
 
         #endregion
@@ -155,48 +154,42 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Unpunish_Command)]
         [Alias(Labels.Punish_Unpunish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task UnPunish()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Punish_Unpunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Punish_Unpunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Punish_Unpunish_Command)]
         [Alias(Labels.Punish_Unpunish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task UnPunish([Summary("The user to be unpunished")] SocketGuildUser user)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var msg = "";
+            var success = await _logic.UnPunish(Context, user);
+            if (success.HasValue)
             {
-                var msg = "";
-                var success = await _logic.UnPunish(Context, user);
-                if (success.HasValue)
-                {
-                    msg = (success.Value) ? $"Successfully unpunished {user.Mention} ({user.Username})" : $"Failed to unpunish {user.Username}";
-                    await ReplyAsync(msg);
-                }
+                msg = (success.Value) ? $"Successfully unpunished {user.Mention} ({user.Username})" : $"Failed to unpunish {user.Username}";
+                await ReplyAsync(msg);
             }
         }
 
         [Command(Labels.Punish_Unpunish_Command)]
         [Alias(Labels.Punish_Unpunish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task UnPunish([Remainder, Summary("The punish input")]string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            if (input.Trim().Equals("all", StringComparison.OrdinalIgnoreCase))
             {
-                if (input.Trim().Equals("all", StringComparison.OrdinalIgnoreCase))
+                var msg = "";
+                var success = await _logic.UnPunishAll(Context);
+                if (success.HasValue)
                 {
-                    var msg = "";
-                    var success = await _logic.UnPunishAll(Context);
-                    if (success.HasValue)
-                    {
-                        msg = (success.Value) ? $"Successfully unpunished everybody" : $"Failed to unpunish everybody";
-                        await ReplyAsync(msg);
-                    }
+                    msg = (success.Value) ? $"Successfully unpunished everybody" : $"Failed to unpunish everybody";
+                    await ReplyAsync(msg);
                 }
             }
         }

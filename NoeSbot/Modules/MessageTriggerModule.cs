@@ -37,18 +37,17 @@ namespace NoeSbot.Modules
         [Command(Labels.MessageTrigger_AddTrigger_Command)]
         [Alias(Labels.MessageTrigger_AddTrigger_Alias_1)]
         [MinPermissions(AccessLevel.ServerOwner)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddTrigger()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.MessageTrigger_AddTrigger_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.MessageTrigger_AddTrigger_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.MessageTrigger_AddTrigger_Command)]
         [Alias(Labels.MessageTrigger_AddTrigger_Alias_1)]
         [MinPermissions(AccessLevel.ServerOwner)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddTrigger([Summary("The trigger")] string trig,
                                         [Summary("The message triggered")] string mess,
                                         [Summary("Optional tts")] bool tts = false)
@@ -69,18 +68,17 @@ namespace NoeSbot.Modules
         [Command(Labels.MessageTrigger_DeleteTrigger_Command)]
         [Alias(Labels.MessageTrigger_DeleteTrigger_Alias_1, Labels.MessageTrigger_DeleteTrigger_Alias_2)]
         [MinPermissions(AccessLevel.ServerOwner)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task DeleteTrigger()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.MessageTrigger_DeleteTrigger_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.MessageTrigger_DeleteTrigger_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.MessageTrigger_DeleteTrigger_Command)]
         [Alias(Labels.MessageTrigger_DeleteTrigger_Alias_1, Labels.MessageTrigger_DeleteTrigger_Alias_2)]
         [MinPermissions(AccessLevel.ServerOwner)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task DeleteTrigger([Summary("The trigger")] string trig)
         {
             var success = await _database.DeleteMessageTrigger(trig.ToLower(), (long)Context.Guild.Id);

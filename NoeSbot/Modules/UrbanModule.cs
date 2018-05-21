@@ -135,92 +135,88 @@ namespace NoeSbot.Modules
         [Command(Labels.Urban_Urban_Command)]
         [Alias(Labels.Urban_Urban_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Urban()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Urban_Urban_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Urban_Urban_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Urban_Urban_Command)]
         [Alias(Labels.Urban_Urban_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Urban([Remainder] string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var client = new HttpClient()
             {
-                var client = new HttpClient()
-                {
-                    BaseAddress = new Uri(apiBaseUrl)
-                };
+                BaseAddress = new Uri(apiBaseUrl)
+            };
 
-                UrbanMain urbanMain = null;
-                using (var cl = client)
-                {
-                    var json = await cl.GetStringAsync($"{apiBaseUrl}{apiQueryPath}{input}");
-                    urbanMain = JsonConvert.DeserializeObject<UrbanMain>(json);
-                }
-
-                if (urbanMain == null || urbanMain.List == null || !urbanMain.List.Any())
-                {
-                    await ReplyAsync("Could not retrieve the requested term.");
-                    return;
-                }
-
-                urbanMain.AuthorId = Context.Message.Author.Id;
-
-                var iconsToAdd = new List<string>();
-                Embed embed = null;
-                bool multiplePages = false;
-
-                if (urbanMain.List.Count > 1)
-                {
-                    iconsToAdd.Add(IconHelper.ArrowUp);
-                    iconsToAdd.Add(IconHelper.ArrowDown);
-                    iconsToAdd.Add(IconHelper.Question);
-                }
-
-                urbanMain = SetCurrentDefinition(urbanMain, 1);
-
-                if (urbanMain.Pages.Length > 1)
-                    multiplePages = true;
-
-                embed = GenerateUrban(urbanMain, true);
-
-                if (multiplePages)
-                {
-                    iconsToAdd.Add(IconHelper.ArrowLeft);
-                    iconsToAdd.Add(IconHelper.ArrowRight);
-                    urbanMain.PageIconsSet = true;
-                }
-
-                if (embed == null)
-                {
-                    await ReplyAsync("Could not generate the urban dictionary item.");
-                    return;
-                }
-
-                var message = await ReplyAsync("", false, embed);
-
-                _urbans.Add(message.Id, urbanMain);
-
-                new Thread(async () =>
-                {
-                    foreach (var icon in iconsToAdd)
-                    {
-                        var emote = IconHelper.GetEmote(icon);
-                        await message.AddReactionAsync(emote);
-                        Thread.Sleep(1300);
-                    }
-
-                    if (urbanMain.DefinitionCount > 1)
-                        _client.ReactionAdded += OnReactionAdded;
-
-                    await message.ModifyAsync(x => x.Embed = GenerateUrban(urbanMain));
-                }).Start();
+            UrbanMain urbanMain = null;
+            using (var cl = client)
+            {
+                var json = await cl.GetStringAsync($"{apiBaseUrl}{apiQueryPath}{input}");
+                urbanMain = JsonConvert.DeserializeObject<UrbanMain>(json);
             }
+
+            if (urbanMain == null || urbanMain.List == null || !urbanMain.List.Any())
+            {
+                await ReplyAsync("Could not retrieve the requested term.");
+                return;
+            }
+
+            urbanMain.AuthorId = Context.Message.Author.Id;
+
+            var iconsToAdd = new List<string>();
+            Embed embed = null;
+            bool multiplePages = false;
+
+            if (urbanMain.List.Count > 1)
+            {
+                iconsToAdd.Add(IconHelper.ArrowUp);
+                iconsToAdd.Add(IconHelper.ArrowDown);
+                iconsToAdd.Add(IconHelper.Question);
+            }
+
+            urbanMain = SetCurrentDefinition(urbanMain, 1);
+
+            if (urbanMain.Pages.Length > 1)
+                multiplePages = true;
+
+            embed = GenerateUrban(urbanMain, true);
+
+            if (multiplePages)
+            {
+                iconsToAdd.Add(IconHelper.ArrowLeft);
+                iconsToAdd.Add(IconHelper.ArrowRight);
+                urbanMain.PageIconsSet = true;
+            }
+
+            if (embed == null)
+            {
+                await ReplyAsync("Could not generate the urban dictionary item.");
+                return;
+            }
+
+            var message = await ReplyAsync("", false, embed);
+
+            _urbans.Add(message.Id, urbanMain);
+
+            new Thread(async () =>
+            {
+                foreach (var icon in iconsToAdd)
+                {
+                    var emote = IconHelper.GetEmote(icon);
+                    await message.AddReactionAsync(emote);
+                    Thread.Sleep(1300);
+                }
+
+                if (urbanMain.DefinitionCount > 1)
+                    _client.ReactionAdded += OnReactionAdded;
+
+                await message.ModifyAsync(x => x.Embed = GenerateUrban(urbanMain));
+            }).Start();
         }
 
         #endregion

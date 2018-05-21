@@ -49,25 +49,21 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Profile_Profile_Command)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Profile()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Profile_Profile_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Profile_Profile_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Profile_Profile_Command)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Profile(SocketGuildUser user)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var getProfileImage = await GetProfileImageAsync(user);
-                await Context.Channel.SendFileAsync(getProfileImage);
-                DeleteTmpImage(user.Id);
-            }
+            var getProfileImage = await GetProfileImageAsync(user);
+            await Context.Channel.SendFileAsync(getProfileImage);
+            DeleteTmpImage(user.Id);
         }
 
         #endregion
@@ -76,76 +72,72 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Profile_ProfileItem_Command)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task ProfileItem()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Profile_ProfileItem_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Profile_ProfileItem_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Profile_ProfileItem_Command)]
         [Alias(Labels.Profile_ProfileItem_Alias_1, Labels.Profile_ProfileItem_Alias_2)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task ProfileItem(string type, [Remainder]string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var user = Context.User as SocketGuildUser;
+            var fType = CommonHelper.FirstLetterToUpper(type);
+
+            if (input.Length > 255)
+                input = input.Substring(0, 255);
+
+            switch (fType)
             {
-                var user = Context.User as SocketGuildUser;
-                var fType = CommonHelper.FirstLetterToUpper(type);
-
-                if (input.Length > 255)
-                    input = input.Substring(0, 255);
-
-                switch (fType)
-                {
-                    case nameof(ProfileEnum.Age):
-                    case "Old":
-                        if (int.TryParse(input, out int age))
-                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Age, age.ToString());
-                        else
-                        {
-                            await ReplyAsync("The age you provided is incorrect (Try something like 28)");
-                            return;
-                        }
-                        break;
-                    case nameof(ProfileEnum.Birthdate):
-                        if (DateTime.TryParse(input, out DateTime birthDate))
-                            await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Birthdate, birthDate.ToString("dd-MM-yyyy"));
-                        else
-                        {
-                            await ReplyAsync("The birthdate you provided is incorrect (Try something like 1988-11-30)");
-                            return;
-                        }
-                        break;
-                    case nameof(ProfileEnum.Location):
-                        await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Location, input);
-                        break;
-                    case nameof(ProfileEnum.Game):
-                        await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Game, input);
-                        break;
-                    case nameof(ProfileEnum.Streaming):
-                    case "Stream":
-                    case "Twitch":
-                    case "Youtube":
-                        await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Streaming, input);
-                        break;
-                    case nameof(ProfileEnum.Summary):
-                    case "Description":
-                        var lines = CommonHelper.SplitToLines(input, 50);
-                        var res = "";
-                        foreach (var line in lines)
-                            res += $"{line}<br>";
-                        await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Summary, res);
-                        break;
-                    default:
-                        await ReplyAsync("Please provide a correct type (Age or Birthdate, Location, ...)");
-                        break;
-                }
-
-                await ReplyAsync("Successfully updated your profile");
+                case nameof(ProfileEnum.Age):
+                case "Old":
+                    if (int.TryParse(input, out int age))
+                        await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Age, age.ToString());
+                    else
+                    {
+                        await ReplyAsync("The age you provided is incorrect (Try something like 28)");
+                        return;
+                    }
+                    break;
+                case nameof(ProfileEnum.Birthdate):
+                    if (DateTime.TryParse(input, out DateTime birthDate))
+                        await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Birthdate, birthDate.ToString("dd-MM-yyyy"));
+                    else
+                    {
+                        await ReplyAsync("The birthdate you provided is incorrect (Try something like 1988-11-30)");
+                        return;
+                    }
+                    break;
+                case nameof(ProfileEnum.Location):
+                    await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Location, input);
+                    break;
+                case nameof(ProfileEnum.Game):
+                    await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Game, input);
+                    break;
+                case nameof(ProfileEnum.Streaming):
+                case "Stream":
+                case "Twitch":
+                case "Youtube":
+                    await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Streaming, input);
+                    break;
+                case nameof(ProfileEnum.Summary):
+                case "Description":
+                    var lines = CommonHelper.SplitToLines(input, 50);
+                    var res = "";
+                    foreach (var line in lines)
+                        res += $"{line}<br>";
+                    await _profileService.AddProfileItem((long)Context.Guild.Id, (long)user.Id, (int)ProfileEnum.Summary, res);
+                    break;
+                default:
+                    await ReplyAsync("Please provide a correct type (Age or Birthdate, Location, ...)");
+                    break;
             }
+
+            await ReplyAsync("Successfully updated your profile");
         }
 
         #endregion
@@ -154,54 +146,50 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Profile_RemoveProfileItem_Command)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveProfileItem()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Profile_RemoveProfileItem_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Profile_RemoveProfileItem_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Profile_RemoveProfileItem_Command)]
         [Alias(Labels.Profile_RemoveProfileItem_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveProfileItem(string type)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var user = Context.User as SocketGuildUser;
+            var fType = CommonHelper.FirstLetterToUpper(type);
+            if (Enum.IsDefined(typeof(ProfileEnum), fType))
             {
-                var user = Context.User as SocketGuildUser;
-                var fType = CommonHelper.FirstLetterToUpper(type);
-                if (Enum.IsDefined(typeof(ProfileEnum), fType))
+                switch ((ProfileEnum)Enum.Parse(typeof(ProfileEnum), fType))
                 {
-                    switch ((ProfileEnum)Enum.Parse(typeof(ProfileEnum), fType))
-                    {
-                        case ProfileEnum.Age:
-                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Age);
-                            break;
-                        case ProfileEnum.Birthdate:
-                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Birthdate);
-                            break;
-                        case ProfileEnum.Location:
-                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Location);
-                            break;
-                        case ProfileEnum.Game:
-                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Game);
-                            break;
-                        case ProfileEnum.Streaming:
-                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Streaming);
-                            break;
-                        case ProfileEnum.Summary:
-                            await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Summary);
-                            break;
-                    }
+                    case ProfileEnum.Age:
+                        await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Age);
+                        break;
+                    case ProfileEnum.Birthdate:
+                        await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Birthdate);
+                        break;
+                    case ProfileEnum.Location:
+                        await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Location);
+                        break;
+                    case ProfileEnum.Game:
+                        await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Game);
+                        break;
+                    case ProfileEnum.Streaming:
+                        await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Streaming);
+                        break;
+                    case ProfileEnum.Summary:
+                        await _profileService.RemoveProfileItem((long)user.Guild.Id, (long)user.Id, (int)ProfileEnum.Summary);
+                        break;
+                }
 
-                    await ReplyAsync("Successfully removed the item from your profile");
-                }
-                else
-                {
-                    await ReplyAsync("Please provide a correct type (Age, Location, ...)");
-                }
+                await ReplyAsync("Successfully removed the item from your profile");
+            }
+            else
+            {
+                await ReplyAsync("Please provide a correct type (Age, Location, ...)");
             }
         }
 
@@ -257,7 +245,7 @@ namespace NoeSbot.Modules
                 streaming = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Streaming)?.Value ?? "n/a";
                 summary = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Summary)?.Value ?? "n/a";
 
-                
+
                 var custom = await _profileService.RetrieveProfileBackground((long)user.Guild.Id, (long)user.Id, favGame);
                 if (custom != null)
                     bitmap = await DownloadHelper.DownloadBitmapImage(custom.Value);
@@ -267,7 +255,7 @@ namespace NoeSbot.Modules
 
             if (bitmap == null)
                 bitmap = new Bitmap(System.Drawing.Image.FromFile(imageFilePath));
-            
+
             using (bitmap)
             {
                 using (var bitmapCore = new Bitmap(System.Drawing.Image.FromFile(imageCorePath)))

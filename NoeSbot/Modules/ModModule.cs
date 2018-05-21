@@ -35,50 +35,46 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Mod_Nuke_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Nuke()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_Nuke_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_Nuke_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Mod_Nuke_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Nuke(string time)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var timeInS = CommonHelper.GetTimeInSeconds(time);
+            if (timeInS <= 0 || timeInS > 3600)
+                timeInS = 60;
+            var timeSpan = TimeSpan.FromSeconds(timeInS);
+
+            var user = Context.User as SocketGuildUser;
+            var builder = new EmbedBuilder()
             {
-                var timeInS = CommonHelper.GetTimeInSeconds(time);
-                if (timeInS <= 0 || timeInS > 3600)
-                    timeInS = 60;
-                var timeSpan = TimeSpan.FromSeconds(timeInS);
+                Color = user.GetColor()
+            };
 
-                var user = Context.User as SocketGuildUser;
-                var builder = new EmbedBuilder()
-                {
-                    Color = user.GetColor()
-                };
+            builder.AddField(x =>
+            {
+                x.Name = "What is happending?";
+                x.Value = $"{user.Username} put this channel in nuke mode for {CommonHelper.ToReadableString(timeSpan)}.{Environment.NewLine}You will not be able to send any messages unless you are a server admin.";
+                x.IsInline = false;
+            });
 
-                builder.AddField(x =>
-                {
-                    x.Name = "What is happending?";
-                    x.Value = $"{user.Username} put this channel in nuke mode for {CommonHelper.ToReadableString(timeSpan)}.{Environment.NewLine}You will not be able to send any messages unless you are a server admin.";
-                    x.IsInline = false;
-                });
+            if (user.AvatarId != null)
+                builder.WithThumbnailUrl(user.GetAvatarUrl());
 
-                if (user.AvatarId != null)
-                    builder.WithThumbnailUrl(user.GetAvatarUrl());
+            var msg = await ReplyAsync("", false, builder.Build());
 
-                var msg = await ReplyAsync("", false, builder.Build());
+            var channelId = Context.Channel.Id;
+            Globals.NukeChannel(channelId);
 
-                var channelId = Context.Channel.Id;
-                Globals.NukeChannel(channelId);
-
-                Action endNuke = async () => await EndNuke(msg.Id, channelId, user.Username);
-                endNuke.DelayFor(timeSpan);
-            }
+            Action endNuke = async () => await EndNuke(msg.Id, channelId, user.Username);
+            endNuke.DelayFor(timeSpan);
         }
 
         #endregion
@@ -87,24 +83,20 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Mod_Botstatus_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Botstatus()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_Botstatus_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_Botstatus_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Mod_Botstatus_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Botstatus([Remainder]string status)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                await _client.SetGameAsync(status);
-                await ReplyAsync("Status changed.");
-            }
+            await _client.SetGameAsync(status);
+            await ReplyAsync("Status changed.");
         }
 
         #endregion

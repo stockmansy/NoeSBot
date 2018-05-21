@@ -38,16 +38,14 @@ namespace NoeSbot.Modules
         [Command(Labels.Game_FlipCoin_Command)]
         [Alias(Labels.Game_FlipCoin_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task FlipCoin()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var result = _random.Next(2);
-                if (result <= 0)
-                    await ReplyAsync("Heads");
-                else
-                    await ReplyAsync("Tails");
-            }
+            var result = _random.Next(2);
+            if (result <= 0)
+                await ReplyAsync("Heads");
+            else
+                await ReplyAsync("Tails");
         }
 
         #endregion
@@ -57,160 +55,156 @@ namespace NoeSbot.Modules
         [Command(Labels.Game_RockPaperScissors_Command)]
         [Alias(Labels.Game_RockPaperScissors_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RockPaperScissors()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_RockPaperScissors_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_RockPaperScissors_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Game_RockPaperScissors_Command)]
         [Alias(Labels.Game_RockPaperScissors_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RockPaperScissors(string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var builder = new StringBuilder();
+
+            var botChooses = _random.Next(3);
+
+            var playerChoice = -1;
+            bool? playerWins = null;
+
+            switch (input.ToLowerInvariant())
             {
-                var builder = new StringBuilder();
-
-                var botChooses = _random.Next(3);
-
-                var playerChoice = -1;
-                bool? playerWins = null;
-
-                switch (input.ToLowerInvariant())
-                {
-                    case "scissors":
-                    case "s":
-                    case "scissor":
-                        playerChoice = 0;
-                        break;
-                    case "rocks":
-                    case "r":
-                    case "rock":
-                        playerChoice = 1;
-                        break;
-                    case "papers":
-                    case "p":
-                    case "paper":
-                        playerChoice = 2;
-                        break;
-                }
-
-                switch (botChooses)
-                {
-                    case 0:
-                        builder.AppendLine("I pick => Scissors!");
-                        builder.AppendLine("```");
-                        builder.AppendLine("   _       ,/'");
-                        builder.AppendLine("  (_).  ,/'");
-                        builder.AppendLine("   _  ::");
-                        builder.AppendLine("  (_)'  `\\.");
-                        builder.AppendLine("           `\\.");
-                        builder.AppendLine("```");
-                        if (playerChoice == 0) // Scissors
-                            playerWins = null;
-                        if (playerChoice == 1) // Rock
-                            playerWins = true;
-                        if (playerChoice == 2) // Paper
-                            playerWins = false;
-                        break;
-                    case 1:
-                        builder.AppendLine("I pick => Rock!");
-                        builder.AppendLine("```");
-                        builder.AppendLine("  ____, O");
-                        builder.AppendLine("   /   /M| ");
-                        builder.AppendLine("  /|MMMMMMMM");
-                        builder.AppendLine("  {| | // |}");
-                        builder.AppendLine("-_}| |/ \\ |{_apx");
-                        builder.AppendLine("");
-                        builder.AppendLine("");
-                        builder.AppendLine("  .Q             Q .");
-                        builder.AppendLine(" /`M\\,          /W\\_\\");
-                        builder.AppendLine("'| H           (`&}=|\"");
-                        builder.AppendLine(" | |\\         ,'`}\\ |");
-                        builder.AppendLine("/'\\l '       (_ / //'\\");
-                        builder.AppendLine("```");
-                        if (playerChoice == 0) // Scissors
-                            playerWins = false;
-                        if (playerChoice == 1) // Rock
-                            playerWins = null;
-                        if (playerChoice == 2) // Paper
-                            playerWins = true;
-                        break;
-                    case 2:
-                        builder.AppendLine("I pick => Paper!");
-                        builder.AppendLine("```");
-                        builder.AppendLine("             _.____");
-                        builder.AppendLine("          _.'      '_.");
-                        builder.AppendLine("      _.-'       _.'  \\");
-                        builder.AppendLine("    _'___     _.'      | ");
-                        builder.AppendLine("  .'     '-.- '         L");
-                        builder.AppendLine(" /          \\          | ");
-                        builder.AppendLine("|     __     |         L");
-                        builder.AppendLine("|   .x$$x.   L         | ");
-                        builder.AppendLine("|   |%$$$|   |         | ");
-                        builder.AppendLine("|   |%%$$|   L         | ");
-                        builder.AppendLine("|   '%%%?'   |         .\\");
-                        builder.AppendLine(" \\          /|      .- ");
-                        builder.AppendLine("  '.__  __.' |   .- ");
-                        builder.AppendLine("      ''      \\.-");
-                        builder.AppendLine("```");
-                        if (playerChoice == 0) // Scissors
-                            playerWins = false;
-                        if (playerChoice == 1) // Rock
-                            playerWins = true;
-                        if (playerChoice == 2) // Paper
-                            playerWins = null;
-                        break;
-                }
-
-                if (playerWins == null && playerChoice >= 0)
-                {
-                    builder.AppendLine("We are:");
-                    builder.AppendLine("```");
-                    builder.AppendLine(" _   _          _ ");
-                    builder.AppendLine("| | (_)        | | ");
-                    builder.AppendLine("| |_ _  ___  __| | ");
-                    builder.AppendLine("| __| |/ _ \\/ _` | ");
-                    builder.AppendLine("| |_| |  __/ (_| |");
-                    builder.AppendLine(" \\__|_|\\___|\\__,_| ");
-                    builder.AppendLine("```");
-                }
-                else if (playerWins == true)
-                {
-                    builder.AppendLine("I suffered:");
-                    builder.AppendLine("```");
-                    builder.AppendLine("     _       __           _   ");
-                    builder.AppendLine("    | |     / _|         | |  ");
-                    builder.AppendLine("  __| | ___| |_ ___  __ _| |_ ");
-                    builder.AppendLine(" / _` |/ _ \\  _/ _ \\/ _` | __| ");
-                    builder.AppendLine("| (_| |  __/ ||  __/ (_| | |_ ");
-                    builder.AppendLine(" \\__,_|\\___|_| \\___|\\__,_|\\__| ");
-                    builder.AppendLine("```");
-                }
-                else if (playerWins == false)
-                {
-                    builder.AppendLine("I attained:");
-                    builder.AppendLine("```");
-                    builder.AppendLine("       _      _                   ");
-                    builder.AppendLine("      (_)    | | ");
-                    builder.AppendLine("__   ___  ___| |_ ___  _ __ _   _ ");
-                    builder.AppendLine("\\ \\ / / |/ __| __/ _ \\| '__| | | |");
-                    builder.AppendLine(" \\ V /| | (__| || (_) | |  | |_| |");
-                    builder.AppendLine("  \\_/ |_|\\___|\\__\\___/|_|   \\__, |");
-                    builder.AppendLine("                             __/ |");
-                    builder.AppendLine("                            |___/ ");
-                    builder.AppendLine("```");
-                }
-
-                if (playerChoice < 0)
-                    await ReplyAsync("Please choose something valid (rock,rocks,r; paper,papers,p; scissor, scissors,s)");
-                else
-                    await ReplyAsync(builder.ToString());
+                case "scissors":
+                case "s":
+                case "scissor":
+                    playerChoice = 0;
+                    break;
+                case "rocks":
+                case "r":
+                case "rock":
+                    playerChoice = 1;
+                    break;
+                case "papers":
+                case "p":
+                case "paper":
+                    playerChoice = 2;
+                    break;
             }
+
+            switch (botChooses)
+            {
+                case 0:
+                    builder.AppendLine("I pick => Scissors!");
+                    builder.AppendLine("```");
+                    builder.AppendLine("   _       ,/'");
+                    builder.AppendLine("  (_).  ,/'");
+                    builder.AppendLine("   _  ::");
+                    builder.AppendLine("  (_)'  `\\.");
+                    builder.AppendLine("           `\\.");
+                    builder.AppendLine("```");
+                    if (playerChoice == 0) // Scissors
+                        playerWins = null;
+                    if (playerChoice == 1) // Rock
+                        playerWins = true;
+                    if (playerChoice == 2) // Paper
+                        playerWins = false;
+                    break;
+                case 1:
+                    builder.AppendLine("I pick => Rock!");
+                    builder.AppendLine("```");
+                    builder.AppendLine("  ____, O");
+                    builder.AppendLine("   /   /M| ");
+                    builder.AppendLine("  /|MMMMMMMM");
+                    builder.AppendLine("  {| | // |}");
+                    builder.AppendLine("-_}| |/ \\ |{_apx");
+                    builder.AppendLine("");
+                    builder.AppendLine("");
+                    builder.AppendLine("  .Q             Q .");
+                    builder.AppendLine(" /`M\\,          /W\\_\\");
+                    builder.AppendLine("'| H           (`&}=|\"");
+                    builder.AppendLine(" | |\\         ,'`}\\ |");
+                    builder.AppendLine("/'\\l '       (_ / //'\\");
+                    builder.AppendLine("```");
+                    if (playerChoice == 0) // Scissors
+                        playerWins = false;
+                    if (playerChoice == 1) // Rock
+                        playerWins = null;
+                    if (playerChoice == 2) // Paper
+                        playerWins = true;
+                    break;
+                case 2:
+                    builder.AppendLine("I pick => Paper!");
+                    builder.AppendLine("```");
+                    builder.AppendLine("             _.____");
+                    builder.AppendLine("          _.'      '_.");
+                    builder.AppendLine("      _.-'       _.'  \\");
+                    builder.AppendLine("    _'___     _.'      | ");
+                    builder.AppendLine("  .'     '-.- '         L");
+                    builder.AppendLine(" /          \\          | ");
+                    builder.AppendLine("|     __     |         L");
+                    builder.AppendLine("|   .x$$x.   L         | ");
+                    builder.AppendLine("|   |%$$$|   |         | ");
+                    builder.AppendLine("|   |%%$$|   L         | ");
+                    builder.AppendLine("|   '%%%?'   |         .\\");
+                    builder.AppendLine(" \\          /|      .- ");
+                    builder.AppendLine("  '.__  __.' |   .- ");
+                    builder.AppendLine("      ''      \\.-");
+                    builder.AppendLine("```");
+                    if (playerChoice == 0) // Scissors
+                        playerWins = false;
+                    if (playerChoice == 1) // Rock
+                        playerWins = true;
+                    if (playerChoice == 2) // Paper
+                        playerWins = null;
+                    break;
+            }
+
+            if (playerWins == null && playerChoice >= 0)
+            {
+                builder.AppendLine("We are:");
+                builder.AppendLine("```");
+                builder.AppendLine(" _   _          _ ");
+                builder.AppendLine("| | (_)        | | ");
+                builder.AppendLine("| |_ _  ___  __| | ");
+                builder.AppendLine("| __| |/ _ \\/ _` | ");
+                builder.AppendLine("| |_| |  __/ (_| |");
+                builder.AppendLine(" \\__|_|\\___|\\__,_| ");
+                builder.AppendLine("```");
+            }
+            else if (playerWins == true)
+            {
+                builder.AppendLine("I suffered:");
+                builder.AppendLine("```");
+                builder.AppendLine("     _       __           _   ");
+                builder.AppendLine("    | |     / _|         | |  ");
+                builder.AppendLine("  __| | ___| |_ ___  __ _| |_ ");
+                builder.AppendLine(" / _` |/ _ \\  _/ _ \\/ _` | __| ");
+                builder.AppendLine("| (_| |  __/ ||  __/ (_| | |_ ");
+                builder.AppendLine(" \\__,_|\\___|_| \\___|\\__,_|\\__| ");
+                builder.AppendLine("```");
+            }
+            else if (playerWins == false)
+            {
+                builder.AppendLine("I attained:");
+                builder.AppendLine("```");
+                builder.AppendLine("       _      _                   ");
+                builder.AppendLine("      (_)    | | ");
+                builder.AppendLine("__   ___  ___| |_ ___  _ __ _   _ ");
+                builder.AppendLine("\\ \\ / / |/ __| __/ _ \\| '__| | | |");
+                builder.AppendLine(" \\ V /| | (__| || (_) | |  | |_| |");
+                builder.AppendLine("  \\_/ |_|\\___|\\__\\___/|_|   \\__, |");
+                builder.AppendLine("                             __/ |");
+                builder.AppendLine("                            |___/ ");
+                builder.AppendLine("```");
+            }
+
+            if (playerChoice < 0)
+                await ReplyAsync("Please choose something valid (rock,rocks,r; paper,papers,p; scissor, scissors,s)");
+            else
+                await ReplyAsync(builder.ToString());
         }
 
         #endregion
@@ -220,30 +214,22 @@ namespace NoeSbot.Modules
         [Command(Labels.Game_8Ball_Command)]
         [Alias(Labels.Game_8Ball_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task MagicBall()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_8Ball_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_8Ball_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Game_8Ball_Command)]
         [Alias(Labels.Game_8Ball_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task MagicBall([Remainder] string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var result = "";
+            var result = "";
 
-                var options = new List<EightBallModel>() {
-                new EightBallModel
-                {
-                    Text = "Wiklas is a pussy",
-                    ImageName = "8Ballwiklaspussy.jpg"
-                },
+            var options = new List<EightBallModel>() {
                 new EightBallModel
                 {
                     Text = "Yes",
@@ -276,19 +262,18 @@ namespace NoeSbot.Modules
                 }
             };
 
-                var rndNr = _random.Next(options.Count);
-                var randomElement = options.ElementAt(rndNr);
-                result = randomElement?.Text;
-                var imageName = randomElement?.ImageName;
+            var rndNr = _random.Next(options.Count);
+            var randomElement = options.ElementAt(rndNr);
+            result = randomElement?.Text;
+            var imageName = randomElement?.ImageName;
 
-                var fileExists = File.Exists(@"Images\MagicBall\" + imageName);
+            var fileExists = File.Exists(@"Images\MagicBall\" + imageName);
 
-                //Check if the image exsits!!! then send it
-                if (fileExists)
-                    await Context.Channel.SendFileAsync(@"Images\MagicBall\" + imageName, result);
-                else
-                    await ReplyAsync(result);
-            }
+            //Check if the image exsits!!! then send it
+            if (fileExists)
+                await Context.Channel.SendFileAsync(@"Images\MagicBall\" + imageName, result);
+            else
+                await ReplyAsync(result);
         }
 
         #endregion
@@ -298,33 +283,29 @@ namespace NoeSbot.Modules
         [Command(Labels.Game_Choose_Command)]
         [Alias(Labels.Game_Choose_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Choose()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Choose_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Choose_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Game_Choose_Command)]
         [Alias(Labels.Game_Choose_Alias_1)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Choose([Remainder] string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var inputs = input.Split(' ');
+            if (inputs.Length < 2)
             {
-                var inputs = input.Split(' ');
-                if (inputs.Length < 2)
-                {
-                    await ReplyAsync("Please provide at least 2 options");
-                    return;
-                }
-
-                var result = _random.Next(inputs.Length);
-
-                await ReplyAsync(inputs[result]);
+                await ReplyAsync("Please provide at least 2 options");
+                return;
             }
+
+            var result = _random.Next(inputs.Length);
+
+            await ReplyAsync(inputs[result]);
         }
 
         #endregion
@@ -334,30 +315,26 @@ namespace NoeSbot.Modules
         [Command(Labels.Game_Blame_Command)]
         [Alias(Labels.Game_Blame_Alias_1, Labels.Game_Blame_Alias_2)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RandomlyBlame()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                await Context.Message.DeleteAsync();
-                var allUsers = await Context.Guild.GetUsersAsync();
-                var onlineUsers = allUsers.Where(x => x.Status == UserStatus.Online && !x.IsBot && !x.IsWebhook).ToList();
-                var rndUser = onlineUsers[_random.Next(onlineUsers.Count)];
-                var name = !string.IsNullOrWhiteSpace(rndUser.Nickname) ? rndUser.Nickname : rndUser.Username;
-                await ReplyAsync($"I blame {name}", true);
-            }
+            await Context.Message.DeleteAsync();
+            var allUsers = await Context.Guild.GetUsersAsync();
+            var onlineUsers = allUsers.Where(x => x.Status == UserStatus.Online && !x.IsBot && !x.IsWebhook).ToList();
+            var rndUser = onlineUsers[_random.Next(onlineUsers.Count)];
+            var name = !string.IsNullOrWhiteSpace(rndUser.Nickname) ? rndUser.Nickname : rndUser.Username;
+            await ReplyAsync($"I blame {name}", true);
         }
 
         [Command(Labels.Game_Blame_Command)]
         [Alias(Labels.Game_Blame_Alias_1, Labels.Game_Blame_Alias_2)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RandomlyBlame([Summary("The user to be blamed")] SocketGuildUser user)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook && !user.IsBot)
-            {
-                await Context.Message.DeleteAsync();
-                var name = !string.IsNullOrWhiteSpace(user.Nickname) ? user.Nickname : user.Username;
-                await ReplyAsync($"I blame {name}", true);
-            }
+            await Context.Message.DeleteAsync();
+            var name = !string.IsNullOrWhiteSpace(user.Nickname) ? user.Nickname : user.Username;
+            await ReplyAsync($"I blame {name}", true);
         }
 
         #endregion
@@ -367,31 +344,27 @@ namespace NoeSbot.Modules
         [Command(Labels.Game_Roll_Command)]
         [Alias(Labels.Game_Roll_Alias_1, Labels.Game_Roll_Alias_2, Labels.Game_Roll_Alias_3)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Roll()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Roll_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Roll_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Game_Roll_Command)]
         [Alias(Labels.Game_Roll_Alias_1, Labels.Game_Roll_Alias_2, Labels.Game_Roll_Alias_3)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Roll([Remainder]string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            try
             {
-                try
-                {
-                    var result = DiceHelper.GetDiceResult(input);
-                    await ReplyAsync($"{IconHelper.Dice} {result}");
-                }
-                catch
-                {
-                    await Context.User.SendMessageAsync("Invalid input, you have to specify a solid number (e.g. 6)");
-                }
+                var result = DiceHelper.GetDiceResult(input);
+                await ReplyAsync($"{IconHelper.Dice} {result}");
+            }
+            catch
+            {
+                await Context.User.SendMessageAsync("Invalid input, you have to specify a solid number (e.g. 6)");
             }
         }
 
@@ -402,31 +375,27 @@ namespace NoeSbot.Modules
         [Command(Labels.Game_Dnd_Command)]
         [Alias(Labels.Game_Dnd_Alias_1, Labels.Game_Dnd_Alias_2, Labels.Game_Dnd_Alias_3)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Dnd()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Roll_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Roll_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
         [Command(Labels.Game_Dnd_Command)]
         [Alias(Labels.Game_Dnd_Alias_1, Labels.Game_Dnd_Alias_2, Labels.Game_Dnd_Alias_3)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Dnd([Remainder]string input)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            try
             {
-                try
-                {
-                    var result = DiceHelper.GetDndResult(input);
-                    await ReplyAsync($"{IconHelper.Dice} {result}");
-                }
-                catch
-                {
-                    await Context.User.SendMessageAsync("Invalid input, you have to specify a solid number or expression (e.g. 6, 20 + 2, 20 x 5)");
-                }
+                var result = DiceHelper.GetDndResult(input);
+                await ReplyAsync($"{IconHelper.Dice} {result}");
+            }
+            catch
+            {
+                await Context.User.SendMessageAsync("Invalid input, you have to specify a solid number or expression (e.g. 6, 20 + 2, 20 x 5)");
             }
         }
 

@@ -29,6 +29,7 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Help_Marco_Command)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsAllowed)]
         public async Task MarcoPoloAsync()
         {
             await ReplyAsync("Polo");
@@ -40,22 +41,21 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Help_Help_Command)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task HelpAsync()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                await Context.Message.DeleteAsync();
-                var user = Context.User as SocketGuildUser;
+            await Context.Message.DeleteAsync();
+            var user = Context.User as SocketGuildUser;
 
-                var prefix = Configuration.Load(Context.Guild.Id).Prefix;
-                var loadedModules = Configuration.Load(Context.Guild.Id).LoadedModules;
+            var prefix = Configuration.Load(Context.Guild.Id).Prefix;
+            var loadedModules = Configuration.Load(Context.Guild.Id).LoadedModules;
 
-                await user.SendMessageAsync("", false, CommonHelper.GetModules(prefix, user.GetColor(), loadedModules));
-            }
+            await user.SendMessageAsync("", false, CommonHelper.GetModules(prefix, user.GetColor(), loadedModules));
         }
 
         [Command(Labels.Help_Help_Command)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsAllowed)]
         public async Task HelpAsync(string command)
         {
             var user = Context.User as SocketGuildUser;

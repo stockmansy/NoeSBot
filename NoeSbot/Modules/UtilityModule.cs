@@ -35,53 +35,49 @@ namespace NoeSbot.Modules
 
         [Command(Labels.Utility_UserInfo_Command)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task UserInfo()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                var user = Context.User as SocketGuildUser;
-                await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Utility_UserInfo_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
-            }
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Utility_UserInfo_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
         }
 
 
         [Command(Labels.Utility_UserInfo_Command)]
         [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task UserInfo(SocketGuildUser user)
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
+            var builder = new EmbedBuilder()
             {
-                var builder = new EmbedBuilder()
-                {
-                    Color = user.GetColor()
-                };
+                Color = user.GetColor()
+            };
 
-                builder.AddField(x =>
-                {
-                    x.Name = $"Username of {user.Nickname}";
-                    x.Value = $"{user.Username}";
-                    x.IsInline = false;
-                });
+            builder.AddField(x =>
+            {
+                x.Name = $"Username of {user.Nickname}";
+                x.Value = $"{user.Username}";
+                x.IsInline = false;
+            });
 
-                builder.AddField(x =>
-                {
-                    x.Name = "Join date";
-                    x.Value = $"The user's joined {user.JoinedAt?.ToString("dd/MM/yyyy HH:mm")}";
-                    x.IsInline = false;
-                });
+            builder.AddField(x =>
+            {
+                x.Name = "Join date";
+                x.Value = $"The user's joined {user.JoinedAt?.ToString("dd/MM/yyyy HH:mm")}";
+                x.IsInline = false;
+            });
 
-                builder.AddField(x =>
-                {
-                    x.Name = "The user roles";
-                    x.Value = $"{string.Join(Environment.NewLine, user.Roles.Where(y => y.Id != y.Guild.EveryoneRole.Id).Select(y => y.Name))}";
-                    x.IsInline = false;
-                });
+            builder.AddField(x =>
+            {
+                x.Name = "The user roles";
+                x.Value = $"{string.Join(Environment.NewLine, user.Roles.Where(y => y.Id != y.Guild.EveryoneRole.Id).Select(y => y.Name))}";
+                x.IsInline = false;
+            });
 
-                if (user.AvatarId != null)
-                    builder.WithThumbnailUrl(user.GetAvatarUrl());
+            if (user.AvatarId != null)
+                builder.WithThumbnailUrl(user.GetAvatarUrl());
 
-                await ReplyAsync("", false, builder.Build());
-            }
+            await ReplyAsync("", false, builder.Build());
         }
 
         #endregion
@@ -91,17 +87,15 @@ namespace NoeSbot.Modules
         [Command(Labels.Utility_RandomMember_Command)]
         [Alias(Labels.Utility_RandomMember_Alias_1, Labels.Utility_RandomMember_Alias_2)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RandomMember()
         {
-            if (!Context.Message.Author.IsBot && !Context.Message.Author.IsWebhook)
-            {
-                await Context.Message.DeleteAsync();
-                var allUsers = await Context.Guild.GetUsersAsync();
-                var onlineUsers = allUsers.Where(x => x.Status == UserStatus.Online && !x.IsBot && !x.IsWebhook).ToList();
-                var rndUser = onlineUsers[_random.Next(onlineUsers.Count)];
-                var name = !string.IsNullOrWhiteSpace(rndUser.Nickname) ? rndUser.Nickname : rndUser.Username;
-                await ReplyAsync($"Picked {name} at random");
-            }
+            await Context.Message.DeleteAsync();
+            var allUsers = await Context.Guild.GetUsersAsync();
+            var onlineUsers = allUsers.Where(x => x.Status == UserStatus.Online && !x.IsBot && !x.IsWebhook).ToList();
+            var rndUser = onlineUsers[_random.Next(onlineUsers.Count)];
+            var name = !string.IsNullOrWhiteSpace(rndUser.Nickname) ? rndUser.Nickname : rndUser.Username;
+            await ReplyAsync($"Picked {name} at random");
         }
 
         #endregion
