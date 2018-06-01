@@ -5,10 +5,12 @@ using Microsoft.Extensions.Caching.Memory;
 using NoeSbot.Database.Models;
 using NoeSbot.Database.Services;
 using NoeSbot.Enums;
+using NoeSbot.Extensions;
 using NoeSbot.Helpers;
 using NoeSbot.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,12 +24,18 @@ namespace NoeSbot.Logic
         private readonly DiscordSocketClient _client;
         private IMemoryCache _cache;
         private bool _runPunishedCheck = false;
+        private ConcurrentList<FileInfo> _punishImages;
+        private static Random _rnd;
 
         public PunishLogic(IPunishedService database, DiscordSocketClient client, IMemoryCache memoryCache)
         {
             _database = database;
             _client = client;
             _cache = memoryCache;
+            _punishImages = new ConcurrentList<FileInfo>();
+            foreach (var image in FileHelper.ProcessDirectory(@"Images\PunishModule\"))
+                _punishImages.Add(image);
+            _rnd = new Random();
         }
 
         public async Task HandleMessage(ICommandContext context)
@@ -68,7 +76,7 @@ namespace NoeSbot.Logic
             return result;
         }
 
-        public async Task Punish(ICommandContext context, SocketGuildUser user, string time, string reason, int durationInSecs)
+        public async Task<string> Punish(ICommandContext context, SocketGuildUser user, string time, string reason, int durationInSecs)
         {
             var success = await _database.SavePunishedAsync((long)user.Id, DateTime.UtcNow, durationInSecs, reason);
             var punishedRoles = GetPunishRoles(context);
@@ -83,6 +91,8 @@ namespace NoeSbot.Logic
 
                 if (!_runPunishedCheck)
                     StartPunishedCheck(context);
+
+                return RandomPunishedImage()?.FullName;
             }
             else
                 throw new Exception("Could not successfully punish the user");
@@ -129,7 +139,7 @@ namespace NoeSbot.Logic
 
                 foreach (var pun in all)
                 {
-                    var iuser =await context.Guild.GetUserAsync((ulong)pun.UserId);
+                    var iuser = await context.Guild.GetUserAsync((ulong)pun.UserId);
                     var user = (SocketGuildUser)iuser;
 
                     foreach (var role in punishedRoles)
@@ -289,7 +299,8 @@ namespace NoeSbot.Logic
 
             foreach (var role in roles)
             {
-                if (user.Roles.Contains(role)) { 
+                if (user.Roles.Contains(role))
+                {
                     await user.RemoveRoleAsync(role);
                     LogHelper.Log($"Attempted to remove role {role.Name}", LogLevel.Debug);
                 }
@@ -303,6 +314,12 @@ namespace NoeSbot.Logic
         {
             await Task.Delay(delay, tokenSource.Token);
             await Unpunish(roles, user);
+        }
+
+        private FileInfo RandomPunishedImage()
+        {
+            var r = _rnd.Next(_punishImages.Count);
+            return _punishImages[r];
         }
     }
 }

@@ -678,7 +678,7 @@
 
 {fields}
    {field}
-      {name}What will happen?/name}
+      {name}What will happen?{/name}
       {value}UserX put this channel in nuke mode.
 You will not be able to send any messages unless you are a server admin.{/value}
    {/field}
@@ -1291,6 +1291,16 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
 
 {examples}
    {example}{0}{1} testcustom{/example}
+{/examples}</value>
+  </data>
+  <data name="modmodule_denuke_name" xml:space="preserve">
+    <value>Denuke Command</value>
+  </data>
+  <data name="modmodule_denuke_summary" xml:space="preserve">
+    <value>This will remove the nuke on a channel:
+
+{examples}
+   {example}{0}{1}{/example}
 {/examples}</value>
   </data>
 </root>

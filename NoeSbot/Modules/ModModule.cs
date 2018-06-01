@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Memory;
 using NoeSbot.Enums;
 using NoeSbot.Extensions;
 using NoeSbot.Resources;
+using NoeSbot.Logic;
 
 namespace NoeSbot.Modules
 {
@@ -17,13 +18,15 @@ namespace NoeSbot.Modules
     public class ModModule : ModuleBase
     {
         private readonly DiscordSocketClient _client;
+        private readonly ModLogic _modLogic;
         private IMemoryCache _cache;
 
         #region Constructor
 
-        public ModModule(DiscordSocketClient client, IMemoryCache memoryCache)
+        public ModModule(DiscordSocketClient client, ModLogic modLogic, IMemoryCache memoryCache)
         {
             _client = client;
+            _modLogic = modLogic;
             _cache = memoryCache;
         }
 
@@ -71,10 +74,24 @@ namespace NoeSbot.Modules
             var msg = await ReplyAsync("", false, builder.Build());
 
             var channelId = Context.Channel.Id;
-            Globals.NukeChannel(channelId);
+            _modLogic.NukeChannel(channelId, msg.Id);
 
             Action endNuke = async () => await EndNuke(msg.Id, channelId, user.Username);
             endNuke.DelayFor(timeSpan);
+        }
+
+        #endregion
+
+        #region DeNuke
+
+        [Command(Labels.Mod_Denuke_Command)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task Denuke()
+        {
+            var user = Context.User as SocketGuildUser;
+            var channelId = Context.Channel.Id;
+            await StopNuke(channelId);
         }
 
         #endregion
@@ -112,7 +129,19 @@ namespace NoeSbot.Modules
 
             await Context.Channel.SendMessageAsync($"The nuke started by {username} has ended...");
 
-            Globals.DeNukeChannel(channelId);
+            _modLogic.DeNukeChannel(channelId);
+        }
+
+        private async Task StopNuke(ulong channelId)
+        {
+            var msgId = _modLogic.DeNukeChannel(channelId);
+            if (msgId > 0)
+            {
+                var msg = await Context.Channel.GetMessageAsync(msgId);
+                await msg.DeleteAsync();
+            }
+
+            await Context.Channel.SendMessageAsync($"The nuke was ended early...");
         }
 
         #endregion

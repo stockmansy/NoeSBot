@@ -1,9 +1,12 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using NoeSbot.Enums;
+using NoeSbot.Extensions;
 using NoeSbot.Helpers;
 using NoeSbot.Resources;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,10 +17,12 @@ namespace NoeSbot.Logic
     public class ModLogic
     {
         private readonly DiscordSocketClient _client;
+        private static ConcurrentDictionary<ulong, ulong> _nukedChannels;
 
         public ModLogic(DiscordSocketClient client)
         {
             _client = client;
+            _nukedChannels = new ConcurrentDictionary<ulong, ulong>();
         }
 
         public async Task UserJoined(SocketGuildUser user)
@@ -55,7 +60,31 @@ namespace NoeSbot.Logic
             }
         }
 
-        private bool ModLoaded (ulong guildId)
+        public async Task<bool> Process(ICommandContext context)
+        {
+            var user = context.User as SocketGuildUser; ;
+            if (!user.GuildPermissions.Administrator && _nukedChannels.ContainsKey(context.Channel.Id))
+            {
+                var msg = context.Message as IMessage;
+                await msg.DeleteAsync();
+                return false;
+            }
+
+            return true;
+        }
+
+        public void NukeChannel(ulong channel, ulong msg)
+        {
+            _nukedChannels.AddOrUpdate(channel, msg);
+        }
+
+        public ulong DeNukeChannel(ulong channel)
+        {
+            _nukedChannels.TryRemove(channel, out ulong msg);
+            return msg;
+        }
+
+        private bool ModLoaded(ulong guildId)
         {
             var loadedModules = Configuration.Load(guildId).LoadedModules;
 

@@ -28,8 +28,7 @@ namespace NoeSbot
         
         public async Task Start()
         {
-            Configuration.EnsureExists();            
-            Globals.LoadGlobals();
+            Configuration.EnsureExists();
             
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {

@@ -1397,6 +1397,28 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Denuke Command.
+        /// </summary>
+        internal static string modmodule_denuke_name {
+            get {
+                return ResourceManager.GetString("modmodule_denuke_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This will remove the nuke on a channel:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string modmodule_denuke_summary {
+            get {
+                return ResourceManager.GetString("modmodule_denuke_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mod Module.
         /// </summary>
         internal static string modmodule_name {
@@ -1419,7 +1441,7 @@ namespace NoeSbot.Resources {
         ///
         ///{fields}
         ///   {field}
-        ///      {name}What will happen?/name}
+        ///      {name}What will happen?{/name}
         ///      {value}UserX put this channel in nuke mode.
         ///You will not be able to send any messages unless you are a server admin.{/value}
         ///   {/field}

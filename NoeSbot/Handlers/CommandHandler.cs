@@ -134,13 +134,8 @@ namespace NoeSbot.Handlers
 
                 if (loadedModules.Contains((int)ModuleEnum.Mod))
                 {
-                    var user = context.User as SocketGuildUser; ;
-                    if (!user.GuildPermissions.Administrator && Globals.NukedChannels.Contains(context.Channel.Id))
-                    {
-                        var msg = context.Message as IMessage;
-                        await msg.DeleteAsync();
+                    if (!(await _modLogic.Process(context)))
                         return false;
-                    }
                 }
 
                 if (loadedModules.Contains((int)ModuleEnum.Punish))

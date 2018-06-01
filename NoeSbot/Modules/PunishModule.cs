@@ -86,8 +86,8 @@ namespace NoeSbot.Modules
                     var cus = await _logic.GetCustomPunish(user);
                     if (!cus.HasCustom)
                     {
-                        await _logic.Punish(Context, user, time, reason, durationInSecs);
-                        await Context.Channel.SendFileAsync(Globals.RandomPunishedImage.FullName, $"Successfully punished {user.Mention} ({user.Username}) for {punishTime}");
+                        var randomPunishedImage =  await _logic.Punish(Context, user, time, reason, durationInSecs);
+                        await Context.Channel.SendFileAsync(randomPunishedImage, $"Successfully punished {user.Mention} ({user.Username}) for {punishTime}");
                     }
                     else
                     {
