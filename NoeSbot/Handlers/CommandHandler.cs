@@ -57,6 +57,7 @@ namespace NoeSbot.Handlers
             _client.MessageUpdated += MessageUpdatedHandler;
             _client.UserJoined += _modLogic.UserJoined;
             _client.Ready += Ready;
+            _client.JoinedGuild += JoinedGuild;
 
             // Discover all of the commands in this assembly and load them.
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
@@ -74,7 +75,32 @@ namespace NoeSbot.Handlers
             _client.ReactionAdded -= _eventLogic.OnReactionAdded;
             _client.ReactionAdded += _eventLogic.OnReactionAdded;
 
+            _client.SetGameAsync("Command help for more info");
+
             return Task.CompletedTask;
+        }
+
+        public async Task JoinedGuild(SocketGuild guild)
+        {
+            var builder = new EmbedBuilder()
+            {
+                Color = Color.Red,
+                Description = $"Follow these steps to get the bot fully functional{Environment.NewLine}(Not all required, you can disable modules){Environment.NewLine}{Environment.NewLine}Keep in mind that some commands require users to have certain permissions."
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = "Create the following";
+                x.Value = $"The user role: silenced{Environment.NewLine}The channel media_room";
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "Give the bot the following permissions";
+                x.Value = $"Manage roles{Environment.NewLine}Manage messages{Environment.NewLine}Send messages{Environment.NewLine}Read message history{Environment.NewLine}Attach files{Environment.NewLine}Add reactions{Environment.NewLine}Connect{Environment.NewLine}Speak";
+            });
+
+            await guild.TextChannels.First().SendMessageAsync("", false, builder.Build());
         }
 
         public async Task MessageReceivedHandler(SocketMessage messageParam)
