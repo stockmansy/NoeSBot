@@ -24,7 +24,8 @@ For it to fully function it needs the following permissions:
     Add reactions
     Connect
     Speak
-
+    
 And it needs the following items:
+
     The user role: silenced
     The channel media_room
