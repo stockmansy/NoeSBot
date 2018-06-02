@@ -25,6 +25,9 @@ namespace NoeSbot.Logic
             var channels = await context.Guild.GetChannelsAsync();
             var mediaChannel = channels.Where(x => x.Name != null && x.Name.Equals(Configuration.Load(context.Guild.Id).MediaChannel, StringComparison.OrdinalIgnoreCase)).SingleOrDefault() as IMessageChannel;
 
+            if (mediaChannel == null)
+                return;
+
             var messages = await mediaChannel.GetMessagesAsync(80).Flatten();
 
             var user = context.User as SocketGuildUser;
