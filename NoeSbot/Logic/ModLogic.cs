@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
+using NoeSbot.Database.Services;
 using NoeSbot.Enums;
 using NoeSbot.Extensions;
 using NoeSbot.Helpers;
@@ -18,11 +20,15 @@ namespace NoeSbot.Logic
     {
         private readonly DiscordSocketClient _client;
         private static ConcurrentDictionary<ulong, ulong> _nukedChannels;
+        private readonly ISerializedItemService _serializedItemService;
+        private readonly ILogger<ConfigurationService> _logger;
 
-        public ModLogic(DiscordSocketClient client)
+        public ModLogic(DiscordSocketClient client, ISerializedItemService serializedItemService, ILoggerFactory loggerFactory)
         {
             _client = client;
             _nukedChannels = new ConcurrentDictionary<ulong, ulong>();
+            _serializedItemService = serializedItemService;
+            _logger = loggerFactory.CreateLogger<ConfigurationService>();
         }
 
         public async Task UserJoined(SocketGuildUser user)
@@ -57,6 +63,143 @@ namespace NoeSbot.Logic
 
                 if (!user.Roles.Contains(role))
                     await user.AddRoleAsync(role);
+            }
+        }
+
+        public async Task TakeGuildBackup(IGuild guild)
+        {
+            try
+            {
+                IReadOnlyCollection<IGuildChannel> channels = null;
+                IReadOnlyCollection<IGuildUser> users = null;
+                IReadOnlyCollection<IBan> bans = null;
+                IGuildUser botUser = null;
+                IReadOnlyCollection<IInviteMetadata> invites = null;
+                IReadOnlyCollection<IRole> roles = null;
+                IReadOnlyCollection<GuildEmote> emotes = null;
+                try
+                {
+                    channels = await guild.GetChannelsAsync();
+                }
+                catch { }
+                try
+                {
+                    users = await guild.GetUsersAsync();
+                }
+                catch { }
+                try
+                {
+                    bans = await guild.GetBansAsync();
+                } catch { }
+                
+                try
+                {
+                    await guild.GetCurrentUserAsync();
+                }
+                catch { }
+                
+                try
+                {
+                    invites = await guild.GetInvitesAsync();
+                }
+                catch { }                
+                try
+                {
+                    roles = guild.Roles;
+                }
+                catch { }
+                try
+                {
+                    emotes = guild.Emotes;
+                }
+                catch { }
+
+                var channelInfo = channels?.Where(x => x.Name != null).Select(x => new
+                {
+                    x.Name,
+                    x.IsNsfw,
+                    x.Position,
+                    x.Id,
+                    x.CreatedAt,
+                    x.PermissionOverwrites
+                });
+
+                var userInfo = users?.Select(x => new
+                {
+                    x.Username,
+                    x.Nickname,
+                    x.AvatarId,
+                    x.IsBot,
+                    x.IsDeafened,
+                    x.IsMuted,
+                    x.IsSuppressed,
+                    x.JoinedAt,
+                    x.RoleIds
+                });
+                
+
+                var bansInfo = botUser != null && botUser.GuildPermissions.BanMembers ? bans.Select(x => new
+                {
+                    x.User.Id,
+                    x.User.Username,
+                    x.Reason
+                }) : null;
+
+                var botUserInfo = new
+                {
+                    botUser?.Username,
+                    botUser?.Nickname,
+                    botUser?.AvatarId,
+                    botUser?.IsBot,
+                    botUser?.IsDeafened,
+                    botUser?.IsMuted,
+                    botUser?.IsSuppressed,
+                    botUser?.JoinedAt,
+                    botUser?.RoleIds
+                };
+
+                var invitesInfo = invites?.Select(x => new
+                {
+                    x.Inviter.Id,
+                    x.Inviter.Username,
+                    x.IsRevoked,
+                    x.IsTemporary,
+                    x.MaxAge,
+                    x.MaxUses,
+                    x.Url
+                });
+
+                var rolesInfo = roles?.Select(x => new
+                {
+                    x.Name,
+                    x.Permissions,
+                    x.Position,
+                    x.Color
+                });
+
+                var emotesInfo = emotes?.Select(x => new
+                {
+                    x.Name,
+                    x.Url,
+                    x.CreatedAt
+                });
+
+                var backup = new
+                {
+                    ChannelInfo = channelInfo,
+                    UserInfo = userInfo,
+                    BanInfo = bansInfo,
+                    BotUserInfo = botUserInfo,
+                    InviteInfo = invitesInfo,
+                    RoleInfo = rolesInfo,
+                    EmoteInfo = emotesInfo
+                };
+
+                await _serializedItemService.AddGuildBackup((long)guild.Id, backup);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in Backup Guild: {ex.Message}");
             }
         }
 

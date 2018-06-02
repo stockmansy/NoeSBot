@@ -78,12 +78,16 @@ namespace NoeSbot.Handlers
             await _punishLogic.VerifyPunished();
 
             await _client.SetGameAsync("Command help for more info");
+
+            foreach (var guild in _client.Guilds)
+                await _modLogic.TakeGuildBackup(guild);
         }
 
         public async Task UserJoined(SocketGuildUser user)
         {
             await _modLogic.UserJoined(user);
             await _punishLogic.VerifyPunished();
+            await _modLogic.TakeGuildBackup(user.Guild);
         }
 
         public async Task JoinedGuild(SocketGuild guild)
@@ -107,6 +111,8 @@ namespace NoeSbot.Handlers
             });
 
             await guild.TextChannels.First().SendMessageAsync("", false, builder.Build());
+
+            await _modLogic.TakeGuildBackup(guild);
         }
 
         public async Task MessageReceivedHandler(SocketMessage messageParam)

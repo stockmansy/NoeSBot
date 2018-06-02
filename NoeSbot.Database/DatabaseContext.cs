@@ -58,6 +58,8 @@ namespace NoeSbot.Database
 
         public DbSet<CustomCommand> CustomCommandEntities { get; set; }
 
+        public DbSet<SerializedItem> SerializedItemEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -71,6 +73,7 @@ namespace NoeSbot.Database
             modelBuilder.Entity<EventItem>();
             modelBuilder.Entity<ProfileBackground>();
             modelBuilder.Entity<CustomCommand>();
+            modelBuilder.Entity<SerializedItem>();
         }
     }
 
