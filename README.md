@@ -8,9 +8,10 @@ It's currently fully in development still. But you can find a list of commands h
 Feel free to use this bot.
 I'd love to hear your opinion on it. You can find me on my discord server. (Link at the top)
 
-WIP but it's already a feature rich bot. Important: You can enable and disable features of the bot via commands! You can also change the bot's prefix on the fly.
+Important: You can enable and disable features of the bot via commands! 
+You can also change the bot's prefix on the fly.
 
-Features such as play music, create quick polls, punish/silence users, twitch/youtube stream notifications, keep a list of media posted, and much more...
+It has features such as play music, create quick polls, punish/silence users, twitch/youtube stream notifications, keep a list of media posted, and much more...
 
 You can find a full list of commands by typing help, or checking the site.
 
@@ -29,3 +30,6 @@ And it needs the following items:
 
     The user role: silenced
     The channel media_room
+
+
+If you build the repository to install the server, make sure you download ffmpeg and youtube-dl.exe, otherwise the music features won't work.
