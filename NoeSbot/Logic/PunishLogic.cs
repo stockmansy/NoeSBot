@@ -49,6 +49,20 @@ namespace NoeSbot.Logic
             }
         }
 
+        public async Task VerifyPunished()
+        {
+            var allPunished = await GetAllPunishedAsync();
+
+            foreach (var pun in allPunished)
+            {
+                var punishTime = CommonHelper.GetTimeString(pun.TimeOfPunishment, pun.Duration);
+                if (punishTime.StartsWith("-"))
+                {
+                    await Unpunish((ulong)pun.UserId);
+                }
+            }
+        }
+
         public async Task<CustomPunishItem> GetCustomPunish(SocketGuildUser user)
         {
             var result = new CustomPunishItem
@@ -306,7 +320,12 @@ namespace NoeSbot.Logic
                 }
             }
 
-            await _database.RemovePunishedAsync((long)user.Id);
+            await Unpunish(user.Id);
+        }
+
+        private async Task Unpunish(ulong userId)
+        {
+            await _database.RemovePunishedAsync((long)userId);
             ClearCache();
         }
 

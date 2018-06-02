@@ -55,7 +55,7 @@ namespace NoeSbot.Handlers
             // Hook the event handlers
             _client.MessageReceived += MessageReceivedHandler;
             _client.MessageUpdated += MessageUpdatedHandler;
-            _client.UserJoined += _modLogic.UserJoined;
+            _client.UserJoined += UserJoined;
             _client.Ready += Ready;
             _client.JoinedGuild += JoinedGuild;
 
@@ -63,7 +63,7 @@ namespace NoeSbot.Handlers
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 
-        public Task Ready()
+        public async Task Ready()
         {
             if (!_notifyTaskRunning)
             {
@@ -75,9 +75,15 @@ namespace NoeSbot.Handlers
             _client.ReactionAdded -= _eventLogic.OnReactionAdded;
             _client.ReactionAdded += _eventLogic.OnReactionAdded;
 
-            _client.SetGameAsync("Command help for more info");
+            await _punishLogic.VerifyPunished();
 
-            return Task.CompletedTask;
+            await _client.SetGameAsync("Command help for more info");
+        }
+
+        public async Task UserJoined(SocketGuildUser user)
+        {
+            await _modLogic.UserJoined(user);
+            await _punishLogic.VerifyPunished();
         }
 
         public async Task JoinedGuild(SocketGuild guild)
