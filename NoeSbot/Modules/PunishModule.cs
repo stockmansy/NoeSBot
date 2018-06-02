@@ -42,6 +42,7 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Punish_Command)]
         [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punish()
         {
@@ -52,6 +53,7 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Punish_Command)]
         [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user)
         {
@@ -61,6 +63,7 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Punish_Command)]
         [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user,
                                  [Summary("The punish time")]string time)
@@ -71,6 +74,7 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Punish_Command)]
         [Alias(Labels.Punish_Punish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user,
                                  [Summary("The punish time")]string time,
@@ -154,6 +158,8 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Unpunish_Command)]
         [Alias(Labels.Punish_Unpunish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [RequireBotPermission(GuildPermission.ManageRoles)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task UnPunish()
         {
@@ -164,6 +170,8 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Unpunish_Command)]
         [Alias(Labels.Punish_Unpunish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [RequireBotPermission(GuildPermission.ManageRoles)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task UnPunish([Summary("The user to be unpunished")] SocketGuildUser user)
         {
@@ -179,6 +187,8 @@ namespace NoeSbot.Modules
         [Command(Labels.Punish_Unpunish_Command)]
         [Alias(Labels.Punish_Unpunish_Alias_1)]
         [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [RequireBotPermission(GuildPermission.ManageRoles)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task UnPunish([Remainder, Summary("The punish input")]string input)
         {

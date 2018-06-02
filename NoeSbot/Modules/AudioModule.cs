@@ -151,6 +151,7 @@ namespace NoeSbot.Modules
         [Command(Labels.Audio_Play_Command)]
         [Alias(Labels.Audio_Play_Alias_1, Labels.Audio_Play_Alias_2, Labels.Audio_Play_Alias_3)]
         [MinPermissions(AccessLevel.User)]
+        [RequireBotPermission(GuildPermission.Connect)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Play()
         {
@@ -161,6 +162,7 @@ namespace NoeSbot.Modules
         [Command(Labels.Audio_Play_Command)]
         [Alias(Labels.Audio_Play_Alias_1, Labels.Audio_Play_Alias_2, Labels.Audio_Play_Alias_3)]
         [MinPermissions(AccessLevel.User)]
+        [RequireBotPermission(GuildPermission.Connect)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Play([Remainder] string input)
         {

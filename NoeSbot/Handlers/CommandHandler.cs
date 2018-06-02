@@ -157,6 +157,9 @@ namespace NoeSbot.Handlers
             try
             {
                 var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
+                var bot = await context.Guild.GetCurrentUserAsync();
+                if (!bot.GuildPermissions.SendMessages)
+                    return false;
 
                 if (loadedModules.Contains((int)ModuleEnum.Mod))
                 {
@@ -164,7 +167,7 @@ namespace NoeSbot.Handlers
                         return false;
                 }
 
-                if (loadedModules.Contains((int)ModuleEnum.Punish))
+                if (loadedModules.Contains((int)ModuleEnum.Punish) && bot.GuildPermissions.ManageMessages)
                 {
                     await _punishLogic.HandleMessage(context);
                 }
