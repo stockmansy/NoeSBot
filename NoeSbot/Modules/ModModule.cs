@@ -118,9 +118,117 @@ namespace NoeSbot.Modules
 
         #endregion
 
+        #region Remove Messages
+
+        [Command(Labels.Mod_RemoveMessages_Command)]
+        [Alias(Labels.Mod_RemoveMessage_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task RemoveMessages()
+        {
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_RemoveMessages_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+        }
+
+        [Command(Labels.Mod_RemoveMessages_Command)]
+        [Alias(Labels.Mod_RemoveMessage_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task RemoveMessages(string time)
+        {
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+            var deletedCount = await DeleteMessages(null, durationInSecs);
+            if (deletedCount < 0)
+                await ReplyAsync("Remove messages failed");
+            else if (deletedCount == 0)
+                await ReplyAsync("Didn't find any messages in this timeframe to remove");
+            else
+                await ReplyAsync($"Successfully removed {deletedCount} messages");
+        }
+
+        [Command(Labels.Mod_RemoveMessages_Command)]
+        [Alias(Labels.Mod_RemoveMessage_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task RemoveMessages(SocketGuildUser user, string time)
+        {
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+            var deletedCount = await DeleteMessages(user, durationInSecs);
+            if (deletedCount < 0)
+                await ReplyAsync("Remove messages failed");
+            else if (deletedCount == 0)
+                await ReplyAsync("Didn't find any messages in this timeframe to remove");
+            else
+                await ReplyAsync($"Successfully removed {deletedCount} messages for user {user.Username}");
+        }
+
+        #endregion
+
+        #region Clean Messages
+
+        [Command(Labels.Mod_CleanMessages_Command)]
+        [Alias(Labels.Mod_CleanMessage_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task CleanMessages()
+        {
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_CleanMessages_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+        }
+
+        [Command(Labels.Mod_CleanMessages_Command)]
+        [Alias(Labels.Mod_CleanMessage_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task CleanMessages(string time)
+        {
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+            await Context.Message.DeleteAsync();
+            var deletedCount = await DeleteMessages(null, durationInSecs);
+            if (deletedCount < 0)
+                await ReplyAsync("Cleanup failed");
+        }
+
+        [Command(Labels.Mod_CleanMessages_Command)]
+        [Alias(Labels.Mod_CleanMessage_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task CleanMessages(SocketGuildUser user, string time)
+        {
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+            await Context.Message.DeleteAsync();
+            var deletedCount = await DeleteMessages(user, durationInSecs);
+            if (deletedCount < 0)
+                await ReplyAsync("Cleanup failed");
+        }
+
+        #endregion
+
         #endregion
 
         #region Private
+
+        private async Task<int> DeleteMessages(SocketGuildUser user, int secondsBack)
+        {
+            try
+            {
+                var lastMessages = await Context.Channel.GetMessagesAsync(100).Flatten();
+                var userMessages = lastMessages.Where(x => (user != null ? x.Author.Id == user.Id : true) && x.CreatedAt.UtcTicks >= DateTime.UtcNow.AddSeconds(-secondsBack).Ticks).ToList();
+                await Context.Channel.DeleteMessagesAsync(userMessages);
+
+                return userMessages.Count;
+            }
+            catch
+            {
+                return -1;
+            }
+        }
 
         private async Task EndNuke(ulong messageId, ulong channelId, string username)
         {

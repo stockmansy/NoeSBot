@@ -1303,4 +1303,48 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
    {example}{0}{1}{/example}
 {/examples}</value>
   </data>
+  <data name="modmodule_cleanmessages_name" xml:space="preserve">
+    <value>Clean Messages Command</value>
+  </data>
+  <data name="modmodule_cleanmessages_summary" xml:space="preserve">
+    <value>Cleanup the messages for a given user (or all) in a given timeframe (This won't show a message to everybody):
+
+{fields}
+   {field}
+      {name}Parameter 1 (Optional): user{/name}
+      {value}The user who's messages you'll cleanup{/value}
+   {/field}
+   {field}
+      {name}Parameter 2:  time{/name}
+      {value}(e.g. 10m, 1h){/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @MensAap 10m{/example}
+   {example}{0}{1} @MensAap 1h{/example}
+{/examples}</value>
+  </data>
+  <data name="modmodule_removemessages_name" xml:space="preserve">
+    <value>Remove Messages Command</value>
+  </data>
+  <data name="modmodule_removemessages_summary" xml:space="preserve">
+    <value>Remove the messages for a given user (or all) in a given timeframe (This will show a message to everybody):
+
+{fields}
+   {field}
+      {name}Parameter 1 (Optional): user{/name}
+      {value}The user who's messages you'll remove{/value}
+   {/field}
+   {field}
+      {name}Parameter 2:  time{/name}
+      {value}(e.g. 10m, 1h){/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} @MensAap 10m{/example}
+   {example}{0}{1} @MensAap 1h{/example}
+{/examples}</value>
+  </data>
 </root>

@@ -292,6 +292,16 @@ namespace NoeSbot.Resources
         public const string Mod_Botstatus_Name = "modmodule_botstatus_name";
         public const string Mod_Botstatus_Summary = "modmodule_botstatus_summary";
 
+        public const string Mod_RemoveMessages_Command = "removemessages";
+        public const string Mod_RemoveMessage_Alias_1 = "rm";
+        public const string Mod_RemoveMessages_Name = "modmodule_removemessages_name";
+        public const string Mod_RemoveMessages_Summary = "modmodule_removemessages_summary";
+
+        public const string Mod_CleanMessages_Command = "cleanmessages";
+        public const string Mod_CleanMessage_Alias_1 = "cm";
+        public const string Mod_CleanMessages_Name = "modmodule_cleanmessages_name";
+        public const string Mod_CleanMessages_Summary = "modmodule_cleanmessages_summary";
+
         #endregion
 
         #region Notify Module
