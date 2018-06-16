@@ -29,7 +29,9 @@ namespace NoeSbot.Logic
         private int _count;
         private AudioStatusEnum _status;
         private bool _adding;
-
+        private TaskCompletionSource<bool> _tcs;
+        private bool _internalPause;
+        
         public AudioPlayer(IVoiceChannel voiceChannel, ITextChannel textChannel, ulong guildId, int defaultVolume = 5)
         {
             _voiceChannel = voiceChannel ?? throw new ArgumentNullException(nameof(voiceChannel));
@@ -40,8 +42,19 @@ namespace NoeSbot.Logic
             _guildId = guildId;
             _volume = 1.0f;
             _status = AudioStatusEnum.Created;
+            _tcs = new TaskCompletionSource<bool>();
 
             SetVolume(defaultVolume);
+        }
+
+        private bool Pause
+        {
+            get => _internalPause;
+            set
+            {
+                new Thread(() => _tcs.TrySetResult(value)).Start();
+                _internalPause = value;
+            }
         }
 
         private string FileName => $"botsong_{_guildId}_{_count}";
@@ -142,6 +155,18 @@ namespace NoeSbot.Logic
             _adding = false;
         }
 
+        public void PauseAudio()
+        {
+            Pause = true;
+            _status = AudioStatusEnum.Paused;
+        }
+
+        public void Resume()
+        {
+            Pause = false;
+            _status = AudioStatusEnum.Playing;
+        }
+
         public async Task Stop()
         {
             Dispose();
@@ -221,6 +246,17 @@ namespace NoeSbot.Logic
                                 buffer = ScaleVolumeSafeAllocateBuffers(buffer, _volume);
 
                                 await audioOutput.WriteAsync(buffer, 0, read, _disposeToken.Token);
+
+                                if (Pause)
+                                {
+                                    bool pauseAgain;
+
+                                    do
+                                    {
+                                        pauseAgain = await _tcs.Task;
+                                        _tcs = new TaskCompletionSource<bool>();
+                                    } while (pauseAgain);
+                                }
 
                                 bytesSent += read;
                             }

@@ -1371,4 +1371,24 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
    {example}{0}{1} @MensAap 2d{/example}
 {/examples}</value>
   </data>
+  <data name="audiomodule_pause_name" xml:space="preserve">
+    <value>Pause Audio Command</value>
+  </data>
+  <data name="audiomodule_pause_summary" xml:space="preserve">
+    <value>You can pause the audio with this command:
+
+{examples}
+   {example}{0}{1}{/example}
+{/examples}</value>
+  </data>
+  <data name="audiomodule_resume_name" xml:space="preserve">
+    <value>Resume Audio Command</value>
+  </data>
+  <data name="audiomodule_resume_summary" xml:space="preserve">
+    <value>You can resume the audio with this command:
+
+{examples}
+   {example}{0}{1}{/example}
+{/examples}</value>
+  </data>
 </root>

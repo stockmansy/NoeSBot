@@ -122,6 +122,28 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pause Audio Command.
+        /// </summary>
+        internal static string audiomodule_pause_name {
+            get {
+                return ResourceManager.GetString("audiomodule_pause_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can pause the audio with this command:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string audiomodule_pause_summary {
+            get {
+                return ResourceManager.GetString("audiomodule_pause_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Play Command.
         /// </summary>
         internal static string audiomodule_play_name {
@@ -147,6 +169,28 @@ namespace NoeSbot.Resources {
         internal static string audiomodule_play_summary {
             get {
                 return ResourceManager.GetString("audiomodule_play_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resume Audio Command.
+        /// </summary>
+        internal static string audiomodule_resume_name {
+            get {
+                return ResourceManager.GetString("audiomodule_resume_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can resume the audio with this command:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string audiomodule_resume_summary {
+            get {
+                return ResourceManager.GetString("audiomodule_resume_summary", resourceCulture);
             }
         }
         

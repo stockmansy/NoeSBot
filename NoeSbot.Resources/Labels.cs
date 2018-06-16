@@ -61,6 +61,18 @@ namespace NoeSbot.Resources
         public const string Audio_Play_Name = "audiomodule_play_name";
         public const string Audio_Play_Summary = "audiomodule_play_summary";
 
+        public const string Audio_Pause_Command = "pause";
+        public const string Audio_Pause_Alias_1 = "pauseaudio";
+        public const string Audio_Pause_Alias_2 = "pausesong";
+        public const string Audio_Pause_Name = "audiomodule_pause_name";
+        public const string Audio_Pause_Summary = "audiomodule_pause_summary";
+
+        public const string Audio_Resume_Command = "resume";
+        public const string Audio_Resume_Alias_1 = "resumeaudio";
+        public const string Audio_Resume_Alias_2 = "resumesong";
+        public const string Audio_Resume_Name = "audiomodule_resume_name";
+        public const string Audio_Resume_Summary = "audiomodule_resume_summary";
+
         public const string Audio_Stop_Command = "stop";
         public const string Audio_Stop_Alias_1 = "s";
         public const string Audio_Stop_Alias_2 = "stopaudio";

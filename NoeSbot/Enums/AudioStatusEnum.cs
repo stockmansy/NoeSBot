@@ -8,6 +8,7 @@ namespace NoeSbot.Enums
     {
         Created = 1,
         Stopped = 2,
-        Playing = 3
+        Playing = 3,
+        Paused = 4
     }
 }
