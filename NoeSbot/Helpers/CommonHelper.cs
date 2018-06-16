@@ -303,5 +303,13 @@ namespace NoeSbot.Helpers
 
             return list;
         }
+
+        public static IEnumerable<IList<T>> SplitList<T>(List<T> list, int nSize = 30)
+        {
+            for (int i = 0; i < list.Count; i += nSize)
+            {
+                yield return list.GetRange(i, Math.Min(nSize, list.Count - i));
+            }
+        }
     }
 }

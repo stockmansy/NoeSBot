@@ -1453,6 +1453,42 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Logs Command.
+        /// </summary>
+        internal static string modmodule_logs_name {
+            get {
+                return ResourceManager.GetString("modmodule_logs_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can retrieve the logs with this command:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}(Optional) Parameter: user{/name}
+        ///      {value}Specify a user to get the logs from{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}(Optional) Parameter: time{/name}
+        ///      {value}Specify how much time to get back{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///   {example}{0}{1} @MensAap{/example}
+        ///   {example}{0}{1} 2d{/example}
+        ///   {example}{0}{1} @MensAap 2d{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string modmodule_logs_summary {
+            get {
+                return ResourceManager.GetString("modmodule_logs_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mod Module.
         /// </summary>
         internal static string modmodule_name {
