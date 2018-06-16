@@ -75,7 +75,7 @@ namespace NoeSbot.Handlers
             _client.ReactionAdded -= _eventLogic.OnReactionAdded;
             _client.ReactionAdded += _eventLogic.OnReactionAdded;
 
-            await _punishLogic.VerifyPunished();
+            //await _punishLogic.VerifyPunished();
 
             await _client.SetGameAsync("Command help for more info");
 
@@ -86,7 +86,7 @@ namespace NoeSbot.Handlers
         public async Task UserJoined(SocketGuildUser user)
         {
             await _modLogic.UserJoined(user);
-            await _punishLogic.VerifyPunished();
+            await _punishLogic.VerifyPunished(user);
             await _modLogic.TakeGuildBackup(user.Guild);
         }
 
