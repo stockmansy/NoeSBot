@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using NoeSbot.Database.Models;
 using System.IO;
 using NoeSbot.Resources;
+using System.Text.RegularExpressions;
 
 namespace NoeSbot.Modules
 {
@@ -359,8 +360,14 @@ namespace NoeSbot.Modules
         {
             try
             {
+                if (Regex.IsMatch(input, @"^d([0-9]).*$"))
+                {
+                    await Dnd(input.Replace("d", ""));
+                    return;
+                }
+
                 var result = DiceHelper.GetDiceResult(input);
-                await ReplyAsync($"{IconHelper.Dice} {result}");
+                await ReplyAsync($"{ IconHelper.Dice} {result}");
             }
             catch
             {

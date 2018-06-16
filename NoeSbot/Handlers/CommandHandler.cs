@@ -31,8 +31,11 @@ namespace NoeSbot.Handlers
         private CustomCommandLogic _customCommandLogic;
         private MediaProcessor _mediaProcessor;
         private MessageTriggers _messageTriggers;
+        private IActivityLogService _activityLogService;
 
-        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs, MediaProcessor mediaProcessor, MessageTriggers messageTriggers, ModLogic modLogic, PunishLogic punishLogic, NotifyLogic notifyLogic, EventLogic eventLogic, CustomCommandLogic customCommandLogic)
+        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs,
+                              MediaProcessor mediaProcessor, MessageTriggers messageTriggers, ModLogic modLogic, PunishLogic punishLogic, NotifyLogic notifyLogic,
+                              EventLogic eventLogic, CustomCommandLogic customCommandLogic, IActivityLogService activityLogService)
         {
             _commands = commands;
             _client = client;
@@ -46,6 +49,7 @@ namespace NoeSbot.Handlers
             _mediaProcessor = mediaProcessor;
             _messageTriggers = messageTriggers;
             _tokenSource = new CancellationTokenSource();
+            _activityLogService = activityLogService;
         }
 
         public async Task InstallCommands(IServiceProvider provider)
@@ -75,7 +79,7 @@ namespace NoeSbot.Handlers
             _client.ReactionAdded -= _eventLogic.OnReactionAdded;
             _client.ReactionAdded += _eventLogic.OnReactionAdded;
 
-            await _punishLogic.VerifyPunished();
+            //await _punishLogic.VerifyPunished();
 
             await _client.SetGameAsync("Command help for more info");
 
@@ -86,7 +90,7 @@ namespace NoeSbot.Handlers
         public async Task UserJoined(SocketGuildUser user)
         {
             await _modLogic.UserJoined(user);
-            await _punishLogic.VerifyPunished();
+            await _punishLogic.VerifyPunished(user);
             await _modLogic.TakeGuildBackup(user.Guild);
         }
 
@@ -150,7 +154,10 @@ namespace NoeSbot.Handlers
                 {
                     var success = await _customCommandLogic.Process(context, _commands.Commands, context.Message.Content.Substring(argPos).Trim(), _provider);
                     if (success)
+                    {
+                        await AddLog(message, guild, context);
                         return;
+                    }                        
                 }
                 catch (Exception ex)
                 {
@@ -161,6 +168,26 @@ namespace NoeSbot.Handlers
                 await context.Channel.SendMessageAsync(result.ErrorReason);
 #endif
                 _logger.LogError(result.ErrorReason);
+            }
+            else
+            {
+                await AddLog(message, guild, context);
+            }
+        }
+
+        private async Task AddLog(SocketUserMessage message, IGuild guild, CommandContext context)
+        {
+            try
+            {
+                var logMsg = $"{message.Author.Username} performed: '{message.Content}'";
+                if (message.MentionedUsers.Any())
+                    logMsg += $" Mentioned users: {string.Join(", ", message.MentionedUsers.Select(x => $"{x.Username}"))}";
+
+                await _activityLogService.AddActivityLog((long)guild.Id, (long)message.Author.Id, (long)message.Channel.Id, message.Content?.Split(' ')?[0], logMsg);
+            }
+            catch (Exception ex)
+            {
+                await context.Channel.SendMessageAsync(ex.Message);
             }
         }
 

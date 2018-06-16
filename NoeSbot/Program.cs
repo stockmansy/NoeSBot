@@ -96,7 +96,8 @@ namespace NoeSbot
                         .AddSingleton<IHttpService, HttpService>()
                         .AddSingleton<IEventService, EventService>()
                         .AddSingleton<ICustomCommandService, CustomCommandService>()
-                        .AddSingleton<ISerializedItemService, SerializedItemService>();
+                        .AddSingleton<ISerializedItemService, SerializedItemService>()
+                        .AddSingleton<IActivityLogService, ActivityLogService>();
         }
     }
 }

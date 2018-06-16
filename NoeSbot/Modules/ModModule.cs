@@ -11,6 +11,10 @@ using NoeSbot.Enums;
 using NoeSbot.Extensions;
 using NoeSbot.Resources;
 using NoeSbot.Logic;
+using NoeSbot.Database.Services;
+using System.Collections.Generic;
+using NoeSbot.Database.ViewModels;
+using System.Text;
 
 namespace NoeSbot.Modules
 {
@@ -19,14 +23,16 @@ namespace NoeSbot.Modules
     {
         private readonly DiscordSocketClient _client;
         private readonly ModLogic _modLogic;
+        private readonly IActivityLogService _activityLogService;
         private IMemoryCache _cache;
 
         #region Constructor
 
-        public ModModule(DiscordSocketClient client, ModLogic modLogic, IMemoryCache memoryCache)
+        public ModModule(DiscordSocketClient client, ModLogic modLogic, IActivityLogService activityLogService, IMemoryCache memoryCache)
         {
             _client = client;
             _modLogic = modLogic;
+            _activityLogService = activityLogService;
             _cache = memoryCache;
         }
 
@@ -118,9 +124,177 @@ namespace NoeSbot.Modules
 
         #endregion
 
+        #region Remove Messages
+
+        [Command(Labels.Mod_RemoveMessages_Command)]
+        [Alias(Labels.Mod_RemoveMessages_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task RemoveMessages()
+        {
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_RemoveMessages_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+        }
+
+        [Command(Labels.Mod_RemoveMessages_Command)]
+        [Alias(Labels.Mod_RemoveMessages_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task RemoveMessages(string time)
+        {
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+            var deletedCount = await DeleteMessages(null, durationInSecs);
+            if (deletedCount < 0)
+                await ReplyAsync("Remove messages failed");
+            else if (deletedCount == 0)
+                await ReplyAsync("Didn't find any messages in this timeframe to remove");
+            else
+                await ReplyAsync($"Successfully removed {deletedCount} messages");
+        }
+
+        [Command(Labels.Mod_RemoveMessages_Command)]
+        [Alias(Labels.Mod_RemoveMessages_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task RemoveMessages(SocketGuildUser user, string time)
+        {
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+            var deletedCount = await DeleteMessages(user, durationInSecs);
+            if (deletedCount < 0)
+                await ReplyAsync("Remove messages failed");
+            else if (deletedCount == 0)
+                await ReplyAsync("Didn't find any messages in this timeframe to remove");
+            else
+                await ReplyAsync($"Successfully removed {deletedCount} messages for user {user.Username}");
+        }
+
+        #endregion
+
+        #region Clean Messages
+
+        [Command(Labels.Mod_CleanMessages_Command)]
+        [Alias(Labels.Mod_CleanMessages_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task CleanMessages()
+        {
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_CleanMessages_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+        }
+
+        [Command(Labels.Mod_CleanMessages_Command)]
+        [Alias(Labels.Mod_CleanMessages_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task CleanMessages(string time)
+        {
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+            await Context.Message.DeleteAsync();
+            var deletedCount = await DeleteMessages(null, durationInSecs);
+            if (deletedCount < 0)
+                await ReplyAsync("Cleanup failed");
+        }
+
+        [Command(Labels.Mod_CleanMessages_Command)]
+        [Alias(Labels.Mod_CleanMessages_Alias_1)]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task CleanMessages(SocketGuildUser user, string time)
+        {
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+            await Context.Message.DeleteAsync();
+            var deletedCount = await DeleteMessages(user, durationInSecs);
+            if (deletedCount < 0)
+                await ReplyAsync("Cleanup failed");
+        }
+
+        #endregion
+
+        [Command(Labels.Mod_Logs_Command)]
+        [Alias(Labels.Mod_Logs_Alias_1)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task GetLogs()
+        {
+            await Context.Message.DeleteAsync();
+
+            var activityLog = await _activityLogService.RetrieveActivityLog((long)Context.Guild.Id);
+            await SendLogs(activityLog.Logs);
+        }
+
+        [Command(Labels.Mod_Logs_Command)]
+        [Alias(Labels.Mod_Logs_Alias_1)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task GetLogs(SocketGuildUser user)
+        {
+            await Context.Message.DeleteAsync();
+
+            var activityLog = await _activityLogService.RetrieveActivityLog((long)Context.Guild.Id, (long)user.Id);
+            await SendLogs(activityLog.Logs);
+        }
+
+        [Command(Labels.Mod_Logs_Command)]
+        [Alias(Labels.Mod_Logs_Alias_1)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task GetLogs(string time)
+        {
+            await Context.Message.DeleteAsync();
+
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+
+            var activityLog = await _activityLogService.RetrieveActivityLog((long)Context.Guild.Id);
+            await SendLogs(activityLog.Logs.Where(x => x.Date.Ticks >= DateTime.UtcNow.AddSeconds(-durationInSecs).Ticks));
+        }
+
+        [Command(Labels.Mod_Logs_Command)]
+        [Alias(Labels.Mod_Logs_Alias_1)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task GetLogs(SocketGuildUser user, string time)
+        {
+            await Context.Message.DeleteAsync();
+
+            var durationInSecs = CommonHelper.GetTimeInSeconds(time);
+
+            var activityLog = await _activityLogService.RetrieveActivityLog((long)Context.Guild.Id, (long)user.Id);
+            await SendLogs(activityLog.Logs.Where(x => x.Date.Ticks >= DateTime.UtcNow.AddSeconds(-durationInSecs).Ticks));
+        }
+
+        #region Log
+
+        #endregion
+
         #endregion
 
         #region Private
+
+        private async Task<int> DeleteMessages(SocketGuildUser user, int secondsBack)
+        {
+            try
+            {
+                var lastMessages = await Context.Channel.GetMessagesAsync(100).Flatten();
+                var userMessages = lastMessages.Where(x => (user != null ? x.Author.Id == user.Id : true) && x.CreatedAt.UtcTicks >= DateTime.UtcNow.AddSeconds(-secondsBack).Ticks).ToList();
+                await Context.Channel.DeleteMessagesAsync(userMessages);
+
+                return userMessages.Count;
+            }
+            catch
+            {
+                return -1;
+            }
+        }
 
         private async Task EndNuke(ulong messageId, ulong channelId, string username)
         {
@@ -142,6 +316,26 @@ namespace NoeSbot.Modules
             }
 
             await Context.Channel.SendMessageAsync($"The nuke was ended early...");
+        }
+
+        private async Task SendLogs(IEnumerable<ActivityLogVM.ActivityLogVMItem> logs)
+        {
+            var splitlogs = CommonHelper.SplitList(logs.OrderByDescending(x => x.Date).ToList(), 40);            
+
+            foreach (var splitList in splitlogs)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("```");
+                
+                foreach (var log in splitList)
+                {
+                    sb.AppendLine($"{log.Log} at {log.Date.ToLocalTime().ToString("yyyy-MM-dd HH:mm")}");
+                }
+
+                sb.AppendLine("```");
+
+                await Context.Message.Author.SendMessageAsync(sb.ToString());
+            }
         }
 
         #endregion

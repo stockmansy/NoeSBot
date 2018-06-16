@@ -122,6 +122,28 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pause Audio Command.
+        /// </summary>
+        internal static string audiomodule_pause_name {
+            get {
+                return ResourceManager.GetString("audiomodule_pause_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can pause the audio with this command:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string audiomodule_pause_summary {
+            get {
+                return ResourceManager.GetString("audiomodule_pause_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Play Command.
         /// </summary>
         internal static string audiomodule_play_name {
@@ -147,6 +169,28 @@ namespace NoeSbot.Resources {
         internal static string audiomodule_play_summary {
             get {
                 return ResourceManager.GetString("audiomodule_play_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resume Audio Command.
+        /// </summary>
+        internal static string audiomodule_resume_name {
+            get {
+                return ResourceManager.GetString("audiomodule_resume_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can resume the audio with this command:
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string audiomodule_resume_summary {
+            get {
+                return ResourceManager.GetString("audiomodule_resume_summary", resourceCulture);
             }
         }
         
@@ -1397,6 +1441,40 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clean Messages Command.
+        /// </summary>
+        internal static string modmodule_cleanmessages_name {
+            get {
+                return ResourceManager.GetString("modmodule_cleanmessages_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cleanup the messages for a given user (or all) in a given timeframe (This won&apos;t show a message to everybody):
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter 1 (Optional): user{/name}
+        ///      {value}The user who&apos;s messages you&apos;ll cleanup{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter 2:  time{/name}
+        ///      {value}(e.g. 10m, 1h){/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @MensAap 10m{/example}
+        ///   {example}{0}{1} @MensAap 1h{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string modmodule_cleanmessages_summary {
+            get {
+                return ResourceManager.GetString("modmodule_cleanmessages_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Denuke Command.
         /// </summary>
         internal static string modmodule_denuke_name {
@@ -1415,6 +1493,42 @@ namespace NoeSbot.Resources {
         internal static string modmodule_denuke_summary {
             get {
                 return ResourceManager.GetString("modmodule_denuke_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logs Command.
+        /// </summary>
+        internal static string modmodule_logs_name {
+            get {
+                return ResourceManager.GetString("modmodule_logs_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can retrieve the logs with this command:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}(Optional) Parameter: user{/name}
+        ///      {value}Specify a user to get the logs from{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}(Optional) Parameter: time{/name}
+        ///      {value}Specify how much time to get back{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1}{/example}
+        ///   {example}{0}{1} @MensAap{/example}
+        ///   {example}{0}{1} 2d{/example}
+        ///   {example}{0}{1} @MensAap 2d{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string modmodule_logs_summary {
+            get {
+                return ResourceManager.GetString("modmodule_logs_summary", resourceCulture);
             }
         }
         
@@ -1458,6 +1572,40 @@ namespace NoeSbot.Resources {
         internal static string modmodule_nuke_summary {
             get {
                 return ResourceManager.GetString("modmodule_nuke_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Messages Command.
+        /// </summary>
+        internal static string modmodule_removemessages_name {
+            get {
+                return ResourceManager.GetString("modmodule_removemessages_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove the messages for a given user (or all) in a given timeframe (This will show a message to everybody):
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter 1 (Optional): user{/name}
+        ///      {value}The user who&apos;s messages you&apos;ll remove{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Parameter 2:  time{/name}
+        ///      {value}(e.g. 10m, 1h){/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} @MensAap 10m{/example}
+        ///   {example}{0}{1} @MensAap 1h{/example}
+        ///{/examples}.
+        /// </summary>
+        internal static string modmodule_removemessages_summary {
+            get {
+                return ResourceManager.GetString("modmodule_removemessages_summary", resourceCulture);
             }
         }
         

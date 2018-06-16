@@ -49,7 +49,7 @@ namespace NoeSbot.Logic
             }
         }
 
-        public async Task VerifyPunished()
+        public async Task VerifyPunished(SocketGuildUser user)
         {
             var allPunished = await GetAllPunishedAsync();
 
@@ -58,7 +58,8 @@ namespace NoeSbot.Logic
                 var punishTime = CommonHelper.GetTimeString(pun.TimeOfPunishment, pun.Duration);
                 if (punishTime.StartsWith("-"))
                 {
-                    await Unpunish((ulong)pun.UserId);
+                    var punishedRoles = GetPunishRoles(user.Guild);
+                    await Unpunish(punishedRoles, user);
                 }
             }
         }
@@ -93,7 +94,7 @@ namespace NoeSbot.Logic
         public async Task<string> Punish(ICommandContext context, SocketGuildUser user, string time, string reason, int durationInSecs)
         {
             var success = await _database.SavePunishedAsync((long)user.Id, DateTime.UtcNow, durationInSecs, reason);
-            var punishedRoles = GetPunishRoles(context);
+            var punishedRoles = GetPunishRoles(context.Guild);
             if (success && punishedRoles != null)
             {
                 LogHelper.Log($"Punish user {user.Username} ({user.Id}) for guild {context.Guild.Name}", LogLevel.Debug);
@@ -119,7 +120,7 @@ namespace NoeSbot.Logic
                 return null;
 
             var success = await _database.RemovePunishedAsync((long)user.Id);
-            var punishedRoles = GetPunishRoles(context);
+            var punishedRoles = GetPunishRoles(context.Guild);
 
             if (success && punishedRoles != null)
             {
@@ -145,7 +146,7 @@ namespace NoeSbot.Logic
                 return null;
 
             var success = await _database.RemovePunishedAsync();
-            var punishedRoles = GetPunishRoles(context);
+            var punishedRoles = GetPunishRoles(context.Guild);
 
             if (success && punishedRoles != null)
             {
@@ -176,7 +177,7 @@ namespace NoeSbot.Logic
         {
             var allPunished = await GetAllPunishedAsync();
             var result = new List<Punished>();
-            var punishedRoles = GetPunishRoles(context);
+            var punishedRoles = GetPunishRoles(context.Guild);
 
             foreach (var pun in allPunished)
             {
@@ -221,7 +222,7 @@ namespace NoeSbot.Logic
                 while (true && _runPunishedCheck)
                 {
                     var allPunished = await GetAllPunishedAsync();
-                    var punishedRoles = GetPunishRoles(context);
+                    var punishedRoles = GetPunishRoles(context.Guild);
                     var count = allPunished.Count();
 
                     if (count <= 0)
@@ -248,11 +249,11 @@ namespace NoeSbot.Logic
             });
         }
 
-        private IEnumerable<IRole> GetPunishRoles(ICommandContext context)
+        private IEnumerable<IRole> GetPunishRoles(IGuild guild)
         {
             if (!_cache.TryGetValue(CacheEnum.PunishedRoles, out IEnumerable<IRole> cacheEntry))
             {
-                cacheEntry = context.Guild.Roles.Where(x => x.Name.IndexOf(Configuration.Load(context.Guild.Id).PunishedRole, StringComparison.OrdinalIgnoreCase) >= 0);
+                cacheEntry = guild.Roles.Where(x => x.Name.IndexOf(Configuration.Load(guild.Id).PunishedRole, StringComparison.OrdinalIgnoreCase) >= 0);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5));
@@ -286,7 +287,7 @@ namespace NoeSbot.Logic
 
         private async Task<bool> CheckPunishedAsync(ICommandContext context, SocketGuildUser user, IEnumerable<Punished> allPunished)
         {
-            var punishedRoles = GetPunishRoles(context);
+            var punishedRoles = GetPunishRoles(context.Guild);
             if (allPunished != null && punishedRoles != null)
             {
                 var pun = allPunished.Where(x => x.UserId == (long)user.Id).SingleOrDefault();

@@ -239,6 +239,47 @@ namespace NoeSbot.Modules
 
         #endregion
 
+        #region Pause
+
+        [Command(Labels.Audio_Pause_Command)]
+        [Alias(Labels.Audio_Pause_Alias_1, Labels.Audio_Pause_Alias_2)]
+        [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task Pause()
+        {
+            if (_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
+            {
+                audioplayer.PauseAudio();
+                
+                await ReplyAsync("Paused the audio");
+            } else
+                await ReplyAsync("Audio not playing");
+
+
+        }
+
+        #endregion
+
+        #region Resume
+
+        [Command(Labels.Audio_Resume_Command)]
+        [Alias(Labels.Audio_Resume_Alias_1, Labels.Audio_Resume_Alias_2)]
+        [MinPermissions(AccessLevel.User)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task Resume()
+        {
+            if (_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
+            {
+                audioplayer.Resume();
+
+                await ReplyAsync("Resumed playing the audio");
+            }
+            else
+                await ReplyAsync("Audio not playing");            
+        }
+
+        #endregion
+
         #region Stop
 
         [Command(Labels.Audio_Stop_Command)]

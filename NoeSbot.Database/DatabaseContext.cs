@@ -60,6 +60,8 @@ namespace NoeSbot.Database
 
         public DbSet<SerializedItem> SerializedItemEntities { get; set; }
 
+        public DbSet<ActivityLog> ActivityLogEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -74,6 +76,7 @@ namespace NoeSbot.Database
             modelBuilder.Entity<ProfileBackground>();
             modelBuilder.Entity<CustomCommand>();
             modelBuilder.Entity<SerializedItem>();
+            modelBuilder.Entity<ActivityLog>();
         }
     }
 

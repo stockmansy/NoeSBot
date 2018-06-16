@@ -61,6 +61,18 @@ namespace NoeSbot.Resources
         public const string Audio_Play_Name = "audiomodule_play_name";
         public const string Audio_Play_Summary = "audiomodule_play_summary";
 
+        public const string Audio_Pause_Command = "pause";
+        public const string Audio_Pause_Alias_1 = "pauseaudio";
+        public const string Audio_Pause_Alias_2 = "pausesong";
+        public const string Audio_Pause_Name = "audiomodule_pause_name";
+        public const string Audio_Pause_Summary = "audiomodule_pause_summary";
+
+        public const string Audio_Resume_Command = "resume";
+        public const string Audio_Resume_Alias_1 = "resumeaudio";
+        public const string Audio_Resume_Alias_2 = "resumesong";
+        public const string Audio_Resume_Name = "audiomodule_resume_name";
+        public const string Audio_Resume_Summary = "audiomodule_resume_summary";
+
         public const string Audio_Stop_Command = "stop";
         public const string Audio_Stop_Alias_1 = "s";
         public const string Audio_Stop_Alias_2 = "stopaudio";
@@ -291,6 +303,21 @@ namespace NoeSbot.Resources
         public const string Mod_Botstatus_Command = "botstatus";
         public const string Mod_Botstatus_Name = "modmodule_botstatus_name";
         public const string Mod_Botstatus_Summary = "modmodule_botstatus_summary";
+
+        public const string Mod_RemoveMessages_Command = "removemessages";
+        public const string Mod_RemoveMessages_Alias_1 = "rm";
+        public const string Mod_RemoveMessages_Name = "modmodule_removemessages_name";
+        public const string Mod_RemoveMessages_Summary = "modmodule_removemessages_summary";
+
+        public const string Mod_CleanMessages_Command = "cleanmessages";
+        public const string Mod_CleanMessages_Alias_1 = "cm";
+        public const string Mod_CleanMessages_Name = "modmodule_cleanmessages_name";
+        public const string Mod_CleanMessages_Summary = "modmodule_cleanmessages_summary";
+
+        public const string Mod_Logs_Command = "logs";
+        public const string Mod_Logs_Alias_1 = "getlogs";
+        public const string Mod_Logs_Name = "modmodule_logs_name";
+        public const string Mod_Logs_Summary = "modmodule_logs_summary";
 
         #endregion
 
