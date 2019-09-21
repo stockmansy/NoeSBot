@@ -51,7 +51,7 @@ namespace NoeSbot.Modules
         public async Task StartEvent()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_StartEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_StartEvent_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
 
@@ -135,7 +135,7 @@ namespace NoeSbot.Modules
         public async Task UpdateEvent()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_UpdateEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_UpdateEvent_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Event_UpdateEvent_Command)]
@@ -208,7 +208,7 @@ namespace NoeSbot.Modules
         public async Task StopEvent()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_StopEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_StopEvent_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Event_StopEvent_Command)]
@@ -249,7 +249,7 @@ namespace NoeSbot.Modules
         public async Task TriggerEvent()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_TriggerEvent_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_TriggerEvent_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Event_TriggerEvent_Command)]

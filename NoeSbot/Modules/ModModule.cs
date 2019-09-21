@@ -48,7 +48,7 @@ namespace NoeSbot.Modules
         public async Task Nuke()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_Nuke_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_Nuke_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Mod_Nuke_Command)]
@@ -110,7 +110,7 @@ namespace NoeSbot.Modules
         public async Task Botstatus()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_Botstatus_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_Botstatus_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Mod_Botstatus_Command)]
@@ -134,7 +134,7 @@ namespace NoeSbot.Modules
         public async Task RemoveMessages()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_RemoveMessages_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_RemoveMessages_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Mod_RemoveMessages_Command)]
@@ -183,7 +183,7 @@ namespace NoeSbot.Modules
         public async Task CleanMessages()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_CleanMessages_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Mod_CleanMessages_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Mod_CleanMessages_Command)]

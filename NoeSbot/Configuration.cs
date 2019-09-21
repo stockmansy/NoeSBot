@@ -21,7 +21,7 @@ namespace NoeSbot
         [JsonIgnore]
         public static string FileName { get; private set; } = "config/configuration.json";
         public ulong[] Owners { get; set; }
-        public char Prefix { get; set; } = '!';
+        public char[] Prefixes { get; set; } = new char[] { '!' };
         public string Token { get; set; } = "";
         public string PunishedRole { get; set; } = "silenced";
         public string MediaChannel { get; set; } = "media_room";
@@ -143,9 +143,9 @@ namespace NoeSbot
                     if (owners.Length > 0)
                         exConfig.Owners = owners;
 
-                    var prefix = guildConfigs.Where(x => x.ConfigurationTypeId == (int)ConfigurationEnum.Prefix).Select(x => x.Value).FirstOrDefault();
-                    if (!string.IsNullOrWhiteSpace(prefix))
-                        exConfig.Prefix = prefix.First();
+                    var prefixes = guildConfigs.Where(x => x.ConfigurationTypeId == (int)ConfigurationEnum.Prefixes).Select(x => char.Parse(x.Value)).ToArray();
+                    if (prefixes.Length > 0)
+                        exConfig.Prefixes = prefixes;
 
                     var punishedRole = guildConfigs.Where(x => x.ConfigurationTypeId == (int)ConfigurationEnum.PunishedRole).Select(x => x.Value).FirstOrDefault();
                     if (!string.IsNullOrWhiteSpace(punishedRole))

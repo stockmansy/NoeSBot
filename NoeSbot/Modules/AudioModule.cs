@@ -58,7 +58,7 @@ namespace NoeSbot.Modules
         public async Task GetInfo()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_AudioInfo_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_AudioInfo_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Audio_AudioInfo_Command)]
@@ -120,7 +120,7 @@ namespace NoeSbot.Modules
         public async Task SetAudio()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_Volume_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_Volume_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Audio_Volume_Command)]
@@ -156,7 +156,7 @@ namespace NoeSbot.Modules
         public async Task Play()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_Play_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_Play_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Audio_Play_Command)]

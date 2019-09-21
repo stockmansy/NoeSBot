@@ -188,7 +188,7 @@ namespace NoeSbot.Helpers
             yield return line.ToString().Trim();
         }
 
-        public static Embed GetHelp(string command, char prefix, Color color)
+        public static Embed GetHelp(string command, char[] prefixes, Color color)
         {
             var model = Labels.GetCommandInfo(command);
 
@@ -214,7 +214,7 @@ namespace NoeSbot.Helpers
                 builder.AddField(x =>
                 {
                     x.Name = $"{Labels.GetText("label_example")} {i}";
-                    x.Value = string.Format(example, prefix, command);
+                    x.Value = string.Format(example, prefixes.First(), command);
                     x.IsInline = false;
                 });
 
@@ -232,7 +232,7 @@ namespace NoeSbot.Helpers
             return builder.Build();
         }
 
-        public static Embed GetModules(char prefix, Color color, int[] loadedModules)
+        public static Embed GetModules(char[] prefixes, Color color, int[] loadedModules)
         {
             var modules = Labels.GetModules();
 
@@ -251,7 +251,7 @@ namespace NoeSbot.Helpers
                 foreach (var cmd in module.Commands)
                 {
                     var alias = cmd.Alias.Count > 0 ? $"(Alias: {string.Join(", ", cmd.Alias)})" : "";
-                    description += $"{prefix}{cmd.Command} {alias}{Environment.NewLine}";
+                    description += $"{prefixes.First()}{cmd.Command} {alias}{Environment.NewLine}";
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))

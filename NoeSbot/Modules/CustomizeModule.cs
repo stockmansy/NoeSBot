@@ -46,7 +46,7 @@ namespace NoeSbot.Modules
         public async Task AddCustomPunish()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_AddCustomPunish_Command)]
@@ -68,7 +68,7 @@ namespace NoeSbot.Modules
         public async Task AddCustom()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustom_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_AddCustom_Command)]
@@ -123,7 +123,7 @@ namespace NoeSbot.Modules
         public async Task AddCustomProfileBackground()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomProfileBackground_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomProfileBackground_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_AddCustomProfileBackground_Command)]
@@ -171,7 +171,7 @@ namespace NoeSbot.Modules
         public async Task AddCustomPunishedCommand()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomPunishCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomPunishCommand_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_AddCustomPunishCommand_Command)]
@@ -222,7 +222,7 @@ namespace NoeSbot.Modules
         public async Task AddCustomUnpunishCommand()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomUnpunishCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_AddCustomUnpunishCommand_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_AddCustomUnpunishCommand_Command)]
@@ -250,7 +250,7 @@ namespace NoeSbot.Modules
         public async Task GetCustomPunish()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_GetCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_GetCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_GetCustomPunish_Command)]
@@ -271,7 +271,7 @@ namespace NoeSbot.Modules
         public async Task GetCustom()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_GetCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_GetCustom_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_GetCustom_Command)]
@@ -336,7 +336,7 @@ namespace NoeSbot.Modules
         public async Task RemoveAllCustomPunish()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveAllCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveAllCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_RemoveAllCustomPunish_Command)]
@@ -357,7 +357,7 @@ namespace NoeSbot.Modules
         public async Task RemoveCustom()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveAllCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveAllCustom_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_RemoveAllCustom_Command)]
@@ -395,7 +395,7 @@ namespace NoeSbot.Modules
         public async Task RemoveCustomPunish()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustomPunish_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_RemoveCustomPunish_Command)]
@@ -417,7 +417,7 @@ namespace NoeSbot.Modules
         public async Task RemoveSpecificCustomPunish()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustom_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustom_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_RemoveCustom_Command)]
@@ -456,7 +456,7 @@ namespace NoeSbot.Modules
         public async Task RemoveCustomCommand()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustomCommand_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Customize_RemoveCustomCommand_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Customize_RemoveCustomCommand_Command)]

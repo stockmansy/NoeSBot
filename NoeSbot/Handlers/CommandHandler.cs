@@ -6,12 +6,11 @@ using System;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using Discord;
-using NoeSbot.Enums;
+using NoeSbot.Extensions;
 using NoeSbot.Logic;
 using NoeSbot.Database.Services;
 using System.Threading;
 using NoeSbot.Resources;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace NoeSbot.Handlers
 {
@@ -142,7 +141,7 @@ namespace NoeSbot.Handlers
             }
 
             // If it isn't a command return
-            if (!(message.HasCharPrefix(Configuration.Load(guild.Id).Prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
+            if (!(message.HasCharPrefix(Configuration.Load(guild.Id).Prefixes, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
 
             // Execute the command. (result does not indicate a return value, rather an object stating if the command executed succesfully)
             var result = await _commands.ExecuteAsync(context, argPos, _provider, MultiMatchHandling.Best);

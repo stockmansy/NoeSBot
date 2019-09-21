@@ -41,7 +41,7 @@ namespace NoeSbot.Modules
         public async Task AddTrigger()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.MessageTrigger_AddTrigger_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.MessageTrigger_AddTrigger_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.MessageTrigger_AddTrigger_Command)]
@@ -72,7 +72,7 @@ namespace NoeSbot.Modules
         public async Task DeleteTrigger()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.MessageTrigger_DeleteTrigger_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.MessageTrigger_DeleteTrigger_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.MessageTrigger_DeleteTrigger_Command)]

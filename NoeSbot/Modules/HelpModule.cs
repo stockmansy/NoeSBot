@@ -47,10 +47,10 @@ namespace NoeSbot.Modules
             await Context.Message.DeleteAsync();
             var user = Context.User as SocketGuildUser;
 
-            var prefix = Configuration.Load(Context.Guild.Id).Prefix;
+            var prefixes = Configuration.Load(Context.Guild.Id).Prefixes;
             var loadedModules = Configuration.Load(Context.Guild.Id).LoadedModules;
 
-            await user.SendMessageAsync("", false, CommonHelper.GetModules(prefix, user.GetColor(), loadedModules));
+            await user.SendMessageAsync("", false, CommonHelper.GetModules(prefixes, user.GetColor(), loadedModules));
         }
 
         [Command(Labels.Help_Help_Command)]
@@ -67,7 +67,7 @@ namespace NoeSbot.Modules
                 return;
             }
 
-            await ReplyAsync("", false, CommonHelper.GetHelp(command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         #endregion

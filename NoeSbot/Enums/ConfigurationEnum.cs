@@ -3,7 +3,7 @@
     public enum ConfigurationEnum
     {
         Owners = 1,
-        Prefix = 2,
+        Prefixes = 2,
         PunishedRole = 3,
         MediaChannel = 4,
         GeneralChannel = 5,

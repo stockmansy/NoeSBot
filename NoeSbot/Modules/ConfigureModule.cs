@@ -61,7 +61,7 @@ namespace NoeSbot.Modules
             builder.AddField(x =>
             {
                 x.Name = "Prefix";
-                x.Value = config.Prefix;
+                x.Value = config.Prefixes;
                 x.IsInline = false;
             });
 
@@ -111,7 +111,7 @@ namespace NoeSbot.Modules
         public async Task SaveConfigAsync()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_SaveConfig_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_SaveConfig_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Configure_SaveConfig_Command)]
@@ -147,7 +147,7 @@ namespace NoeSbot.Modules
             switch (configName.ToLowerInvariant())
             {
                 case "prefix":
-                    success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.Prefix, value);
+                    success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.Prefixes, value);
                     break;
                 case "punishedrole":
                     success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.PunishedRole, value);
@@ -179,7 +179,7 @@ namespace NoeSbot.Modules
         public async Task LoadModuleAsync()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_LoadModule_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_LoadModule_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Configure_LoadModule_Command)]
@@ -247,7 +247,7 @@ namespace NoeSbot.Modules
         public async Task UnLoadModuleAsync()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_UnloadModule_Command, Configuration.Load(Context.Guild.Id).Prefix, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_UnloadModule_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Configure_UnloadModule_Command)]
