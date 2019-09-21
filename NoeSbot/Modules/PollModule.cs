@@ -176,7 +176,7 @@ namespace NoeSbot.Modules
             for (var j = 1; j <= poll.Options.Count; j++)
             {
                 await message.AddReactionAsync(IconHelper.GetEmote(_reactions[j]));
-                await Task.Delay(1250);
+                await Task.Delay(500);
             }
 
             await message.ModifyAsync(x => x.Embed = GeneratePollEmbed(poll));

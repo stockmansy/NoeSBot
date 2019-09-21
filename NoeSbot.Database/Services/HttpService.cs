@@ -20,7 +20,6 @@ namespace NoeSbot.Database.Services
     {
         private HttpClient _http;
         private readonly ILogger<ConfigurationService> _logger;
-        private string _token;
 
         public HttpService(ILoggerFactory loggerFactory)
         {
@@ -42,7 +41,7 @@ namespace NoeSbot.Database.Services
         private async Task<HttpContent> SendTwitch<T>(HttpMethod method, string path, T payload, string authToken = null)
             where T : class
         {
-            HttpRequestMessage msg = new HttpRequestMessage(method, path);
+            var msg = new HttpRequestMessage(method, path);
 
             if (authToken != null)
             {
@@ -61,7 +60,7 @@ namespace NoeSbot.Database.Services
 
             var response = await _http.SendAsync(msg, HttpCompletionOption.ResponseContentRead);
             if (!response.IsSuccessStatusCode)
-                throw new HttpException(response.StatusCode);
+                throw new HttpRequestException(response.ToString());
             return response.Content;
         }
 
@@ -70,7 +69,7 @@ namespace NoeSbot.Database.Services
         private async Task<HttpContent> Send<T>(HttpMethod method, string path, T payload)
             where T : class
         {
-            HttpRequestMessage msg = new HttpRequestMessage(method, path);
+            var msg = new HttpRequestMessage(method, path);
             
             if (payload != null)
             {
@@ -82,7 +81,7 @@ namespace NoeSbot.Database.Services
 
             var response = await _http.SendAsync(msg, HttpCompletionOption.ResponseContentRead);
             if (!response.IsSuccessStatusCode)
-                throw new HttpException(response.StatusCode);
+                throw new HttpRequestException(response.ToString());
             return response.Content;
         }
 

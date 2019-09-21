@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using NoeSbot.Database.Models;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace NoeSbot.Database
         : base(options)
         {
             // .NET Core EF7 fix -_-
-            Database.ExecuteSqlCommand("CREATE TABLE IF NOT EXISTS `__EFMigrationsHistory` (`MigrationId` nvarchar(150) NOT NULL, `ProductVersion` nvarchar(32) NOT NULL,PRIMARY KEY(`MigrationId`))");
+            //Database.ExecuteSqlCommand("CREATE TABLE IF NOT EXISTS `__EFMigrationsHistory` (`MigrationId` nvarchar(150) NOT NULL, `ProductVersion` nvarchar(32) NOT NULL,PRIMARY KEY(`MigrationId`))");
 
             Database.EnsureCreated();
             Database.Migrate();
@@ -81,9 +82,9 @@ namespace NoeSbot.Database
     }
 
     // DbContextFactory => It's to generate the migrations
-    public class DatabaseContextFactory : IDbContextFactory<DatabaseContext>
+    public class DatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContext>
     {
-        public DatabaseContext Create(DbContextFactoryOptions options)
+        public DatabaseContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
             optionsBuilder.UseMySql("Server=localhost; Port=; Database=noesbot; Uid=noesbot; Pwd=123456;");

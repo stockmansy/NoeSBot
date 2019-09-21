@@ -338,6 +338,8 @@ namespace NoeSbot.Logic
 
         private FileInfo RandomPunishedImage()
         {
+            if (_punishImages.Count <= 0)
+                return null;
             var r = _rnd.Next(_punishImages.Count);
             return _punishImages[r];
         }

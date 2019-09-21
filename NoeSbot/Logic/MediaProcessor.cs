@@ -28,7 +28,7 @@ namespace NoeSbot.Logic
             if (mediaChannel == null)
                 return;
 
-            var messages = await mediaChannel.GetMessagesAsync(80).Flatten();
+            var messages = await mediaChannel.GetMessagesAsync(80).Flatten().ToList();
 
             var user = context.User as SocketGuildUser;
 

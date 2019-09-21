@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,16 +14,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006" />
-    <PackageReference Include="Discord.Net" Version="1.0.2" />
+    <PackageReference Include="Discord.Net" Version="2.1.1" />
     <PackageReference Include="log4net" Version="2.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="1.1.1" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.1" PrivateAssets="All" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.0" />
-	<PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
-    <PackageReference Include="MySqlConnector" Version="0.19.2" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="1.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="2.2.6" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.6" PrivateAssets="All" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.6">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="MySqlConnector" Version="0.57.0-rc1" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.1-preview1-final" />
+    <PackageReference Include="System.Drawing.Common" Version="4.6.0-rc1.19456.4" />
   </ItemGroup>
   
   <ItemGroup>

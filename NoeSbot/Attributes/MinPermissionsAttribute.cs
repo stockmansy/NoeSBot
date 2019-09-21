@@ -17,7 +17,7 @@ namespace NoeSbot.Attributes
             Level = level;
         }
         
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+        public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             var access = GetPermission(context);
 

@@ -284,9 +284,9 @@ namespace NoeSbot.Modules
         {
             try
             {
-                var lastMessages = await Context.Channel.GetMessagesAsync(100).Flatten();
-                var userMessages = lastMessages.Where(x => (user != null ? x.Author.Id == user.Id : true) && x.CreatedAt.UtcTicks >= DateTime.UtcNow.AddSeconds(-secondsBack).Ticks).ToList();
-                await Context.Channel.DeleteMessagesAsync(userMessages);
+                var lastMessages = Context.Channel.GetMessagesAsync(100).Flatten();
+                var userMessages = await lastMessages.Where(x => (user != null ? x.Author.Id == user.Id : true) && x.CreatedAt.UtcTicks >= DateTimeOffset.UtcNow.AddSeconds(-secondsBack).Ticks).Where(x => x.Id != Context.Message.Id).ToList();
+                await ((ITextChannel)Context.Channel).DeleteMessagesAsync(userMessages);
 
                 return userMessages.Count;
             }
@@ -320,13 +320,13 @@ namespace NoeSbot.Modules
 
         private async Task SendLogs(IEnumerable<ActivityLogVM.ActivityLogVMItem> logs)
         {
-            var splitlogs = CommonHelper.SplitList(logs.OrderByDescending(x => x.Date).ToList(), 40);            
+            var splitlogs = CommonHelper.SplitList(logs.OrderByDescending(x => x.Date).ToList(), 40);
 
             foreach (var splitList in splitlogs)
             {
                 var sb = new StringBuilder();
                 sb.AppendLine("```");
-                
+
                 foreach (var log in splitList)
                 {
                     sb.AppendLine($"{log.Log} at {log.Date.ToLocalTime().ToString("yyyy-MM-dd HH:mm")}");

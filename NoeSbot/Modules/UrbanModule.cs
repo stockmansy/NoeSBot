@@ -209,7 +209,7 @@ namespace NoeSbot.Modules
                 {
                     var emote = IconHelper.GetEmote(icon);
                     await message.AddReactionAsync(emote);
-                    Thread.Sleep(1300);
+                    Thread.Sleep(500);
                 }
 
                 if (urbanMain.DefinitionCount > 1)

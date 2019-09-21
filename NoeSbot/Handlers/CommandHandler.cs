@@ -63,7 +63,7 @@ namespace NoeSbot.Handlers
             _client.JoinedGuild += JoinedGuild;
 
             // Discover all of the commands in this assembly and load them.
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), provider);
         }
 
         public async Task Ready()

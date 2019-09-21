@@ -343,7 +343,7 @@ namespace NoeSbot.Logic
                 cacheEntry = await defaultChannel.GetMessagesAsync(15, options: new RequestOptions
                 {
                     AuditLogReason = "Checking if people were notified"
-                }).Flatten();
+                }).Flatten().ToList();
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5));

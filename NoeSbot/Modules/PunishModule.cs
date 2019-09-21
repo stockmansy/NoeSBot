@@ -16,6 +16,7 @@ using NoeSbot.Database.Services;
 using NoeSbot.Database.Models;
 using NoeSbot.Logic;
 using NoeSbot.Resources;
+using Microsoft.Extensions.Logging;
 
 namespace NoeSbot.Modules
 {
@@ -25,12 +26,14 @@ namespace NoeSbot.Modules
         private const int PUNISH_TIME = 3000;
 
         private PunishLogic _logic;
+        private readonly ILogger<ConfigurationService> _logger;
 
         #region Constructor
 
-        public PunishModule(PunishLogic logic)
+        public PunishModule(PunishLogic logic, ILoggerFactory loggerFactory)
         {
             _logic = logic;
+            _logger = loggerFactory.CreateLogger<ConfigurationService>();
         }
 
         #endregion
@@ -90,8 +93,11 @@ namespace NoeSbot.Modules
                     var cus = await _logic.GetCustomPunish(user);
                     if (!cus.HasCustom)
                     {
-                        var randomPunishedImage =  await _logic.Punish(Context, user, time, reason, durationInSecs);
-                        await Context.Channel.SendFileAsync(randomPunishedImage, $"Successfully punished {user.Mention} ({user.Username}) for {punishTime}");
+                        var randomPunishedImage = await _logic.Punish(Context, user, time, reason, durationInSecs);
+                        if (randomPunishedImage == null)
+                            await Context.Channel.SendMessageAsync($"Successfully punished {user.Mention} ({user.Username}) for {punishTime}");
+                        else
+                            await Context.Channel.SendFileAsync(randomPunishedImage, $"Successfully punished {user.Mention} ({user.Username}) for {punishTime}");
                     }
                     else
                     {
@@ -105,10 +111,11 @@ namespace NoeSbot.Modules
                         await ReplyAsync(cus.ReasonMessage);
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
                     var msg = $"Failed to punish {user.Username}";
-                    LogHelper.Log(msg, LogLevel.Debug);
+                    _logger.LogError($"Error in Punish: {ex.Message}");
+                    LogHelper.Log(msg, Helpers.LogLevel.Debug);
                     await ReplyAsync(msg);
                 }
             }

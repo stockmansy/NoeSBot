@@ -20,7 +20,7 @@ namespace NoeSbot.Attributes
             _accessLevel = accessLevel;
         }
 
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+        public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             switch (_accessLevel)
             {

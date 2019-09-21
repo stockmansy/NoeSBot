@@ -117,7 +117,6 @@ namespace NoeSbot.Logic
                 var channelInfo = channels?.Where(x => x.Name != null).Select(x => new
                 {
                     x.Name,
-                    x.IsNsfw,
                     x.Position,
                     x.Id,
                     x.CreatedAt,
