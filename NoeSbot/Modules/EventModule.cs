@@ -22,18 +22,14 @@ namespace NoeSbot.Modules
     [ModuleName(ModuleEnum.Event)]
     public class EventModule : ModuleBase
     {
-        private readonly DiscordSocketClient _client;
-        private IMemoryCache _cache;
-        private Random _random = new Random();
-        private IEventService _eventService;
-        private EventLogic _eventLogic;
+        private readonly Random _random = new Random();
+        private readonly IEventService _eventService;
+        private readonly EventLogic _eventLogic;
 
         #region Constructor
 
-        public EventModule(DiscordSocketClient client, IMemoryCache memoryCache, IEventService eventService, EventLogic eventLogic)
+        public EventModule(IEventService eventService, EventLogic eventLogic)
         {
-            _client = client;
-            _cache = memoryCache;
             _eventService = eventService;
             _eventLogic = eventLogic;
         }
@@ -369,7 +365,7 @@ namespace NoeSbot.Modules
             builder.AddField(x =>
             {
                 x.Name = $"{item.Name}";
-                x.Value = $"The event will end on {item.Date.ToLocalTime().ToString("dd-MM-yyyy hh:mm")}";
+                x.Value = $"The event will end on {item.Date.ToLocalTime():dd-MM-yyyy hh:mm}";
                 x.IsInline = false;
             });
 
@@ -385,7 +381,7 @@ namespace NoeSbot.Modules
                 builder.AddField(x =>
                 {
                     x.Name = $"Match date";
-                    x.Value = $"Secret santa matches will be send out on {item.MatchDate.Value.ToLocalTime().ToString("dd-MM-yyyy hh:mm")}";
+                    x.Value = $"Secret santa matches will be send out on {item.MatchDate.Value.ToLocalTime():dd-MM-yyyy hh:mm}";
                     x.IsInline = false;
                 });
             }
@@ -439,7 +435,7 @@ namespace NoeSbot.Modules
             builder.AddField(x =>
             {
                 x.Name = $"Matches";
-                x.Value = $"{strBuilder.ToString()}";
+                x.Value = $"{strBuilder}";
                 x.IsInline = false;
             });
 

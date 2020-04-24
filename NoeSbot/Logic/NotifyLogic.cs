@@ -24,17 +24,15 @@ namespace NoeSbot.Logic
     public class NotifyLogic
     {
         private readonly DiscordSocketClient _client;
-        private readonly IConfigurationService _configurationService;
         private readonly INotifyService _notifyService;
         private readonly IHttpService _httpService;
-        private ConcurrentDictionary<int, DateTime?> _printed;
+        private readonly ConcurrentDictionary<int, DateTime?> _printed;
         private readonly LimitedDictionary<ulong, NotifyItem> _notifyMessages;
         private readonly IMemoryCache _cache;
 
-        public NotifyLogic(DiscordSocketClient client, IConfigurationService configurationService, INotifyService notifyService, IHttpService httpService, IMemoryCache memoryCache)
+        public NotifyLogic(DiscordSocketClient client, INotifyService notifyService, IHttpService httpService, IMemoryCache memoryCache)
         {
             _client = client;
-            _configurationService = configurationService;
             _httpService = httpService;
             _notifyService = notifyService;
             _printed = new ConcurrentDictionary<int, DateTime?>();

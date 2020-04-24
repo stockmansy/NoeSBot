@@ -181,8 +181,8 @@ namespace NoeSbot
 
         public static Configuration CloneJson(Configuration source)
         {
-            if (Object.ReferenceEquals(source, null))
-                return default(Configuration);
+            if (source is null)
+                return default;
             
             var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
             return JsonConvert.DeserializeObject<Configuration>(JsonConvert.SerializeObject(source), deserializeSettings);
