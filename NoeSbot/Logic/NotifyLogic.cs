@@ -159,7 +159,7 @@ namespace NoeSbot.Logic
                                         _printed.AddOrUpdate(notifyItem.NotifyItemId, null);
                                     }
                                 }
-                                catch (Exception ex)
+                                catch
                                 {
                                     await Task.Delay(5000);
                                     continue;
@@ -214,7 +214,7 @@ namespace NoeSbot.Logic
                                         _printed.AddOrUpdate(notifyItem.NotifyItemId, null);
                                     }
                                 }
-                                catch (Exception ex)
+                                catch 
                                 {
                                     await Task.Delay(5000);
                                     continue;

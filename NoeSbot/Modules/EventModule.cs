@@ -113,7 +113,7 @@ namespace NoeSbot.Modules
 
                 await PrintEventNotification(eventItem);
             }
-            catch (Exception ex)
+            catch
             {
                 var builder = new EmbedBuilder()
                 {
