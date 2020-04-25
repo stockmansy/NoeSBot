@@ -88,7 +88,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.PunishedEntities.ToListAsync();
+                var existing = await _context.PunishedEntities.AsAsyncEnumerable().ToListAsync();
                 if (existing == null)
                     return new List<Punished>();
                 

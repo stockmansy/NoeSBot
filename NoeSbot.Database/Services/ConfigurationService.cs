@@ -28,7 +28,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.ConfigurationEntities.Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId && x.Value.Equals(value, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
+                var existing = await _context.ConfigurationEntities.AsQueryable().Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId && x.Value.Equals(value, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
                 if (existing != null)
                     _context.ConfigurationEntities.Remove(existing);
 
@@ -96,7 +96,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.ConfigurationEntities.ToListAsync();
+                var existing = await _context.ConfigurationEntities.AsAsyncEnumerable().ToListAsync();
                 if (existing == null)
                     return new List<Config>();
                 

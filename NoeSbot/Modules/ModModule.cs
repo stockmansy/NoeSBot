@@ -285,7 +285,7 @@ namespace NoeSbot.Modules
             try
             {
                 var lastMessages = Context.Channel.GetMessagesAsync(100).Flatten();
-                var userMessages = await lastMessages.Where(x => (user != null ? x.Author.Id == user.Id : true) && x.CreatedAt.UtcTicks >= DateTimeOffset.UtcNow.AddSeconds(-secondsBack).Ticks).Where(x => x.Id != Context.Message.Id).ToList();
+                var userMessages = await lastMessages.Where(x => (user != null ? x.Author.Id == user.Id : true) && x.CreatedAt.UtcTicks >= DateTimeOffset.UtcNow.AddSeconds(-secondsBack).Ticks).Where(x => x.Id != Context.Message.Id).ToListAsync();
                 await ((ITextChannel)Context.Channel).DeleteMessagesAsync(userMessages);
 
                 return userMessages.Count;

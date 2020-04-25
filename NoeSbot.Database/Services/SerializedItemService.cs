@@ -1,14 +1,10 @@
-﻿using NoeSbot.Database;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Linq;
-using Discord.Commands;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using NoeSbot.Database.Models;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace NoeSbot.Database.Services
 {

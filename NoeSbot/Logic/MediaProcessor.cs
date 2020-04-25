@@ -23,12 +23,13 @@ namespace NoeSbot.Logic
                 return;
 
             var channels = await context.Guild.GetChannelsAsync();
-            var mediaChannel = channels.Where(x => x.Name != null && x.Name.Equals(Configuration.Load(context.Guild.Id).MediaChannel, StringComparison.OrdinalIgnoreCase)).SingleOrDefault() as IMessageChannel;
+            var mediaChannel = channels.Where(x => x.Name != null && x.Name.Equals(Configuration.Load(context.Guild.Id).MediaChannel, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            var mediaMsgChannel = mediaChannel as IMessageChannel;
 
             if (mediaChannel == null)
                 return;
 
-            var messages = await mediaChannel.GetMessagesAsync(80).Flatten().ToList();
+            var messages = await mediaMsgChannel.GetMessagesAsync(80).Flatten().ToListAsync();
 
             var user = context.User as SocketGuildUser;
 
@@ -36,7 +37,7 @@ namespace NoeSbot.Logic
             {
                 foreach (var attach in context.Message.Attachments)
                 {
-                    await ProcessMediaAsync(messages, attach.Url, user, mediaChannel);
+                    await ProcessMediaAsync(messages, attach.Url, user, mediaMsgChannel);
                 }
             }
 
@@ -46,7 +47,7 @@ namespace NoeSbot.Logic
             foreach (Match match in matches)
             {
                 if (context.Message.Embeds.Any())//CheckForMedia(match.Value))            
-                    await ProcessMediaAsync(messages, match.Value, user, mediaChannel);
+                    await ProcessMediaAsync(messages, match.Value, user, mediaMsgChannel);
             }
         }
 
@@ -78,7 +79,7 @@ namespace NoeSbot.Logic
                 if (isRepost)
                 {
                     builder.AppendLine("Repost!");
-                    builder.AppendLine($"{mentionedUser} posted the following media on {f.CreatedAt.ToString("dd-MM-yyyy hh:mm")}");
+                    builder.AppendLine($"{mentionedUser} posted the following media on {f.CreatedAt:dd-MM-yyyy hh:mm}");
                     builder.AppendLine("```");
                     builder.AppendLine($"{input}");
                     builder.AppendLine("```");
