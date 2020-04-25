@@ -24,7 +24,7 @@ namespace NoeSbot
     {
         private DiscordSocketClient _client;
         
-        static void Main(string[] args) => new Program().Start().GetAwaiter().GetResult();
+        static async Task Main(string[] args) => await new Program().Start();
         
         public async Task Start()
         {
