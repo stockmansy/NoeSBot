@@ -23,13 +23,13 @@ namespace NoeSbot
     public class Program
     {
         private DiscordSocketClient _client;
-        
+
         static async Task Main(string[] args) => await new Program().Start();
-        
+
         public async Task Start()
         {
             Configuration.EnsureExists();
-            
+
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Verbose,
@@ -43,7 +43,7 @@ namespace NoeSbot
             Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
 
             log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
-            
+
             _client.Log += Log;
 
             var serviceCollection = ConfigureServices();
@@ -77,7 +77,19 @@ namespace NoeSbot
         private IServiceCollection ConfigureServices()
         {
             return new ServiceCollection()
-                        .AddDbContext<DatabaseContext>(options => options.UseMySql(Configuration.Load().ConnectionString))
+                        .AddDbContext<DatabaseContext>(options =>
+                        {
+                            switch (Configuration.Load().UseDataBaseMode)
+                            {
+                                case Configuration.DataBaseMode.MySQL:
+                                    options.UseMySql(Configuration.Load().MySQLConnectionString);
+                                    break;
+                                case Configuration.DataBaseMode.SQLite:
+                                default:
+                                    options.UseSqlite("Data Source=noesbot.db");
+                                    break;
+                            }                            
+                        })
                         .AddSingleton(_client)
                         .AddSingleton<CommandService>()
                         .AddSingleton<CommandHandler>()

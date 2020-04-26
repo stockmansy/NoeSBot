@@ -52,7 +52,10 @@ namespace NoeSbot
                 _loadedModules = value;
             }
         }
-        public string ConnectionString { get; set; }
+
+        public string MySQLConnectionString { get; set; }
+
+        public DataBaseMode UseDataBaseMode { get; set; } = DataBaseMode.SQLite;
 
         public static void EnsureExists()
         {
@@ -83,7 +86,7 @@ namespace NoeSbot
                 string dbPassword = Console.ReadLine();
 
                 config.Token = token;
-                config.ConnectionString = String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};", dbHost, dbPort, dbName, dbUser, dbPassword);
+                config.MySQLConnectionString = String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};", dbHost, dbPort, dbName, dbUser, dbPassword);
                 config.SaveJson();
             }
             Console.WriteLine("Configuration Loaded");
@@ -186,6 +189,12 @@ namespace NoeSbot
             
             var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
             return JsonConvert.DeserializeObject<Configuration>(JsonConvert.SerializeObject(source), deserializeSettings);
+        }
+
+        public enum DataBaseMode
+        {
+            SQLite,
+            MySQL
         }
     }
 }

@@ -1,13 +1,14 @@
 {
   "owners": "",
-  "prefix": "~",
+  "prefixes": [ "~", "!" ],
   "token": "tokenhere",
   "punishedrole": "silenced",
   "mediachannel": "media_room",
   "generalchannel": "general",
   "LoadedModules": "",
-  "connectionstring": "Server=localhost; Port=3306; Database=noesbot; Uid=noesbot; Pwd=example;",
+  "mysqlconnectionstring": "Server=localhost; Port=3306; Database=noesbot; Uid=noesbot; Pwd=example;",
+  "usedatabasemode": "SQLite",
   "newuserrole": "initiate",
   "twitchclientid": "",
-  "youtubeapikey":  ""
+  "youtubeapikey": ""
 }

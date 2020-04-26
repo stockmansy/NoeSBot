@@ -39,7 +39,7 @@ namespace NoeSbot.Database.Services
 
         private async Task RemoveOldGuildBackup(long guildId)
         {
-            var existingOld = await _context.SerializedItemEntities.Where(x => x.GuildId == guildId &&
+            var existingOld = await _context.SerializedItemEntities.AsAsyncEnumerable().Where(x => x.GuildId == guildId &&
                                                                                x.Type == (int)SerializedItem.SerializedItemType.GuildBackup &&
                                                                                x.ModifiedDate.Ticks < DateTimeOffset.UtcNow.AddMonths(-1).Ticks)
                                                                    .ToListAsync();

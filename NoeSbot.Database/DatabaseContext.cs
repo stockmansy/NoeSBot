@@ -15,7 +15,7 @@ namespace NoeSbot.Database
             // .NET Core EF7 fix -_-
             //Database.ExecuteSqlCommand("CREATE TABLE IF NOT EXISTS `__EFMigrationsHistory` (`MigrationId` nvarchar(150) NOT NULL, `ProductVersion` nvarchar(32) NOT NULL,PRIMARY KEY(`MigrationId`))");
 
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
             Database.Migrate();
 
             var entries = ChangeTracker
@@ -87,7 +87,8 @@ namespace NoeSbot.Database
         public DatabaseContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
-            optionsBuilder.UseMySql("Server=localhost; Port=; Database=noesbot; Uid=noesbot; Pwd=123456;");
+            //optionsBuilder.UseMySql("Server=localhost; Port=; Database=noesbot; Uid=noesbot; Pwd=123456;");
+            optionsBuilder.UseSqlite("Data Source=noesbot.db");
 
             return new DatabaseContext(optionsBuilder.Options);
         }
