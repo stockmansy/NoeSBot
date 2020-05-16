@@ -21,14 +21,14 @@ namespace NoeSbot.Logic
         private readonly DiscordSocketClient _client;
         private static ConcurrentDictionary<ulong, ulong> _nukedChannels;
         private readonly ISerializedItemService _serializedItemService;
-        private readonly ILogger<ConfigurationService> _logger;
+        private readonly ILogger<ModLogic> _logger;
 
         public ModLogic(DiscordSocketClient client, ISerializedItemService serializedItemService, ILoggerFactory loggerFactory)
         {
             _client = client;
             _nukedChannels = new ConcurrentDictionary<ulong, ulong>();
             _serializedItemService = serializedItemService;
-            _logger = loggerFactory.CreateLogger<ConfigurationService>();
+            _logger = loggerFactory.CreateLogger<ModLogic>();
         }
 
         public async Task UserJoined(SocketGuildUser user)

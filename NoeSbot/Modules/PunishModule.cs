@@ -26,14 +26,14 @@ namespace NoeSbot.Modules
         private const int PUNISH_TIME = 3000;
 
         private PunishLogic _logic;
-        private readonly ILogger<ConfigurationService> _logger;
+        private readonly ILogger<PunishModule> _logger;
 
         #region Constructor
 
         public PunishModule(PunishLogic logic, ILoggerFactory loggerFactory)
         {
             _logic = logic;
-            _logger = loggerFactory.CreateLogger<ConfigurationService>();
+            _logger = loggerFactory.CreateLogger<PunishModule>();
         }
 
         #endregion

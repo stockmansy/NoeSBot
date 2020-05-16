@@ -14,12 +14,12 @@ namespace NoeSbot.Database.Services
     public class ProfileService : IProfileService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<ConfigurationService> _logger;
+        private readonly ILogger<ProfileService> _logger;
 
         public ProfileService(DatabaseContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<ConfigurationService>();
+            _logger = loggerFactory.CreateLogger<ProfileService>();
         }
 
         #region ProfileItem

@@ -11,12 +11,12 @@ namespace NoeSbot.Database.Services
     public class SerializedItemService : ISerializedItemService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<ConfigurationService> _logger;
+        private readonly ILogger<SerializedItemService> _logger;
 
         public SerializedItemService(DatabaseContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<ConfigurationService>();
+            _logger = loggerFactory.CreateLogger<SerializedItemService>();
         }
 
         #region Guild backup

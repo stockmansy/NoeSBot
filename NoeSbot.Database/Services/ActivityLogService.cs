@@ -15,12 +15,12 @@ namespace NoeSbot.Database.Services
     public class ActivityLogService : IActivityLogService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<ConfigurationService> _logger;
+        private readonly ILogger<ActivityLogService> _logger;
 
         public ActivityLogService(DatabaseContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<ConfigurationService>();
+            _logger = loggerFactory.CreateLogger<ActivityLogService>();
         }
 
         #region ActivityLogs
