@@ -1,5 +1,6 @@
 ﻿using Discord;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NoeSbot.Extensions
@@ -20,6 +21,11 @@ namespace NoeSbot.Extensions
                 return true;
             }
             return false;
+        }
+
+        public static bool NotNullOrEmpty<T>(this IEnumerable<T> source)
+        {
+            return source != null && source.Any();
         }
     }
 }
