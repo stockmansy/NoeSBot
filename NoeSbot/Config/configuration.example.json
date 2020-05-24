@@ -1,14 +1,20 @@
 {
-  "owners": "",
-  "prefixes": [ "~", "!" ],
-  "token": "tokenhere",
-  "punishedrole": "silenced",
-  "mediachannel": "media_room",
-  "generalchannel": "general",
-  "LoadedModules": "",
-  "mysqlconnectionstring": "Server=localhost; Port=3306; Database=noesbot; Uid=noesbot; Pwd=example;",
-  "usedatabasemode": "SQLite",
-  "newuserrole": "initiate",
-  "twitchclientid": "",
-  "youtubeapikey": ""
+  "DataBaseConfig": {
+    "MySQLConnectionString": "Server=localhost; Port=3306; Database=noesbot; Uid=noesbot; Pwd=example;",
+    "UseDataBaseMode": "SQLite"
+  },
+  "ExternalKeyTokens": {
+    "DiscordToken": "YourDiscordTokenHere",
+    "TwitchClientId": "YourTwitchClientIdHereOPTIONAL",
+    "YoutubeApiKey": "YourYoutubeApiKeyHereOPTIONAL"
+  },
+  "DefaultConfig": {
+    "Owners": [ "YourUserGuidHere" ],
+    "Prefixes": [ "!", "~", "-" ],
+    "punishedrole": "silenced",
+    "mediachannel": "media_room",
+    "generalchannel": "general",
+    "Audiovolume": 5,
+    "LoadedModules": ""
+  }
 }
