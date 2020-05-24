@@ -56,7 +56,7 @@ namespace NoeSbot.Logic
                 await user.Guild.DefaultChannel.SendMessageAsync("", false, builder.Build());
 
                 // Add role
-                var newUserRole = Configuration.Load(guildId).NewUserRole;
+                var newUserRole = GlobalConfig.GetGuildConfig(guildId).NewUserRole;
                 var role = user.Guild.Roles.Where(x => x.Name.Equals(newUserRole, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
                 if (role == null)
                     return;
@@ -228,7 +228,7 @@ namespace NoeSbot.Logic
 
         private bool ModLoaded(ulong guildId)
         {
-            var loadedModules = Configuration.Load(guildId).LoadedModules;
+            var loadedModules = GlobalConfig.GetGuildConfig(guildId).LoadedModules;
 
             return loadedModules.Contains((int)ModuleEnum.Mod);
         }

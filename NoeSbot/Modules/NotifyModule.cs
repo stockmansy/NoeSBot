@@ -47,7 +47,7 @@ namespace NoeSbot.Modules
         public async Task AddStream()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_AddStream_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_AddStream_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Notify_AddStream_Command)]
@@ -76,7 +76,7 @@ namespace NoeSbot.Modules
         public async Task AddTwitchStream()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_AddTwitchStream_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_AddTwitchStream_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Notify_AddTwitchStream_Command)]
@@ -140,7 +140,7 @@ namespace NoeSbot.Modules
         public async Task AddYoutubeStream()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_AddYoutubeStream_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_AddYoutubeStream_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Notify_AddYoutubeStream_Command)]
@@ -266,7 +266,7 @@ namespace NoeSbot.Modules
         public async Task RemoveStream()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_RemoveStream_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_RemoveStream_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Notify_RemoveStream_Command)]
@@ -296,7 +296,7 @@ namespace NoeSbot.Modules
         public async Task RemoveTwitchStream()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_RemoveTwitchStream_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_RemoveTwitchStream_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Notify_RemoveTwitchStream_Command)]
@@ -323,7 +323,7 @@ namespace NoeSbot.Modules
         public async Task RemoveYoutubeStream()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_RemoveYoutubeStream_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Notify_RemoveYoutubeStream_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Notify_RemoveYoutubeStream_Command)]

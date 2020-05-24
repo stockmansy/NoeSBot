@@ -139,6 +139,11 @@ namespace NoeSbot.Logic
             return (youtubeUser, success);
         }
 
+        public async Task<string> GetYoutubeLink(string input)
+        {
+            return await GetYoutubeUrl(input);
+        }
+
         public async Task Run(CancellationToken cancelToken)
         {
             try
@@ -159,7 +164,7 @@ namespace NoeSbot.Logic
 
                         var guild = _client.GetGuild((ulong)notifyItem.GuildId) as IGuild;
 
-                        if (!Configuration.Load(guild.Id).LoadedModules.Contains((int)ModuleEnum.Notify))
+                        if (!GlobalConfig.GetGuildConfig(guild.Id).LoadedModules.Contains((int)ModuleEnum.Notify))
                             return;
 
                         switch (notifyItem.Type)
@@ -327,6 +332,30 @@ namespace NoeSbot.Logic
                 youtubeUser = root.Items.First();
 
             return youtubeUser;
+        }
+
+        private async Task<string> GetYoutubeUrl(string input)
+        {
+            var result = default(string);
+
+            var content = await _httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/search?q={input}&maxResults=1&part=snippet&key={_youtubeToken}");
+            var response = await content.ReadAsStringAsync();
+            var root = JsonConvert.DeserializeObject<YoutubeStream>(response, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                Formatting = Formatting.None,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                Converters = new List<JsonConverter> { new DecimalConverter() }
+            });
+
+            if (root.Items != null && root.Items.Length > 0)
+            {
+                var item = root.Items[0];
+                result = $"https://www.youtube.com/watch?v={item.Id.VideoId}";
+            }
+
+            return result;
         }
 
         private async Task<string> GetMessage(Database.Models.NotifyItem notifyItem, IGuild guild)

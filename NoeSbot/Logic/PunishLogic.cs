@@ -253,7 +253,7 @@ namespace NoeSbot.Logic
         {
             if (!_cache.TryGetValue(CacheEnum.PunishedRoles, out IEnumerable<IRole> cacheEntry))
             {
-                cacheEntry = guild.Roles.Where(x => x.Name.IndexOf(Configuration.Load(guild.Id).PunishedRole, StringComparison.OrdinalIgnoreCase) >= 0);
+                cacheEntry = guild.Roles.Where(x => x.Name.IndexOf(GlobalConfig.GetGuildConfig(guild.Id).PunishedRole, StringComparison.OrdinalIgnoreCase) >= 0);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5));

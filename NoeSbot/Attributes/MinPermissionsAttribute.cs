@@ -32,7 +32,7 @@ namespace NoeSbot.Attributes
             if (c.User.IsBot)
                 return AccessLevel.Blocked;
 
-            if (Configuration.Load(c.Guild.Id).Owners.Contains(c.User.Id))
+            if (GlobalConfig.GetGuildConfig(c.Guild.Id).Owners.Contains(c.User.Id))
                 return AccessLevel.BotOwner;
 
             var user = c.User as SocketGuildUser;

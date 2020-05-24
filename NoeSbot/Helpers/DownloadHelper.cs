@@ -24,9 +24,6 @@ namespace NoeSbot.Helpers
     {
         private static readonly string _tempFolder = Path.Combine(Directory.GetCurrentDirectory(), "Temp");
         private static readonly string _youtubeRegex = @"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$";
-        private static Dictionary<ulong, int> _fileCount = new Dictionary<ulong, int>();
-
-        public static Dictionary<ulong, int> FileCount { get => _fileCount; set => _fileCount = value; }
 
         public static async Task<string> Download(string url, string name)
         {
@@ -52,37 +49,9 @@ namespace NoeSbot.Helpers
                 throw new Exception("Invalid Url!");
         }
 
-        public static async Task<string> GetUrl(IHttpService httpService, string input)
+        public static bool IsValidUrl(string input)
         {
-            try
-            {
-                if (IfValidUrl(input))
-                    return input;
-
-                var content = await httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/search?q={input}&maxResults=1&part=snippet&key={Configuration.Load().YoutubeApiKey}");
-                var response = await content.ReadAsStringAsync();
-                var root = JsonConvert.DeserializeObject<YoutubeStream>(response, new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    MissingMemberHandling = MissingMemberHandling.Ignore,
-                    Formatting = Formatting.None,
-                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                    Converters = new List<JsonConverter> { new DecimalConverter() }
-                });
-
-                if (root.Items != null && root.Items.Length > 0)
-                {
-                    var item = root.Items[0];
-                    return $"https://www.youtube.com/watch?v={item.Id.VideoId}";
-
-                }
-            }
-            catch
-            {
-                throw new Exception("Invalid Url!");
-            }
-
-            throw new Exception("Invalid Url!");
+            return IfValidUrl(input);
         }
 
         #region Private

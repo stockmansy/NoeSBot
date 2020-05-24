@@ -141,7 +141,7 @@ namespace NoeSbot.Handlers
             }
 
             // If it isn't a command return
-            if (!(message.HasCharPrefix(Configuration.Load(guild.Id).Prefixes, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
+            if (!(message.HasCharPrefix(GlobalConfig.GetGuildConfig(guild.Id).Prefixes, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
 
             // Execute the command. (result does not indicate a return value, rather an object stating if the command executed succesfully)
             var result = await _commands.ExecuteAsync(context, argPos, _provider, MultiMatchHandling.Best);
@@ -194,7 +194,7 @@ namespace NoeSbot.Handlers
         {
             try
             {
-                var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
+                var loadedModules = GlobalConfig.GetGuildConfig(context.Guild.Id).LoadedModules;
                 var bot = await context.Guild.GetCurrentUserAsync();
                 if (!bot.GuildPermissions.SendMessages)
                     return false;
@@ -245,7 +245,7 @@ namespace NoeSbot.Handlers
                     {
                         var context = new CommandContext(_client, message);
 
-                        var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
+                        var loadedModules = GlobalConfig.GetGuildConfig(context.Guild.Id).LoadedModules;
                         if (loadedModules.Contains((int)ModuleEnum.Media))
                         {
                             await _mediaProcessor.Process(context);

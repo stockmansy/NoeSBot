@@ -28,15 +28,19 @@ namespace NoeSbot.Modules
         private readonly IHttpService _httpService;
         private static ConcurrentDictionary<ulong, AudioPlayer> _currentAudioClients = new ConcurrentDictionary<ulong, AudioPlayer>();
         private IVoiceChannel _currentChannel;
+        private readonly GlobalConfig _globalConfig;
+        private readonly NotifyLogic _notifyLogic; // TODO move this stuff to another thing
 
         #region Constructor
 
-        public AudioModule(DiscordSocketClient client, IConfigurationService service, IMemoryCache memoryCache, IHttpService httpService)
+        public AudioModule(DiscordSocketClient client, IConfigurationService service, IMemoryCache memoryCache, IHttpService httpService, GlobalConfig globalConfig, NotifyLogic notifyLogic)
         {
             _client = client;
             _service = service;
             _cache = memoryCache;
             _httpService = httpService;
+            _globalConfig = globalConfig;
+            _notifyLogic = notifyLogic;
         }
 
         #endregion
@@ -58,7 +62,7 @@ namespace NoeSbot.Modules
         public async Task GetInfo()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_AudioInfo_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_AudioInfo_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Audio_AudioInfo_Command)]
@@ -120,7 +124,7 @@ namespace NoeSbot.Modules
         public async Task SetAudio()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_Volume_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_Volume_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Audio_Volume_Command)]
@@ -136,7 +140,7 @@ namespace NoeSbot.Modules
 
             var success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.AudioVolume, volume.ToString());
 
-            await Configuration.LoadAsync(_service);
+            await _globalConfig.LoadInGuildConfigs();
 
             if (success)
                 await ReplyAsync($"Changed the audio level to: {volume}");
@@ -156,7 +160,7 @@ namespace NoeSbot.Modules
         public async Task Play()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_Play_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Audio_Play_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Audio_Play_Command)]
@@ -172,7 +176,12 @@ namespace NoeSbot.Modules
                 _currentChannel = user.VoiceChannel;
                 var info = new AudioInfo();
 
-                var url = await DownloadHelper.GetUrl(_httpService, input);
+                var url = input;
+                if (!DownloadHelper.IsValidUrl(url))
+                    url = await _notifyLogic.GetYoutubeLink(input);
+
+                if (!DownloadHelper.IsValidUrl(url)) // Todo do this a bit more elegantly
+                    throw new Exception("Invalid Url!");
 
                 if (_currentChannel != null)
                 {
@@ -192,7 +201,7 @@ namespace NoeSbot.Modules
                             if (!_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
                             {
                                 // Create new audioplayer
-                                audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, Configuration.Load(Context.Guild.Id).AudioVolume);
+                                audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, GlobalConfig.GetGuildConfig(Context.Guild.Id).AudioVolume);
                                 _currentAudioClients.TryAdd(Context.Guild.Id, audioplayer);
                                 info = await audioplayer.Start(items);
                             }
@@ -204,7 +213,7 @@ namespace NoeSbot.Modules
                                 _currentAudioClients.TryRemove(Context.Guild.Id, out AudioPlayer removedPlayer);
 
                                 // Create new audioplayer
-                                audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, Configuration.Load(Context.Guild.Id).AudioVolume);
+                                audioplayer = new AudioPlayer(_currentChannel, textChannel, Context.Guild.Id, GlobalConfig.GetGuildConfig(Context.Guild.Id).AudioVolume);
                                 _currentAudioClients.TryAdd(Context.Guild.Id, audioplayer);
                                 info = await audioplayer.Start(items);
                             }

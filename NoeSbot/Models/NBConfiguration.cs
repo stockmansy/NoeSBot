@@ -82,9 +82,6 @@ namespace NoeSbot
             [JsonIgnore]
             private int[] _loadedModules;
 
-            [JsonIgnore]
-            private char[] _prefixes;
-
             #endregion
 
             #region Clone 

@@ -7,9 +7,6 @@ using NoeSbot.Enums;
 using NoeSbot.Helpers;
 using NoeSbot.Resources;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace NoeSbot.Modules
@@ -18,11 +15,13 @@ namespace NoeSbot.Modules
     [ModuleName(ModuleEnum.Configure)]
     public class ConfigureModule : ModuleBase
     {
-        private IConfigurationService _service;
+        private readonly IConfigurationService _service;
+        private readonly GlobalConfig _globalConfig;
 
-        public ConfigureModule(IConfigurationService service)
+        public ConfigureModule(IConfigurationService service, GlobalConfig globalConfig)
         {
             _service = service;
+            _globalConfig = globalConfig;
         }
 
         #region Commands
@@ -37,7 +36,7 @@ namespace NoeSbot.Modules
         {
             var user = Context.User as SocketGuildUser;
 
-            var config = Configuration.Load(Context.Guild.Id);
+            var config = GlobalConfig.GetGuildConfig(Context.Guild.Id);
             var builder = new EmbedBuilder()
             {
                 Color = user.GetColor(),
@@ -111,7 +110,7 @@ namespace NoeSbot.Modules
         public async Task SaveConfigAsync()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_SaveConfig_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_SaveConfig_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Configure_SaveConfig_Command)]
@@ -129,7 +128,7 @@ namespace NoeSbot.Modules
                     break;
             }
 
-            await Configuration.LoadAsync(_service);
+            await _globalConfig.LoadInGuildConfigs();
 
             if (success)
                 await ReplyAsync("Saved the configuration");
@@ -160,7 +159,7 @@ namespace NoeSbot.Modules
                     break;
             }
 
-            await Configuration.LoadAsync(_service);
+            await _globalConfig.LoadInGuildConfigs();
 
             if (success)
                 await ReplyAsync("Saved the configuration");
@@ -179,7 +178,7 @@ namespace NoeSbot.Modules
         public async Task LoadModuleAsync()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_LoadModule_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_LoadModule_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Configure_LoadModule_Command)]
@@ -202,7 +201,7 @@ namespace NoeSbot.Modules
                 }
             }
 
-            await Configuration.LoadAsync(_service);
+            await _globalConfig.LoadInGuildConfigs();
 
             if (success)
                 await ReplyAsync("Saved the configuration");
@@ -228,7 +227,7 @@ namespace NoeSbot.Modules
                 success = await _service.AddConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.LoadedModules, moduleId.ToString());
             }
 
-            await Configuration.LoadAsync(_service);
+            await _globalConfig.LoadInGuildConfigs();
 
             if (success)
                 await ReplyAsync("Saved the configuration");
@@ -247,7 +246,7 @@ namespace NoeSbot.Modules
         public async Task UnLoadModuleAsync()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_UnloadModule_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_UnloadModule_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Configure_UnloadModule_Command)]
@@ -270,7 +269,7 @@ namespace NoeSbot.Modules
                 }
             }
 
-            await Configuration.LoadAsync(_service);
+            await _globalConfig.LoadInGuildConfigs();
 
             if (success)
                 await ReplyAsync("Saved the configuration");

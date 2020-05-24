@@ -22,7 +22,7 @@ namespace NoeSbot.Attributes
 
         public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
-            var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
+            var loadedModules = GlobalConfig.GetGuildConfig(context.Guild.Id).LoadedModules;
             if (loadedModules.Contains((int)_module))
                 return Task.FromResult(PreconditionResult.FromSuccess());
             else

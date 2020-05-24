@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NoeSbot.Config;
 using NoeSbot.Database;
 using NoeSbot.Database.Services;
 using NoeSbot.Handlers;
@@ -32,8 +31,6 @@ namespace NoeSbot
 
         public async Task Start()
         {
-            Configuration.EnsureExists();
-
             var serviceCollection = InitializeServiceCollection();
             LoadConfiguration();
 
@@ -55,7 +52,6 @@ namespace NoeSbot
                 .BuildServiceProvider();
 
             await InitializeConfigAndCommands(serviceProvider);
-            await Configuration.LoadAsync(serviceProvider.GetService<IConfigurationService>());
 
             await _client.LoginAsync(TokenType.Bot, _token);
 

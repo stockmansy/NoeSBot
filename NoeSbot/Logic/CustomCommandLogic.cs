@@ -77,7 +77,7 @@ namespace NoeSbot.Logic
                 _cache.Set(CacheEnum.CustomCommmands, customCommands, cacheEntryOptions);
             }
 
-            var loadedModules = Configuration.Load(context.Guild.Id).LoadedModules;
+            var loadedModules = GlobalConfig.GetGuildConfig(context.Guild.Id).LoadedModules;
 
             foreach (var custom in customCommands)
             {

@@ -60,7 +60,7 @@ namespace NoeSbot.Modules
         public async Task RockPaperScissors()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_RockPaperScissors_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_RockPaperScissors_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Game_RockPaperScissors_Command)]
@@ -219,7 +219,7 @@ namespace NoeSbot.Modules
         public async Task MagicBall()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_8Ball_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_8Ball_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Game_8Ball_Command)]
@@ -288,7 +288,7 @@ namespace NoeSbot.Modules
         public async Task Choose()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Choose_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Choose_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Game_Choose_Command)]
@@ -349,7 +349,7 @@ namespace NoeSbot.Modules
         public async Task Roll()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Roll_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Roll_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Game_Roll_Command)]
@@ -386,7 +386,7 @@ namespace NoeSbot.Modules
         public async Task Dnd()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Roll_Command, Configuration.Load(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Game_Roll_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Game_Dnd_Command)]

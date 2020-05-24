@@ -15,7 +15,7 @@ namespace NoeSbot.Logic
     {
         public async Task Process(ICommandContext context)
         {
-            if (!context.Channel.Name.Equals(Configuration.Load(context.Guild.Id).GeneralChannel))
+            if (!context.Channel.Name.Equals(GlobalConfig.GetGuildConfig(context.Guild.Id).GeneralChannel))
                 return;
 
             var matches = Regex.Matches(context.Message.Content, @"(www.+|http.+)([\s]|$)");
@@ -23,7 +23,7 @@ namespace NoeSbot.Logic
                 return;
 
             var channels = await context.Guild.GetChannelsAsync();
-            var mediaChannel = channels.Where(x => x.Name != null && x.Name.Equals(Configuration.Load(context.Guild.Id).MediaChannel, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            var mediaChannel = channels.Where(x => x.Name != null && x.Name.Equals(GlobalConfig.GetGuildConfig(context.Guild.Id).MediaChannel, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
             var mediaMsgChannel = mediaChannel as IMessageChannel;
 
             if (mediaChannel == null)
