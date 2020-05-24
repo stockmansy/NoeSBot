@@ -28,7 +28,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).Where(x => x.GuildId == guildId && x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).SingleOrDefaultAsync();
+                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).AsAsyncEnumerable().Where(x => x.GuildId == guildId && x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).SingleOrDefaultAsync();
                 if (existing != null)
                 {
                     var existingItem = existing.Users.Where(x => x.UserId == userId).SingleOrDefault();
@@ -104,7 +104,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).Where(x => x.GuildId == guildId && x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).SingleOrDefaultAsync();
+                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).AsAsyncEnumerable().Where(x => x.GuildId == guildId && x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).SingleOrDefaultAsync();
                 if (existing != null)
                 {
                     var existingItem = existing.Roles.Where(x => x.RoleId == roleId).SingleOrDefault();
@@ -150,7 +150,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).Where(x => x.GuildId == guildId && x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).SingleOrDefaultAsync();
+                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).AsAsyncEnumerable().Where(x => x.GuildId == guildId && x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).SingleOrDefaultAsync();
                 if (existing != null)
                 {
                     existing.Users.Clear();
@@ -174,7 +174,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).Where(x => x.NotifyItemId == notifyItemId).SingleOrDefaultAsync();
+                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).AsAsyncEnumerable().Where(x => x.NotifyItemId == notifyItemId).SingleOrDefaultAsync();
                 if (existing != null)
                 {
                     var existingItem = existing.Users.Where(x => x.UserId == userId).SingleOrDefault();
@@ -219,7 +219,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).Where(x => x.GuildId == guildId && x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).SingleOrDefaultAsync();
+                var existing = await _context.NotifyItemEntities.Include(x => x.Users).Include(x => x.Roles).AsAsyncEnumerable().Where(x => x.GuildId == guildId && x.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && x.Type == type).SingleOrDefaultAsync();
                 if (existing == null)
                     return new NotifyItem();
 

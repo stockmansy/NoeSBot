@@ -15,6 +15,8 @@ using NoeSbot.Models;
 using NoeSbot.Converters;
 using System.Linq;
 using NoeSbot.Resources;
+using NoeSbot.Logic;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace NoeSbot.Modules
 {
@@ -22,15 +24,17 @@ namespace NoeSbot.Modules
     public class NotifyModule : ModuleBase
     {
         private readonly DiscordSocketClient _client;
+        private readonly NotifyLogic _notifyLogic;
         private readonly INotifyService _notifyService;
         private readonly IHttpService _httpService;
         private IMemoryCache _cache;
 
         #region Constructor
 
-        public NotifyModule(DiscordSocketClient client, INotifyService notifyService, IHttpService httpService, IMemoryCache memoryCache)
+        public NotifyModule(DiscordSocketClient client, NotifyLogic notifyLogic, INotifyService notifyService, IHttpService httpService, IMemoryCache memoryCache)
         {
             _client = client;
+            _notifyLogic = notifyLogic;
             _notifyService = notifyService;
             _httpService = httpService;
             _cache = memoryCache;
@@ -86,66 +90,49 @@ namespace NoeSbot.Modules
         public async Task AddTwitchStream(string name, string role = "")
         {
             var user = Context.User as SocketGuildUser;
-            var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/users?login={name}", Configuration.Load().TwitchClientId);
-            var response = await content.ReadAsStringAsync();
-            var root = JsonConvert.DeserializeObject<TwitchUsersRoot>(response, new JsonSerializerSettings
+
+            var builder = new EmbedBuilder()
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                MissingMemberHandling = MissingMemberHandling.Ignore,
-                Formatting = Formatting.None,
-                DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                Converters = new System.Collections.Generic.List<JsonConverter> { new DecimalConverter() }
-            });
+                Color = user.GetColor()
+            };
 
-            if (root.Total > 0)
+            var (twitchUser, success) = (default(TwitchUser), default(bool));
+
+            if (string.IsNullOrWhiteSpace(role))
+                (twitchUser, success) = await _notifyLogic.AddTwitchChannelForUser(name, (long)Context.Guild.Id, (long)user.Id);
+            else
             {
-                var twitchUser = root.Users[0];
-                var builder = new EmbedBuilder()
-                {
-                    Color = user.GetColor()
-                };
-
-                var twitchName = (twitchUser.DisplayName.Equals(twitchUser.Name)) ? twitchUser.DisplayName : $"{twitchUser.DisplayName} ({twitchUser.Name})";
-
-                var success = false;
-                if (string.IsNullOrWhiteSpace(role))
-                    success = await _notifyService.AddNotifyItem((long)Context.Guild.Id, (long)user.Id, twitchUser.Name, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
-                else
-                {
-                    foreach (var r in Context.Guild.Roles)
-                    {
-                        if (r.Name.Equals(role, StringComparison.OrdinalIgnoreCase))
-                        {
-                            success = await _notifyService.AddNotifyItemRole((long)Context.Guild.Id, (long)r.Id, twitchUser.Name, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
-                            break;
-                        }
-                    }
-                }
-
-                if (success)
-                {
-                    builder.AddField(x =>
-                    {
-                        x.Name = "Added the stream";
-                        x.Value = $"{user.Username} added a stream for twitch user {twitchName}";
-                        x.IsInline = false;
-                    });
-                }
-                else
-                {
-                    builder.AddField(x =>
-                    {
-                        x.Name = "Failed to add the stream";
-                        x.Value = $"{user.Username} failed to add a stream for twitch user {twitchName}";
-                        x.IsInline = false;
-                    });
-                }
-
-                if (twitchUser.Logo != null)
-                    builder.WithThumbnailUrl(twitchUser.Logo);
-
-                await ReplyAsync("", false, builder.Build());
+                var guildRole = Context.Guild.Roles.FirstOrDefault(r => r.Name.Equals(role, StringComparison.OrdinalIgnoreCase));
+                if (guildRole != null)
+                    (twitchUser, success) = await _notifyLogic.AddTwitchChannelForRole(name, (long)Context.Guild.Id, (long)guildRole.Id);
             }
+
+            var twitchName = (twitchUser.DisplayName.Equals(twitchUser.Name)) ? twitchUser.DisplayName : $"{twitchUser.DisplayName} ({twitchUser.Name})";
+
+            if (success)
+            {
+                builder.AddField(x =>
+                {
+                    x.Name = "Added the stream";
+                    x.Value = $"{user.Username} added a stream for twitch user {twitchName}";
+                    x.IsInline = false;
+                });
+            }
+            else
+            {
+                builder.AddField(x =>
+                {
+                    x.Name = "Failed to add the stream";
+                    x.Value = $"{user.Username} failed to add a stream for twitch user {twitchName}";
+                    x.IsInline = false;
+                });
+            }
+
+            if (twitchUser.Logo != null)
+                builder.WithThumbnailUrl(twitchUser.Logo);
+
+            await ReplyAsync("", false, builder.Build());
+
         }
 
         #endregion
@@ -167,69 +154,47 @@ namespace NoeSbot.Modules
         public async Task AddYoutubeStream(string name, string role = "")
         {
             var user = Context.User as SocketGuildUser;
-            var content = await _httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/channels?key={Configuration.Load().YoutubeApiKey}&forUsername={name}&part=id");
-            var response = await content.ReadAsStringAsync();
-            var root = JsonConvert.DeserializeObject<YoutubeUserRoot>(response, new JsonSerializerSettings
+
+            var builder = new EmbedBuilder()
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                MissingMemberHandling = MissingMemberHandling.Ignore,
-                Formatting = Formatting.None,
-                DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                Converters = new System.Collections.Generic.List<JsonConverter> { new DecimalConverter() }
-            });
+                Color = user.GetColor()
+            };
 
-            if (root.Items != null && root.Items.Length > 0)
+            var youtubeName = CommonHelper.FirstLetterToUpper(name);
+
+            var (youtubeUser, success) = (default(YoutubeUserRoot.YoutubeUser), default(bool));
+
+            if (string.IsNullOrWhiteSpace(role))
+                (youtubeUser, success) = await _notifyLogic.AddYoutubeChannelForUser(youtubeName, (long)Context.Guild.Id, (long)user.Id);
+            else
             {
-                var youtubeUser = root.Items.First();
-                var builder = new EmbedBuilder()
+                var guildRole = Context.Guild.Roles.FirstOrDefault(r => r.Name.Equals(role, StringComparison.OrdinalIgnoreCase));
+                if (guildRole != null)
+                    (youtubeUser, success) = await _notifyLogic.AddYoutubeChannelForRole(youtubeName, (long)Context.Guild.Id, (long)guildRole.Id);
+            }
+
+            if (success)
+            {
+                builder.AddField(x =>
                 {
-                    Color = user.GetColor()
-                };
-
-                var youtubeName = CommonHelper.FirstLetterToUpper(name);
-
-                var success = false;
-                if (string.IsNullOrWhiteSpace(role))
-                    success = await _notifyService.AddNotifyItem((long)Context.Guild.Id, (long)user.Id, youtubeName, youtubeUser.Id, string.Empty, (int)NotifyEnum.Youtube);
-                else
-                {
-                    foreach (var r in Context.Guild.Roles)
-                    {
-                        if (r.Name.Equals(role, StringComparison.OrdinalIgnoreCase))
-                        {
-                            success = await _notifyService.AddNotifyItemRole((long)Context.Guild.Id, (long)r.Id, youtubeName, youtubeUser.Id, string.Empty, (int)NotifyEnum.Youtube);
-                            break;
-                        }
-                    }
-                }
-
-                if (success)
-                {
-                    builder.AddField(x =>
-                    {
-                        x.Name = "Added the stream";
-                        x.Value = $"{user.Username} added a stream for youtube channel {youtubeName}";
-                        x.IsInline = false;
-                    });
-                }
-                else
-                {
-                    builder.AddField(x =>
-                    {
-                        x.Name = "Failed to add the stream";
-                        x.Value = $"{user.Username} failed to add a stream for youtube channel {youtubeName}";
-                        x.IsInline = false;
-                    });
-                }
-
-                builder.WithThumbnailUrl("http://pngimg.com/uploads/youtube/youtube_PNG13.png");
-
-                await ReplyAsync("", false, builder.Build());
+                    x.Name = "Added the stream";
+                    x.Value = $"{user.Username} added a stream for youtube channel {youtubeName}";
+                    x.IsInline = false;
+                });
             }
             else
             {
-                await ReplyAsync("Could not find the user");
+                builder.AddField(x =>
+                {
+                    x.Name = "Failed to add the stream";
+                    x.Value = $"{user.Username} failed to add a stream for youtube channel {youtubeName}";
+                    x.IsInline = false;
+                });
             }
+
+            builder.WithThumbnailUrl("http://pngimg.com/uploads/youtube/youtube_PNG13.png");
+
+            await ReplyAsync("", false, builder.Build());
         }
 
         #endregion

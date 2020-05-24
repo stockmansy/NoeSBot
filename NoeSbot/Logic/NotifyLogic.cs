@@ -42,12 +42,14 @@ namespace NoeSbot.Logic
             client.ReactionAdded += OnReactionAdded;
         }
 
+        #region Events
+
         protected async Task OnReactionAdded(Cacheable<IUserMessage, ulong> messageParam, ISocketMessageChannel channel, SocketReaction reaction)
         {
             var message = await messageParam.GetOrDownloadAsync();
             if (message == null || !reaction.User.IsSpecified)
                 return;
-                        
+
             var userAdjusting = reaction.User.Value;
 
             if (!userAdjusting.IsBot && !userAdjusting.IsWebhook)
@@ -59,7 +61,7 @@ namespace NoeSbot.Logic
                 var name = reaction.Emote.Name;
 
                 await message.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
-                
+
                 new Thread(async () =>
                 {
                     if (name.Equals(IconHelper.Bell))
@@ -77,10 +79,58 @@ namespace NoeSbot.Logic
                             await userAdjusting.SendMessageAsync("Successfully removed you from the subscription list");
                         else
                             await userAdjusting.SendMessageAsync("Something went wrong trying to remove you to the subscription list");
-                        
+
                     }
                 }).Start();
             }
+        }
+
+        #endregion
+
+        #region Public
+
+        public async Task<(TwitchUser, bool)> AddTwitchChannelForUser(string name, long guildId, long userId)
+        {
+            var twitchUser = await GetTwitchUser(name);
+            var success = false;
+
+            if (twitchUser != null)
+                success = await _notifyService.AddNotifyItem(guildId, userId, twitchUser.Name, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
+
+            return (twitchUser, success);
+        }
+
+        public async Task<(TwitchUser, bool)> AddTwitchChannelForRole(string name, long guildId, long roleId)
+        {
+            var twitchUser = await GetTwitchUser(name);
+            var success = false;
+
+            if (twitchUser != null)
+                success = await _notifyService.AddNotifyItemRole(guildId, roleId, twitchUser.Name, twitchUser.Id, twitchUser.Logo, (int)NotifyEnum.Twitch);
+
+            return (twitchUser, success);
+        }
+
+        public async Task<(YoutubeUserRoot.YoutubeUser, bool)> AddYoutubeChannelForUser(string name, long guildId, long userId)
+        {
+            var youtubeUser = await GetYoutubeUser(name);
+            var success = false;
+
+            if (youtubeUser != null)
+                success = await _notifyService.AddNotifyItem(guildId, userId, name, youtubeUser.Id, string.Empty, (int)NotifyEnum.Youtube);
+
+            return (youtubeUser, success);
+        }
+
+        public async Task<(YoutubeUserRoot.YoutubeUser, bool)> AddYoutubeChannelForRole(string name, long guildId, long roleId)
+        {
+            var youtubeUser = await GetYoutubeUser(name);
+            var success = false;
+
+            if (youtubeUser != null)
+                success = await _notifyService.AddNotifyItemRole(guildId, roleId, name, youtubeUser.Id, string.Empty, (int)NotifyEnum.Youtube);
+
+            return (youtubeUser, success);
         }
 
         public async Task Run(CancellationToken cancelToken)
@@ -163,7 +213,7 @@ namespace NoeSbot.Logic
                                     continue;
                                 }
                                 break;
-                                case (int)NotifyEnum.Youtube:
+                            case (int)NotifyEnum.Youtube:
                                 try
                                 {
                                     var content = await _httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={notifyItem.Value}&type=video&eventType=live&key={Configuration.Load().YoutubeApiKey}");
@@ -182,7 +232,7 @@ namespace NoeSbot.Logic
                                     if (root.Items != null && root.Items.Length > 0)
                                     {
                                         var item = root.Items[0];
-                                        
+
                                         if (existing && (printedItem == null || (printedItem.HasValue && printedItem.Value.AddHours(6) < DateTime.Now))) // Initial print and new print every hour
                                         {
                                             _printed.AddOrUpdate(notifyItem.NotifyItemId, DateTime.Now);
@@ -212,7 +262,7 @@ namespace NoeSbot.Logic
                                         _printed.AddOrUpdate(notifyItem.NotifyItemId, null);
                                     }
                                 }
-                                catch 
+                                catch
                                 {
                                     await Task.Delay(5000);
                                     continue;
@@ -227,7 +277,51 @@ namespace NoeSbot.Logic
             catch (TaskCanceledException) { }
         }
 
+        #endregion
+
         #region Private
+
+        private async Task<TwitchUser> GetTwitchUser(string name)
+        {
+            var twitchUser = default(TwitchUser);
+
+            var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/users?login={name}", Configuration.Load().TwitchClientId);
+            var response = await content.ReadAsStringAsync();
+            var root = JsonConvert.DeserializeObject<TwitchUsersRoot>(response, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                Formatting = Formatting.None,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                Converters = new List<JsonConverter> { new DecimalConverter() }
+            });
+
+            if (root.Total > 0)
+                twitchUser = root.Users[0];
+
+            return twitchUser;
+        }
+
+        private async Task<YoutubeUserRoot.YoutubeUser> GetYoutubeUser(string name)
+        {
+            var youtubeUser = default(YoutubeUserRoot.YoutubeUser);
+
+            var content = await _httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/channels?key={Configuration.Load().YoutubeApiKey}&forUsername={name}&part=id");
+            var response = await content.ReadAsStringAsync();
+            var root = JsonConvert.DeserializeObject<YoutubeUserRoot>(response, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                Formatting = Formatting.None,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                Converters = new List<JsonConverter> { new DecimalConverter() }
+            });
+
+            if (root.Items != null && root.Items.Length > 0)
+                youtubeUser = root.Items.First();
+
+            return youtubeUser;
+        }
 
         private async Task<string> GetMessage(Database.Models.NotifyItem notifyItem, IGuild guild)
         {
@@ -308,12 +402,12 @@ namespace NoeSbot.Logic
             });
 
             builder.AddField(x =>
-            {                
+            {
                 x.Name = "Url";
                 x.Value = url;
                 x.IsInline = false;
             });
-            
+
             if (item.Snippet.Thumbnails?.Default != null)
                 builder.WithThumbnailUrl(item.Snippet.Thumbnails.Default.Url);
 
