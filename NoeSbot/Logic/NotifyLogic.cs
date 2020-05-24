@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NoeSbot.Converters;
@@ -29,8 +30,10 @@ namespace NoeSbot.Logic
         private readonly ConcurrentDictionary<int, DateTime?> _printed;
         private readonly LimitedDictionary<ulong, NotifyItem> _notifyMessages;
         private readonly IMemoryCache _cache;
+        private readonly string _twitchToken;
+        private readonly string _youtubeToken;
 
-        public NotifyLogic(DiscordSocketClient client, INotifyService notifyService, IHttpService httpService, IMemoryCache memoryCache)
+        public NotifyLogic(DiscordSocketClient client, INotifyService notifyService, IHttpService httpService, IMemoryCache memoryCache, IConfigurationRoot configurationRoot)
         {
             _client = client;
             _httpService = httpService;
@@ -38,6 +41,9 @@ namespace NoeSbot.Logic
             _printed = new ConcurrentDictionary<int, DateTime?>();
             _notifyMessages = new LimitedDictionary<ulong, NotifyItem>();
             _cache = memoryCache;
+
+            _twitchToken = configurationRoot.GetValue<string>($"{nameof(NBConfiguration.ExternalKeyTokens)}:{nameof(NBConfiguration.ExternalKeyTokens.TwitchClientId)}");
+            _youtubeToken = configurationRoot.GetValue<string>($"{nameof(NBConfiguration.ExternalKeyTokens)}:{nameof(NBConfiguration.ExternalKeyTokens.YoutubeApiKey)}");
 
             client.ReactionAdded += OnReactionAdded;
         }
@@ -161,7 +167,7 @@ namespace NoeSbot.Logic
                             case (int)NotifyEnum.Twitch:
                                 try
                                 {
-                                    var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/streams/{notifyItem.Value}", Configuration.Load().TwitchClientId);
+                                    var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/streams/{notifyItem.Value}", _twitchToken);
                                     var response = await content.ReadAsStringAsync();
                                     var root = JsonConvert.DeserializeObject<TwitchStreamRoot>(response, new JsonSerializerSettings
                                     {
@@ -216,7 +222,7 @@ namespace NoeSbot.Logic
                             case (int)NotifyEnum.Youtube:
                                 try
                                 {
-                                    var content = await _httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={notifyItem.Value}&type=video&eventType=live&key={Configuration.Load().YoutubeApiKey}");
+                                    var content = await _httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={notifyItem.Value}&type=video&eventType=live&key={_youtubeToken}");
                                     var response = await content.ReadAsStringAsync();
                                     var root = JsonConvert.DeserializeObject<YoutubeStream>(response, new JsonSerializerSettings
                                     {
@@ -285,7 +291,7 @@ namespace NoeSbot.Logic
         {
             var twitchUser = default(TwitchUser);
 
-            var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/users?login={name}", Configuration.Load().TwitchClientId);
+            var content = await _httpService.SendTwitch(HttpMethod.Get, $"https://api.twitch.tv/kraken/users?login={name}", _twitchToken);
             var response = await content.ReadAsStringAsync();
             var root = JsonConvert.DeserializeObject<TwitchUsersRoot>(response, new JsonSerializerSettings
             {
@@ -306,7 +312,7 @@ namespace NoeSbot.Logic
         {
             var youtubeUser = default(YoutubeUserRoot.YoutubeUser);
 
-            var content = await _httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/channels?key={Configuration.Load().YoutubeApiKey}&forUsername={name}&part=id");
+            var content = await _httpService.Send(HttpMethod.Get, $"https://www.googleapis.com/youtube/v3/channels?key={_youtubeToken}&forUsername={name}&part=id");
             var response = await content.ReadAsStringAsync();
             var root = JsonConvert.DeserializeObject<YoutubeUserRoot>(response, new JsonSerializerSettings
             {

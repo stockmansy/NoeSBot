@@ -57,7 +57,7 @@ namespace NoeSbot
             await InitializeConfigAndCommands(serviceProvider);
             await Configuration.LoadAsync(serviceProvider.GetService<IConfigurationService>());
 
-            await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token);
+            await _client.LoginAsync(TokenType.Bot, _token);
 
             LogHelper.LogWithConsole("Starting the bot");
             await _client.StartAsync();
@@ -105,7 +105,7 @@ namespace NoeSbot
                                     options.UseSqlite("Data Source=noesbot.db");
                                     break;
                             }
-                        });
+                        }, ServiceLifetime.Transient);
             services.AddSingleton(_client);
             services.AddSingleton<CommandService>();
             services.AddSingleton<CommandHandler>();

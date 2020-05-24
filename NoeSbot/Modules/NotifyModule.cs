@@ -8,15 +8,10 @@ using System.Threading.Tasks;
 using NoeSbot.Helpers;
 using System;
 using NoeSbot.Database.Services;
-using System.Net.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NoeSbot.Models;
-using NoeSbot.Converters;
 using System.Linq;
 using NoeSbot.Resources;
 using NoeSbot.Logic;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace NoeSbot.Modules
 {
