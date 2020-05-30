@@ -50,7 +50,7 @@ namespace NoeSbot.Modules
             var prefixes = GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes;
             var loadedModules = GlobalConfig.GetGuildConfig(Context.Guild.Id).LoadedModules;
 
-            await user.SendMessageAsync("", false, CommonHelper.GetModules(prefixes, user.GetColor(), loadedModules));
+            await user.SendMessageAsync("", false, CommonDiscordHelper.GetModules(prefixes, user.GetColor(), loadedModules));
         }
 
         [Command(Labels.Help_Help_Command)]
@@ -67,7 +67,7 @@ namespace NoeSbot.Modules
                 return;
             }
 
-            await ReplyAsync("", false, CommonHelper.GetHelp(command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         #endregion

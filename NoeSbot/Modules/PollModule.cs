@@ -104,7 +104,7 @@ namespace NoeSbot.Modules
         public async Task QuickPoll()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Poll_Poll_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Poll_Poll_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Poll_Poll_Command)]
@@ -175,7 +175,7 @@ namespace NoeSbot.Modules
 
             for (var j = 1; j <= poll.Options.Count; j++)
             {
-                await message.AddReactionAsync(IconHelper.GetEmote(_reactions[j]));
+                await message.AddReactionAsync(CommonDiscordHelper.GetEmote(_reactions[j]));
                 await Task.Delay(500);
             }
 

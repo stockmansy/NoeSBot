@@ -44,6 +44,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\NoeS.Helpers\NoeSbot.Helpers.csproj" />
     <ProjectReference Include="..\NoeSbot.Database\NoeSbot.Database.csproj" />
     <ProjectReference Include="..\NoeSbot.Resources\NoeSbot.Resources.csproj" />
   </ItemGroup>

@@ -110,7 +110,7 @@ namespace NoeSbot.Modules
         public async Task SaveConfigAsync()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_SaveConfig_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Configure_SaveConfig_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Configure_SaveConfig_Command)]
@@ -178,7 +178,7 @@ namespace NoeSbot.Modules
         public async Task LoadModuleAsync()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_LoadModule_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Configure_LoadModule_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Configure_LoadModule_Command)]
@@ -246,7 +246,7 @@ namespace NoeSbot.Modules
         public async Task UnLoadModuleAsync()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Configure_UnloadModule_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Configure_UnloadModule_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Configure_UnloadModule_Command)]

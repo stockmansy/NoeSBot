@@ -50,7 +50,7 @@ namespace NoeSbot.Modules
         public async Task Punish()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Punish_Punish_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Punish_Punish_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Punish_Punish_Command)]
@@ -115,7 +115,7 @@ namespace NoeSbot.Modules
                 {
                     var msg = $"Failed to punish {user.Username}";
                     _logger.LogError($"Error in Punish: {ex.Message}");
-                    LogHelper.Log(msg, Helpers.LogLevel.Debug);
+                    LogHelper.LogDebug(msg, false);
                     await ReplyAsync(msg);
                 }
             }
@@ -170,7 +170,7 @@ namespace NoeSbot.Modules
         public async Task UnPunish()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Punish_Unpunish_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Punish_Unpunish_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Punish_Unpunish_Command)]

@@ -411,9 +411,9 @@ namespace NoeSbot.Logic
             var defaultChannel = await guild.GetDefaultChannelAsync();
             var message = await defaultChannel.SendMessageAsync(mentions, false, builder.Build());
 
-            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.Bell));
+            await message.AddReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.Bell));
             await Task.Delay(1250);
-            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.BellStop));
+            await message.AddReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.BellStop));
 
             _notifyMessages.Add(message.Id, new NotifyItem { Id = notifyItemId, Type = NotifyEnum.Twitch });
         }
@@ -449,9 +449,9 @@ namespace NoeSbot.Logic
             var defaultChannel = await guild.GetDefaultChannelAsync();
             var message = await defaultChannel.SendMessageAsync(mentions, false, builder.Build());
 
-            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.Bell));
+            await message.AddReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.Bell));
             await Task.Delay(1250);
-            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.BellStop));
+            await message.AddReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.BellStop));
 
             _notifyMessages.Add(message.Id, new NotifyItem { Id = notifyItemId, Type = NotifyEnum.Youtube });
         }

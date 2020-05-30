@@ -47,7 +47,7 @@ namespace NoeSbot.Modules
         public async Task StartEvent()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_StartEvent_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Event_StartEvent_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
 
@@ -131,7 +131,7 @@ namespace NoeSbot.Modules
         public async Task UpdateEvent()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_UpdateEvent_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Event_UpdateEvent_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Event_UpdateEvent_Command)]
@@ -204,7 +204,7 @@ namespace NoeSbot.Modules
         public async Task StopEvent()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_StopEvent_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Event_StopEvent_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Event_StopEvent_Command)]
@@ -245,7 +245,7 @@ namespace NoeSbot.Modules
         public async Task TriggerEvent()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Event_TriggerEvent_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Event_TriggerEvent_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Event_TriggerEvent_Command)]
@@ -391,11 +391,11 @@ namespace NoeSbot.Modules
 
             var message = await Context.Channel.SendMessageAsync("", false, builder.Build());
 
-            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.Bell));
+            await message.AddReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.Bell));
             await Task.Delay(1250);
-            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.BellStop));
+            await message.AddReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.BellStop));
             await Task.Delay(1250);
-            await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.ClipBoard));
+            await message.AddReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.ClipBoard));
 
             _eventLogic.AddEvent(message.Id, item);
         }

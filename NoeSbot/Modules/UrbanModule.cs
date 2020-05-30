@@ -139,7 +139,7 @@ namespace NoeSbot.Modules
         public async Task Urban()
         {
             var user = Context.User as SocketGuildUser;
-            await ReplyAsync("", false, CommonHelper.GetHelp(Labels.Urban_Urban_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Urban_Urban_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
 
         [Command(Labels.Urban_Urban_Command)]
@@ -207,7 +207,7 @@ namespace NoeSbot.Modules
             {
                 foreach (var icon in iconsToAdd)
                 {
-                    var emote = IconHelper.GetEmote(icon);
+                    var emote = CommonDiscordHelper.GetEmote(icon);
                     await message.AddReactionAsync(emote);
                     Thread.Sleep(500);
                 }
@@ -348,16 +348,16 @@ namespace NoeSbot.Modules
         {
             if (urbanMain.PageIconsSet && urbanMain.PagesCount <= 1)
             {
-                await message.RemoveReactionAsync(IconHelper.GetEmote(IconHelper.ArrowLeft), message.Author);
-                await message.RemoveReactionAsync(IconHelper.GetEmote(IconHelper.ArrowRight), message.Author);
+                await message.RemoveReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.ArrowLeft), message.Author);
+                await message.RemoveReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.ArrowRight), message.Author);
                 urbanMain.PageIconsSet = false;
             }
 
             if (!urbanMain.PageIconsSet && urbanMain.PagesCount > 1)
             {
-                await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.ArrowLeft));
+                await message.AddReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.ArrowLeft));
                 await Task.Delay(1300);
-                await message.AddReactionAsync(IconHelper.GetEmote(IconHelper.ArrowRight));
+                await message.AddReactionAsync(CommonDiscordHelper.GetEmote(IconHelper.ArrowRight));
                 await Task.Delay(1300);
                 urbanMain.PageIconsSet = true;
             }

@@ -55,17 +55,17 @@ namespace NoeSbot
 
             await _client.LoginAsync(TokenType.Bot, _token);
 
-            LogHelper.LogWithConsole("Starting the bot");
+            LogHelper.LogInfo("Starting the bot");
             await _client.StartAsync();
 
-            LogHelper.LogWithConsole("The bot is running");
+            LogHelper.LogInfo("The bot is running");
 
             await Task.Delay(-1);
         }
 
         public Task Log(LogMessage message)
         {
-            LogHelper.LogWithConsole(message.ToString());
+            LogHelper.LogInfo(message.ToString());
             return Task.CompletedTask;
         }
 
@@ -143,6 +143,8 @@ namespace NoeSbot
             Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
 
             log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
+
+            LogHelper.Initialize(typeof(Program));
         }
     }
 }

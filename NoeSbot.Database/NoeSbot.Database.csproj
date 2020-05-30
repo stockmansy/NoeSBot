@@ -30,4 +30,8 @@
     <None Include="Services\ProfileService.cs" />
   </ItemGroup>
   
+  <ItemGroup>
+    <ProjectReference Include="..\NoeS.Helpers\NoeSbot.Helpers.csproj" />
+  </ItemGroup>
+  
 </Project>
