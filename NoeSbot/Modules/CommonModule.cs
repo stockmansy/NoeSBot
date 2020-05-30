@@ -46,7 +46,15 @@ namespace NoeSbot.Modules
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Say([Remainder] string input)
         {
-            await Context.Message.DeleteAsync();
+            try
+            {
+                await Context.Message.DeleteAsync();
+            }
+            catch
+            {
+                LogHelper.LogWarning("Message was already deleted.");
+            }
+            
             await ReplyAsync(input);
         }
 

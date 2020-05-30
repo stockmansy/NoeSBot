@@ -45,7 +45,11 @@ namespace NoeSbot
 
                 foreach (var config in guildConfigs)
                 {
-                    _guildSpecificConfig.Add((ulong)config.Key, MapGuildValuesOnDefaultValues(config));
+                    var key = (ulong)config.Key;
+                    if (_guildSpecificConfig.ContainsKey(key))
+                        _guildSpecificConfig[key] = MapGuildValuesOnDefaultValues(config);
+                    else
+                        _guildSpecificConfig.Add(key, MapGuildValuesOnDefaultValues(config));
                 }
             }
         }

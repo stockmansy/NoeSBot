@@ -226,8 +226,10 @@ namespace NoeSbot.Modules
 
                             await message?.ModifyAsync(x => x.Embed = GetCurrentAudioEmbed(info, user));
                         }
-                        catch
+                        catch (Exception ex)
                         {
+                            LogHelper.LogError($"Something went wrong trying to play audio: {ex}");
+
                             await message?.DeleteAsync();
                             await ReplyAsync("", false, GetFailedEmbed(user));
                         }
@@ -242,6 +244,7 @@ namespace NoeSbot.Modules
             }
             catch (Exception ex)
             {
+                LogHelper.LogError(ex.ToString());
                 await ReplyAsync(ex.Message);
             }
         }
@@ -259,9 +262,10 @@ namespace NoeSbot.Modules
             if (_currentAudioClients.TryGetValue(Context.Guild.Id, out AudioPlayer audioplayer))
             {
                 audioplayer.PauseAudio();
-                
+
                 await ReplyAsync("Paused the audio");
-            } else
+            }
+            else
                 await ReplyAsync("Audio not playing");
 
 
@@ -284,7 +288,7 @@ namespace NoeSbot.Modules
                 await ReplyAsync("Resumed playing the audio");
             }
             else
-                await ReplyAsync("Audio not playing");            
+                await ReplyAsync("Audio not playing");
         }
 
         #endregion
@@ -405,14 +409,14 @@ namespace NoeSbot.Modules
             builder.AddField(x =>
             {
                 x.Name = "Title";
-                x.Value = currentAudio?.Title ?? "No title found";
+                x.Value = !string.IsNullOrEmpty(currentAudio?.Title) ? currentAudio.Title : "No title found";
                 x.IsInline = false;
             });
 
             builder.AddField(x =>
             {
                 x.Name = "Url";
-                x.Value = currentAudio?.Url ?? "No url found";
+                x.Value = !string.IsNullOrEmpty(currentAudio?.Url) ? currentAudio.Url : "No url found";
                 x.IsInline = false;
             });
 

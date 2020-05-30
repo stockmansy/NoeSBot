@@ -60,7 +60,7 @@ namespace NoeSbot.Modules
             builder.AddField(x =>
             {
                 x.Name = "Prefix";
-                x.Value = config.Prefixes;
+                x.Value = string.Join(',', config.Prefixes);
                 x.IsInline = false;
             });
 
@@ -88,7 +88,7 @@ namespace NoeSbot.Modules
             var loadedModules = CommonHelper.GetModuleEnums(config.LoadedModules);
             var loadedString = "";
             foreach (var lModule in loadedModules)
-                loadedString += $"{lModule.ToString()}{Environment.NewLine}";
+                loadedString += $"{lModule}{Environment.NewLine}";
 
             builder.AddField(x =>
             {
