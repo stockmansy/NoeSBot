@@ -21,14 +21,12 @@ namespace NoeSbot.Logic
         private readonly DiscordSocketClient _client;
         private static ConcurrentDictionary<ulong, ulong> _nukedChannels;
         private readonly ISerializedItemService _serializedItemService;
-        private readonly ILogger<ModLogic> _logger;
 
-        public ModLogic(DiscordSocketClient client, ISerializedItemService serializedItemService, ILoggerFactory loggerFactory)
+        public ModLogic(DiscordSocketClient client, ISerializedItemService serializedItemService)
         {
             _client = client;
             _nukedChannels = new ConcurrentDictionary<ulong, ulong>();
             _serializedItemService = serializedItemService;
-            _logger = loggerFactory.CreateLogger<ModLogic>();
         }
 
         public async Task UserJoined(SocketGuildUser user)
@@ -198,7 +196,7 @@ namespace NoeSbot.Logic
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error in Backup Guild: {ex.Message}");
+                LogHelper.LogError($"Error in Backup Guild: {ex.Message}");
             }
         }
 

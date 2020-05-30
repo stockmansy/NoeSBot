@@ -4,19 +4,17 @@ using NoeSbot.Database.Models;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using NoeSbot.Helpers;
 
 namespace NoeSbot.Database.Services
 {
     public class SerializedItemService : ISerializedItemService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<SerializedItemService> _logger;
 
-        public SerializedItemService(DatabaseContext context, ILoggerFactory loggerFactory)
+        public SerializedItemService(DatabaseContext context)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<SerializedItemService>();
         }
 
         #region Guild backup
@@ -32,7 +30,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Add Guild Backup: {ex.Message}");
+                LogHelper.LogError($"Error in Add Guild Backup: {ex.Message}");
                 return false;
             }
         }

@@ -9,18 +9,17 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NoeSbot.Database.Models;
 using Newtonsoft.Json;
+using NoeSbot.Helpers;
 
 namespace NoeSbot.Database.Services
 {
     public class CustomCommandService : ICustomCommandService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<PunishedService> _logger;
         
-        public CustomCommandService(DatabaseContext context, ILoggerFactory loggerFactory)
+        public CustomCommandService(DatabaseContext context)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<PunishedService>();
         }
 
         #region Custom Punish Command
@@ -53,7 +52,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Custom Punish Command: {ex.Message}");
+                LogHelper.LogError($"Error in Save Custom Punish Command: {ex.Message}");
                 return false;
             }
         }
@@ -88,7 +87,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Custom Punish Command: {ex.Message}");
+                LogHelper.LogError($"Error in Save Custom Punish Command: {ex.Message}");
                 return false;
             }
         }
@@ -110,7 +109,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Remove Custom Command: {ex.Message}");
+                LogHelper.LogError($"Error in Remove Custom Command: {ex.Message}");
                 return false;
             }
         }
@@ -127,7 +126,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All Custom Commands: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All Custom Commands: {ex.Message}");
                 return new List<CustomCommand>();
             }
         }

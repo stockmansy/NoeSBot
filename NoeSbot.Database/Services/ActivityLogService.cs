@@ -1,26 +1,21 @@
 ﻿using NoeSbot.Database;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using Discord.Commands;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using NoeSbot.Database.Models;
 using NoeSbot.Database.ViewModels;
+using NoeSbot.Helpers;
 
 namespace NoeSbot.Database.Services
 {
     public class ActivityLogService : IActivityLogService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<ActivityLogService> _logger;
 
-        public ActivityLogService(DatabaseContext context, ILoggerFactory loggerFactory)
+        public ActivityLogService(DatabaseContext context)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<ActivityLogService>();
         }
 
         #region ActivityLogs
@@ -48,7 +43,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Add Activity Log: {ex.Message}");
+                LogHelper.LogError($"Error in Add Activity Log: {ex.Message}");
                 return false;
             }
         }
@@ -63,12 +58,12 @@ namespace NoeSbot.Database.Services
                 if (userId.HasValue)
                     tempLogs = tempLogs.Where(x => x.UserId == userId.Value);
                 var logs = tempLogs.Select(x => new ActivityLogVM.ActivityLogVMItem(x.ActivityLogItemId, x.UserId, x.ChannelId, x.Command, x.Log, x.ModifiedDate));
-                
+
                 return new ActivityLogVM(activityLog.ActivityLogId, guildId, logs);
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All Profile items: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All Profile items: {ex.Message}");
                 return new ActivityLogVM(-1, guildId);
             }
         }

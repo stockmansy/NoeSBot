@@ -19,11 +19,9 @@ namespace NoeSbot.Database.Services
     public class HttpService : IHttpService
     {
         private HttpClient _http;
-        private readonly ILogger<HttpService> _logger;
 
-        public HttpService(ILoggerFactory loggerFactory)
+        public HttpService()
         {
-            _logger = loggerFactory.CreateLogger<HttpService>();
             _http = new HttpClient(new HttpClientHandler
             {
                 AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,

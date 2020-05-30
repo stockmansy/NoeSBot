@@ -8,18 +8,17 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NoeSbot.Database.Models;
+using NoeSbot.Helpers;
 
 namespace NoeSbot.Database.Services
 {
     public class ProfileService : IProfileService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<ProfileService> _logger;
 
-        public ProfileService(DatabaseContext context, ILoggerFactory loggerFactory)
+        public ProfileService(DatabaseContext context)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<ProfileService>();
         }
 
         #region ProfileItem
@@ -69,7 +68,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Configuration Item: {ex.Message}");
+                LogHelper.LogError($"Error in Save Configuration Item: {ex.Message}");
                 return false;
             }
         }
@@ -93,7 +92,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Configuration Item: {ex.Message}");
+                LogHelper.LogError($"Error in Save Configuration Item: {ex.Message}");
                 return false;
             }
         }
@@ -110,7 +109,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All Profile items: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All Profile items: {ex.Message}");
                 return new List<Profile>();
             }
         }
@@ -127,7 +126,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All Profile items: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All Profile items: {ex.Message}");
                 return new Profile();
             }
         }
@@ -213,7 +212,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Add or Update Profile Background: {ex.Message}");
+                LogHelper.LogError($"Error in Add or Update Profile Background: {ex.Message}");
                 return false;
             }
         }
@@ -229,7 +228,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve Profile Background: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve Profile Background: {ex.Message}");
                 return null;
             }
         }

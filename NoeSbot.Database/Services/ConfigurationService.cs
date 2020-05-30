@@ -8,18 +8,17 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NoeSbot.Database.Models;
+using NoeSbot.Helpers;
 
 namespace NoeSbot.Database.Services
 {
     public class ConfigurationService : IConfigurationService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<ConfigurationService> _logger;
         
         public ConfigurationService(DatabaseContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<ConfigurationService>();
         }
 
         #region Config
@@ -44,7 +43,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Configuration Item: {ex.Message}");
+                LogHelper.LogError($"Error in Save Configuration Item: {ex.Message}");
                 return false;
             }
         }
@@ -62,7 +61,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Configuration Item: {ex.Message}");
+                LogHelper.LogError($"Error in Save Configuration Item: {ex.Message}");
                 return false;
             }
         }
@@ -87,7 +86,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Configuration Item: {ex.Message}");
+                LogHelper.LogError($"Error in Save Configuration Item: {ex.Message}");
                 return false;
             }
         }
@@ -104,7 +103,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All Config items: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All Config items: {ex.Message}");
                 return new List<Config>();
             }
         }
@@ -121,7 +120,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All Config items by type: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All Config items by type: {ex.Message}");
                 return new List<Config>();
             }
         }

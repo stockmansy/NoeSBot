@@ -1,23 +1,19 @@
-﻿using NoeSbot.Database;
-using NoeSbot.Database.Models;
-using System;
+﻿using NoeSbot.Database.Models;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using NoeSbot.Helpers;
 
 namespace NoeSbot.Database.Services
 {
     public class MessageTriggerService : IMessageTriggerService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<MessageTriggerService> _logger;
 
-        public MessageTriggerService(DatabaseContext context, ILoggerFactory loggerFactory)
+        public MessageTriggerService(DatabaseContext context)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<MessageTriggerService>();
         }
 
         public async Task<bool> SaveMessageTrigger(string trigger, string message, bool tts, long server)
@@ -41,7 +37,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save MessageTrigger: {ex.Message}");
+                LogHelper.LogError($"Error in Save MessageTrigger: {ex.Message}");
                 return false;
             }
         }
@@ -58,7 +54,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Delete MessageTrigger: {ex.Message}");
+                LogHelper.LogError($"Error in Delete MessageTrigger: {ex.Message}");
                 return false;
             }
         }
@@ -75,7 +71,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All MessageTrigger: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All MessageTrigger: {ex.Message}");
                 return new List<MessageTrigger>();
             }
         }

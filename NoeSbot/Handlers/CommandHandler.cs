@@ -11,6 +11,7 @@ using NoeSbot.Logic;
 using NoeSbot.Database.Services;
 using System.Threading;
 using NoeSbot.Resources;
+using NoeSbot.Helpers;
 
 namespace NoeSbot.Handlers
 {
@@ -19,7 +20,6 @@ namespace NoeSbot.Handlers
         private CommandService _commands;
         private DiscordSocketClient _client;
         private IServiceProvider _provider;
-        private readonly ILogger<CommandHandler> _logger;
         private IMessageTriggerService _msgTrgSrvs;
         private ModLogic _modLogic;
         private PunishLogic _punishLogic;
@@ -32,13 +32,12 @@ namespace NoeSbot.Handlers
         private MessageTriggers _messageTriggers;
         private IActivityLogService _activityLogService;
 
-        public CommandHandler(CommandService commands, DiscordSocketClient client, ILoggerFactory loggerFactory, IMessageTriggerService msgTrgSrvs,
+        public CommandHandler(CommandService commands, DiscordSocketClient client, IMessageTriggerService msgTrgSrvs,
                               MediaProcessor mediaProcessor, MessageTriggers messageTriggers, ModLogic modLogic, PunishLogic punishLogic, NotifyLogic notifyLogic,
                               EventLogic eventLogic, CustomCommandLogic customCommandLogic, IActivityLogService activityLogService)
         {
             _commands = commands;
             _client = client;
-            _logger = loggerFactory.CreateLogger<CommandHandler>();
             _msgTrgSrvs = msgTrgSrvs;
             _modLogic = modLogic;
             _punishLogic = punishLogic;
@@ -166,7 +165,7 @@ namespace NoeSbot.Handlers
 #if DEBUG
                 await context.Channel.SendMessageAsync(result.ErrorReason);
 #endif
-                _logger.LogError(result.ErrorReason);
+                LogHelper.LogError(result.ErrorReason);
             }
             else
             {

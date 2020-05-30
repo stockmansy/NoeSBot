@@ -8,18 +8,17 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NoeSbot.Database.Models;
+using NoeSbot.Helpers;
 
 namespace NoeSbot.Database.Services
 {
     public class EventService : IEventService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<EventService> _logger;
 
-        public EventService(DatabaseContext context, ILoggerFactory loggerFactory)
+        public EventService(DatabaseContext context)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<EventService>();
         }
 
         #region Event
@@ -69,7 +68,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Event Item: {ex.Message}");
+                LogHelper.LogError($"Error in Save Event Item: {ex.Message}");
                 return false;
             }
         }
@@ -100,7 +99,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in updating Event Item: {ex.Message}");
+                LogHelper.LogError($"Error in updating Event Item: {ex.Message}");
                 return false;
             }
         }
@@ -135,7 +134,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in updating Event Item: {ex.Message}");
+                LogHelper.LogError($"Error in updating Event Item: {ex.Message}");
                 return false;
             }
         }
@@ -169,7 +168,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in updating Event Item: {ex.Message}");
+                LogHelper.LogError($"Error in updating Event Item: {ex.Message}");
                 return false;
             }
         }
@@ -196,7 +195,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in updating Event Item: {ex.Message}");
+                LogHelper.LogError($"Error in updating Event Item: {ex.Message}");
                 return false;
             }
         }
@@ -222,7 +221,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in checking if there is already an organiser with that id: {ex.Message}");
+                LogHelper.LogError($"Error in checking if there is already an organiser with that id: {ex.Message}");
                 return false;
             }
         }
@@ -248,7 +247,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in checking if there is already a participant with that id: {ex.Message}");
+                LogHelper.LogError($"Error in checking if there is already a participant with that id: {ex.Message}");
                 return false;
             }
         }
@@ -280,7 +279,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in updating Event Item: {ex.Message}");
+                LogHelper.LogError($"Error in updating Event Item: {ex.Message}");
                 return false;
             }
         }
@@ -312,7 +311,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in updating Event Item: {ex.Message}");
+                LogHelper.LogError($"Error in updating Event Item: {ex.Message}");
                 return false;
             }
         }
@@ -332,7 +331,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in retrieving all event items: {ex.Message}");
+                LogHelper.LogError($"Error in retrieving all event items: {ex.Message}");
                 return new List<EventItem>();
             }
         }
@@ -353,7 +352,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in retrieving an event: {ex.Message}");
+                LogHelper.LogError($"Error in retrieving an event: {ex.Message}");
                 return new EventItem();
             }
         }

@@ -3,20 +3,12 @@ using Discord.Commands;
 using Discord.WebSocket;
 using NoeSbot.Attributes;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using NoeSbot.Helpers;
-using Microsoft.Extensions.Caching.Memory;
 using NoeSbot.Enums;
-using NoeSbot.Database;
-using System.Threading;
-using NoeSbot.Database.Services;
-using NoeSbot.Database.Models;
 using NoeSbot.Logic;
 using NoeSbot.Resources;
-using Microsoft.Extensions.Logging;
 
 namespace NoeSbot.Modules
 {
@@ -26,14 +18,12 @@ namespace NoeSbot.Modules
         private const int PUNISH_TIME = 3000;
 
         private PunishLogic _logic;
-        private readonly ILogger<PunishModule> _logger;
 
         #region Constructor
 
-        public PunishModule(PunishLogic logic, ILoggerFactory loggerFactory)
+        public PunishModule(PunishLogic logic)
         {
             _logic = logic;
-            _logger = loggerFactory.CreateLogger<PunishModule>();
         }
 
         #endregion
@@ -69,7 +59,7 @@ namespace NoeSbot.Modules
         [RequireBotPermission(GuildPermission.ManageMessages)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user,
-                                 [Summary("The punish time")]string time)
+                                 [Summary("The punish time")] string time)
         {
             await Punish(user, time, "No reason given");
         }
@@ -80,8 +70,8 @@ namespace NoeSbot.Modules
         [RequireBotPermission(GuildPermission.ManageMessages)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Punish([Summary("The user to be punished")] SocketGuildUser user,
-                                 [Summary("The punish time")]string time,
-                                 [Remainder, Summary("The punish reason")]string reason)
+                                 [Summary("The punish time")] string time,
+                                 [Remainder, Summary("The punish reason")] string reason)
         {
             if (!user.IsBot)
             {
@@ -114,8 +104,7 @@ namespace NoeSbot.Modules
                 catch (Exception ex)
                 {
                     var msg = $"Failed to punish {user.Username}";
-                    _logger.LogError($"Error in Punish: {ex.Message}");
-                    LogHelper.LogDebug(msg, false);
+                    LogHelper.LogError($"Error in Punish: {ex.Message}");
                     await ReplyAsync(msg);
                 }
             }
@@ -194,7 +183,7 @@ namespace NoeSbot.Modules
         [MinPermissions(AccessLevel.ServerMod)]
         [RequireBotPermission(GuildPermission.ManageMessages)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
-        public async Task UnPunish([Remainder, Summary("The punish input")]string input)
+        public async Task UnPunish([Remainder, Summary("The punish input")] string input)
         {
             if (input.Trim().Equals("all", StringComparison.OrdinalIgnoreCase))
             {

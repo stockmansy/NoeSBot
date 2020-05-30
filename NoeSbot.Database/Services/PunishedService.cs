@@ -1,25 +1,20 @@
-﻿using NoeSbot.Database;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using Discord.Commands;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using NoeSbot.Database.Models;
+using NoeSbot.Helpers;
 
 namespace NoeSbot.Database.Services
 {
     public class PunishedService : IPunishedService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<PunishedService> _logger;
         
-        public PunishedService(DatabaseContext context, ILoggerFactory loggerFactory)
+        public PunishedService(DatabaseContext context)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<PunishedService>();
         }
 
         #region Punished
@@ -45,7 +40,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Punished: {ex.Message}");
+                LogHelper.LogError($"Error in Save Punished: {ex.Message}");
                 return false;
             }
         }
@@ -63,7 +58,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Remove Punished: {ex.Message}");
+                LogHelper.LogError($"Error in Remove Punished: {ex.Message}");
                 return false;
             }
         }
@@ -79,7 +74,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Remove All Punished: {ex.Message}");
+                LogHelper.LogError($"Error in Remove All Punished: {ex.Message}");
                 return false;
             }
         }
@@ -96,7 +91,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All Punished: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All Punished: {ex.Message}");
                 return new List<Punished>();
             }
         }
@@ -121,7 +116,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Custom Punished: {ex.Message}");
+                LogHelper.LogError($"Error in Save Custom Punished: {ex.Message}");
                 return false;
             }
         }
@@ -144,7 +139,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Remove Custom Punished: {ex.Message}");
+                LogHelper.LogError($"Error in Remove Custom Punished: {ex.Message}");
                 return false;
             }
         }
@@ -160,7 +155,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Remove All Custom Punished: {ex.Message}");
+                LogHelper.LogError($"Error in Remove All Custom Punished: {ex.Message}");
                 return false;
             }
         }
@@ -177,7 +172,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All Custom Punished: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All Custom Punished: {ex.Message}");
                 return new List<CustomPunished>();
             }
         }

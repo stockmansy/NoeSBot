@@ -5,6 +5,7 @@ using NoeSbot.Attributes;
 using NoeSbot.Database;
 using NoeSbot.Database.Services;
 using NoeSbot.Extensions;
+using NoeSbot.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,17 +21,15 @@ namespace NoeSbot
     {
         private readonly IConfigurationService _configurationService;
         private readonly NBConfiguration.DefaultConfig _defaultConfig;
-        private readonly ILogger<GlobalConfig> _logger;
 
         private static Dictionary<ulong, NBConfiguration.DefaultConfig> _guildSpecificConfig;
 
         public NBConfiguration.DefaultConfig DefaultConfig { get; set; }
 
-        public GlobalConfig(IConfigurationRoot config, IConfigurationService configurationService, ILoggerFactory loggerFactory)
+        public GlobalConfig(IConfigurationRoot config, IConfigurationService configurationService)
         {
             _configurationService = configurationService;
             _guildSpecificConfig = new Dictionary<ulong, NBConfiguration.DefaultConfig>();
-            _logger = loggerFactory.CreateLogger<GlobalConfig>();
 
             _defaultConfig = config.GetSection(nameof(NBConfiguration.DefaultConfig)).Get<NBConfiguration.DefaultConfig>(c => c.BindNonPublicProperties = false);
             SetDefaultValuesIfNull(); // Had to be added because ^ .Get doesn't override the default values, instead it adds (so the default value would always be added to the config files values)
@@ -84,7 +83,7 @@ namespace NoeSbot
             foreach (var prop in typeof(NBConfiguration.DefaultConfig).GetProperties())
             {
                 // Get the configuration attribute of the property to fetch the guild specific values from the database
-                var configAttr = prop.GetCustomAttribute<ConfigurationAttribute>();                
+                var configAttr = prop.GetCustomAttribute<ConfigurationAttribute>();
                 if (configAttr != null)
                 {
                     var enumV = configAttr.GetConfigurationEnum();
@@ -118,7 +117,7 @@ namespace NoeSbot
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError($"Invalid configuration file entry: {ex.Message}");
+                            LogHelper.LogError($"Invalid configuration file entry: {ex.Message}");
                         }
                     }
                 }

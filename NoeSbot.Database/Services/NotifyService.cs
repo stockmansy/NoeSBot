@@ -8,18 +8,17 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NoeSbot.Database.Models;
+using NoeSbot.Helpers;
 
 namespace NoeSbot.Database.Services
 {
     public class NotifyService : INotifyService
     {
         private readonly DatabaseContext _context;
-        private readonly ILogger<NotifyService> _logger;
 
-        public NotifyService(DatabaseContext context, ILoggerFactory loggerFactory)
+        public NotifyService(DatabaseContext context)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<NotifyService>();
         }
 
         #region Notify
@@ -64,7 +63,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Notify Item: {ex.Message}");
+                LogHelper.LogError($"Error in Save Notify Item: {ex.Message}");
                 return false;
             }
         }
@@ -95,7 +94,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in add user to Notify Item: {ex.Message}");
+                LogHelper.LogError($"Error in add user to Notify Item: {ex.Message}");
                 return false;
             }
         }
@@ -141,7 +140,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Notify Item: {ex.Message}");
+                LogHelper.LogError($"Error in Save Notify Item: {ex.Message}");
                 return false;
             }
         }
@@ -165,7 +164,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Save Notify Item: {ex.Message}");
+                LogHelper.LogError($"Error in Save Notify Item: {ex.Message}");
                 return false;
             }
         }
@@ -193,7 +192,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in remove user from Notify Item: {ex.Message}");
+                LogHelper.LogError($"Error in remove user from Notify Item: {ex.Message}");
                 return false;
             }
         }
@@ -210,7 +209,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All Notify items: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All Notify items: {ex.Message}");
                 return new List<NotifyItem>();
             }
         }
@@ -227,7 +226,7 @@ namespace NoeSbot.Database.Services
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError($"Error in Retrieve All Notify items: {ex.Message}");
+                LogHelper.LogError($"Error in Retrieve All Notify items: {ex.Message}");
                 return new NotifyItem();
             }
         }
