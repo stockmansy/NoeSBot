@@ -62,6 +62,16 @@ namespace NoeSbot
             return result;
         }
 
+        public static IEnumerable<(string Name, ConfigurationAttribute ConfigAttr)> GetTargetedConfigs()
+        {
+            return GetTargetedConfigProperties();
+        }
+
+        public static IEnumerable<(string Name, ConfigurationAttribute ConfigAttr)> GetNonTargetedConfigs()
+        {
+            return GetNonTargetedConfigProperties();
+        }
+
         #region Lets hide this reflection stuff *whistles*
 
         private void SetDefaultValuesIfNull()
@@ -128,6 +138,34 @@ namespace NoeSbot
             }
 
             return result;
+        }
+
+        private static IEnumerable<(string, ConfigurationAttribute)> GetTargetedConfigProperties()
+        {
+            var targetedConfigs = new List<(string, ConfigurationAttribute)>();
+            foreach (var prop in typeof(NBConfiguration.DefaultConfig).GetProperties())
+            {
+                var configAttr = prop.GetCustomAttribute<ConfigurationAttribute>();
+                if (configAttr != null && ((prop.PropertyType == typeof(ulong) && !prop.PropertyType.IsArray) || 
+                                           (prop.PropertyType != null && prop.PropertyType.GetElementType() == typeof(ulong))))
+                    targetedConfigs.Add((prop.Name.ToLowerInvariant(), configAttr));
+            }
+
+            return targetedConfigs;
+        }
+
+        private static IEnumerable<(string, ConfigurationAttribute)> GetNonTargetedConfigProperties()
+        {
+            var targetedConfigs = new List<(string, ConfigurationAttribute)>();
+            foreach (var prop in typeof(NBConfiguration.DefaultConfig).GetProperties())
+            {
+                var configAttr = prop.GetCustomAttribute<ConfigurationAttribute>();
+                if (configAttr != null && ((prop.PropertyType != typeof(ulong) && !prop.PropertyType.IsArray) || 
+                                           (prop.PropertyType != null && prop.PropertyType.GetElementType() != typeof(ulong))))
+                    targetedConfigs.Add((prop.Name.ToLowerInvariant(), configAttr));
+            }
+
+            return targetedConfigs;
         }
 
         #endregion

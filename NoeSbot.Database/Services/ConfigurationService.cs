@@ -15,7 +15,7 @@ namespace NoeSbot.Database.Services
     public class ConfigurationService : IConfigurationService
     {
         private readonly DatabaseContext _context;
-        
+
         public ConfigurationService(DatabaseContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
@@ -27,7 +27,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.ConfigurationEntities.AsQueryable().Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId && x.Value.Equals(value, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
+                var existing = await _context.ConfigurationEntities.AsAsyncEnumerable().Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId && x.Value.Equals(value, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
                 if (existing != null)
                     _context.ConfigurationEntities.Remove(existing);
 
@@ -52,7 +52,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.ConfigurationEntities.Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId && x.Value.Equals(value, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
+                var existing = await _context.ConfigurationEntities.AsAsyncEnumerable().Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId && x.Value.Equals(value, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
                 if (existing != null)
                     _context.ConfigurationEntities.Remove(existing);
 
@@ -70,7 +70,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.ConfigurationEntities.Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId).SingleOrDefaultAsync();
+                var existing = await _context.ConfigurationEntities.AsAsyncEnumerable().Where(x => x.GuildId == guildId && x.ConfigurationTypeId == configTypeId).SingleOrDefaultAsync();
                 if (existing != null)
                     _context.ConfigurationEntities.Remove(existing);
 
@@ -80,7 +80,7 @@ namespace NoeSbot.Database.Services
                     ConfigurationTypeId = configTypeId,
                     Value = value
                 });
-                
+
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -98,7 +98,7 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.ConfigurationEntities.AsAsyncEnumerable().ToListAsync();
                 if (existing == null)
                     return new List<Config>();
-                
+
                 return existing;
             }
             catch (DbUpdateException ex)
@@ -112,7 +112,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.ConfigurationEntities.Where(x => x.ConfigurationTypeId == configTypeId).ToListAsync();
+                var existing = await _context.ConfigurationEntities.AsAsyncEnumerable().Where(x => x.ConfigurationTypeId == configTypeId).ToListAsync();
                 if (existing == null)
                     return new List<Config>();
 

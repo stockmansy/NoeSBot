@@ -1,12 +1,14 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Humanizer;
 using NoeSbot.Attributes;
 using NoeSbot.Database.Services;
 using NoeSbot.Enums;
 using NoeSbot.Helpers;
 using NoeSbot.Resources;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NoeSbot.Modules
@@ -120,12 +122,16 @@ namespace NoeSbot.Modules
                                           [Summary("The user")] SocketGuildUser user)
         {
             var success = true;
-            switch (configName.ToLowerInvariant())
+
+            var targetedConfigs = GlobalConfig.GetTargetedConfigs();
+
+            var targetedConfig = targetedConfigs.EmptyIfNull().FirstOrDefault(tc => tc.Name.Equals(configName, StringComparison.OrdinalIgnoreCase) || tc.Name.Singularize().Equals(configName, StringComparison.OrdinalIgnoreCase));
+            if (targetedConfig != default((string, ConfigurationAttribute)))
+                success = await _service.AddConfigurationItem(((long)Context.Guild.Id), (int)targetedConfig.ConfigAttr.GetConfigurationEnum(), user.Id.ToString());
+            else
             {
-                case "owner":
-                case "owners":
-                    success = await _service.AddConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.Owners, user.Id.ToString());
-                    break;
+                await ReplyAsync("Configuration name not found");
+                return;
             }
 
             await _globalConfig.LoadInGuildConfigs();
@@ -143,20 +149,16 @@ namespace NoeSbot.Modules
                                           [Summary("Configuration value")] string value)
         {
             var success = true;
-            switch (configName.ToLowerInvariant())
+
+            var nonTargetedConfigs = GlobalConfig.GetNonTargetedConfigs();
+
+            var nonTargetedConfig = nonTargetedConfigs.EmptyIfNull().FirstOrDefault(tc => tc.Name.Equals(configName, StringComparison.OrdinalIgnoreCase) || tc.Name.Singularize().Equals(configName, StringComparison.OrdinalIgnoreCase));
+            if (nonTargetedConfig != default((string, ConfigurationAttribute)))
+                success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)nonTargetedConfig.ConfigAttr.GetConfigurationEnum(), value);
+            else
             {
-                case "prefix":
-                    success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.Prefixes, value);
-                    break;
-                case "punishedrole":
-                    success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.PunishedRole, value);
-                    break;
-                case "mediachannel":
-                    success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.MediaChannel, value);
-                    break;
-                case "generalchannel":
-                    success = await _service.SaveConfigurationItem(((long)Context.Guild.Id), (int)ConfigurationEnum.GeneralChannel, value);
-                    break;
+                await ReplyAsync("Configuration name not found");
+                return;
             }
 
             await _globalConfig.LoadInGuildConfigs();
