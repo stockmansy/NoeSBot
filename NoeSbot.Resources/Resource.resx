@@ -1392,9 +1392,15 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
 {/examples}</value>
   </data>
   <data name="customizemodule_addcustomaliascommand_name" xml:space="preserve">
-    <value>Custom Alias Command</value>
+    <value>Add Custom Alias Command</value>
   </data>
   <data name="customizemodule_addcustomaliascommand_summary" xml:space="preserve">
     <value>You can create an alias for another (maybe bots?) command</value>
+  </data>
+  <data name="customizemodule_removecustomaliascommand_name" xml:space="preserve">
+    <value>Remove Custom Alias Command</value>
+  </data>
+  <data name="customizemodule_removecustomaliascommand_summary" xml:space="preserve">
+    <value>This removes a custom alias command</value>
   </data>
 </root>

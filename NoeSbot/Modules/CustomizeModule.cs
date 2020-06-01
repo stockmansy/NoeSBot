@@ -217,6 +217,15 @@ namespace NoeSbot.Modules
         [Command(Labels.Customize_AddCustomAliasCommand_Command)]
         [MinPermissions(AccessLevel.ServerMod)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task AddCustomAliasCommand()
+        {
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Customize_AddCustomAliasCommand_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+        }
+
+        [Command(Labels.Customize_AddCustomAliasCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task AddCustomAliasCommand(string customCommand,
                                                 string aliasCommand)
         {
@@ -505,6 +514,15 @@ namespace NoeSbot.Modules
         #endregion
 
         #region Remove Custom Alias Command
+
+        [Command(Labels.Customize_RemoveCustomAliasCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task RemoveCustomAliasCommand()
+        {
+            var user = Context.User as SocketGuildUser;
+            await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Customize_RemoveCustomAliasCommand_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
+        }
 
         [Command(Labels.Customize_RemoveCustomAliasCommand_Command)]
         [MinPermissions(AccessLevel.ServerMod)]

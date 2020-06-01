@@ -541,7 +541,7 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Custom Alias Command.
+        ///   Looks up a localized string similar to Add Custom Alias Command.
         /// </summary>
         internal static string customizemodule_addcustomaliascommand_name {
             get {
@@ -864,6 +864,24 @@ namespace NoeSbot.Resources {
         internal static string customizemodule_removecustom_summary {
             get {
                 return ResourceManager.GetString("customizemodule_removecustom_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Custom Alias Command.
+        /// </summary>
+        internal static string customizemodule_removecustomaliascommand_name {
+            get {
+                return ResourceManager.GetString("customizemodule_removecustomaliascommand_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This removes a custom alias command.
+        /// </summary>
+        internal static string customizemodule_removecustomaliascommand_summary {
+            get {
+                return ResourceManager.GetString("customizemodule_removecustomaliascommand_summary", resourceCulture);
             }
         }
         
