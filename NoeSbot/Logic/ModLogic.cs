@@ -51,7 +51,7 @@ namespace NoeSbot.Logic
                 if (user.AvatarId != null)
                     builder.WithThumbnailUrl(user.GetAvatarUrl());
 
-                await user.Guild.DefaultChannel.SendMessageAsync("", false, builder.Build());
+                await user.Guild.SystemChannel.SendMessageAsync("", false, builder.Build());
 
                 // Add role
                 var newUserRole = GlobalConfig.GetGuildConfig(guildId).NewUserRole;
