@@ -20,7 +20,7 @@ namespace NoeSbot
     public class GlobalConfig
     {
         private readonly IConfigurationService _configurationService;
-        private readonly NBConfiguration.DefaultConfig _defaultConfig;
+        private static NBConfiguration.DefaultConfig _defaultConfig;
 
         private static Dictionary<ulong, NBConfiguration.DefaultConfig> _guildSpecificConfig;
 
@@ -57,7 +57,7 @@ namespace NoeSbot
         public static NBConfiguration.DefaultConfig GetGuildConfig(ulong guildId)
         {
             if (_guildSpecificConfig == null || !_guildSpecificConfig.TryGetValue(guildId, out var result))
-                return new NBConfiguration.DefaultConfig();
+                return _defaultConfig;
 
             return result;
         }
