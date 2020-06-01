@@ -224,7 +224,9 @@ namespace NoeSbot.Database.Services
 
             try
             {
-               return await _context.ProfileBackgroundEntities.Include(zx => zx.Aliases).Where(x => x.GuildId == guildId && ((x.UserId == userId && x.ProfileBackgroundSettingId == ProfileBackground.ProfileBackgroundSetting.Custom) || (x.Aliases.Select(al => al.Alias).Contains(alias.Replace(" ", ""))))).FirstOrDefaultAsync();
+               return await _context.ProfileBackgroundEntities.Include(zx => zx.Aliases).Where(x => x.GuildId == guildId && ((x.UserId == userId && 
+                                                                                                    x.ProfileBackgroundSettingId == ProfileBackground.ProfileBackgroundSetting.Custom) || 
+                                                                                                    (alias != null && x.Aliases.Select(al => al.Alias).Contains(alias.Replace(" ", ""))))).FirstOrDefaultAsync();
             }
             catch (DbUpdateException ex)
             {

@@ -36,7 +36,6 @@ namespace NoeSbot.Modules
 
         #endregion
 
-
         #region Commands
 
         #region Start Event
@@ -49,7 +48,6 @@ namespace NoeSbot.Modules
             var user = Context.User as SocketGuildUser;
             await ReplyAsync("", false, CommonDiscordHelper.GetHelp(Labels.Event_StartEvent_Command, GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes, user.GetColor()));
         }
-
 
         [Command(Labels.Event_StartEvent_Command)]
         [Alias(Labels.Event_StartEvent_Alias_1)]
@@ -109,8 +107,10 @@ namespace NoeSbot.Modules
 
                 await PrintEventNotification(eventItem);
             }
-            catch
+            catch (Exception ex)
             {
+                LogHelper.LogWarning($"An event was improperly started: {ex}");
+
                 var builder = new EmbedBuilder()
                 {
                     Color = user.GetColor(),

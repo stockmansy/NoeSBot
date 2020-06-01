@@ -61,9 +61,17 @@ namespace NoeSbot.Modules
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task Profile(SocketGuildUser user)
         {
-            var getProfileImage = await GetProfileImageAsync(user);
-            await Context.Channel.SendFileAsync(getProfileImage);
-            DeleteTmpImage(user.Id);
+            try
+            {
+                var getProfileImage = await GetProfileImageAsync(user);
+                await Context.Channel.SendFileAsync(getProfileImage);
+                DeleteTmpImage(user.Id);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogError($"An error occurred while trying to render the profile: {ex}");
+                await ReplyAsync("Could not render that profile");
+            }
         }
 
         #endregion
@@ -83,7 +91,7 @@ namespace NoeSbot.Modules
         [Alias(Labels.Profile_ProfileItem_Alias_1, Labels.Profile_ProfileItem_Alias_2)]
         [MinPermissions(AccessLevel.User)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
-        public async Task ProfileItem(string type, [Remainder]string input)
+        public async Task ProfileItem(string type, [Remainder] string input)
         {
             var user = Context.User as SocketGuildUser;
             var fType = CommonHelper.FirstLetterToUpper(type);
@@ -201,7 +209,7 @@ namespace NoeSbot.Modules
 
         private async Task<string> GetProfileImageAsync(SocketGuildUser user)
         {
-            //TODO: Clean this up
+            //TODO: Clean this up!
 
             var tmpUrl = $"{_tempDir}\\Profile{user.Id}.jpg";
             var defaultAvatarUrl = @"Images\Profile\default.png";
@@ -222,6 +230,7 @@ namespace NoeSbot.Modules
             var columnTwoRowThreeY = columnOneRowThreeY;
 
             var profile = await _profileService.RetrieveProfileAsync((long)user.Guild.Id, (long)user.Id);
+            var custom = await _profileService.RetrieveProfileBackground((long)user.Guild.Id, (long)user.Id);
 
             var imageFilePath = @"Images\Profile\profile_bg.jpg";
             var imageCorePath = @"Images\Profile\profile_core.png";
@@ -232,7 +241,7 @@ namespace NoeSbot.Modules
             var favGame = "n/a";
             var streaming = "n/a";
             var summary = "n/a";
-            Bitmap bitmap = null;
+            var bitmap = default(Bitmap);
 
             if (profile != null && profile.Items.Any())
             {
@@ -245,13 +254,14 @@ namespace NoeSbot.Modules
                 streaming = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Streaming)?.Value ?? "n/a";
                 summary = profile.Items.SingleOrDefault(x => x.ProfileItemTypeId == (int)ProfileEnum.Summary)?.Value ?? "n/a";
 
-
-                var custom = await _profileService.RetrieveProfileBackground((long)user.Guild.Id, (long)user.Id, favGame);
-                if (custom != null)
-                    bitmap = await DownloadHelper.DownloadBitmapImage(custom.Value);
+                if (custom == null)
+                    custom = await _profileService.RetrieveProfileBackground((long)user.Guild.Id, (long)user.Id, favGame);
 
                 imageFilePath = GetDefaultBackgrounds(favGame, imageFilePath);
             }
+
+            if (custom != null)
+                bitmap = await DownloadHelper.DownloadBitmapImage(custom.Value);
 
             if (bitmap == null)
                 bitmap = new Bitmap(System.Drawing.Image.FromFile(imageFilePath));
@@ -347,12 +357,12 @@ namespace NoeSbot.Modules
 
                         using (var output = File.Open(tmpUrl, FileMode.Create))
                         {
-                            var qualityParamId = Encoder.Quality;
-                            var encoderParameters = new EncoderParameters(1);
-                            encoderParameters.Param[0] = new EncoderParameter(qualityParamId, quality);
-                            var codec = ImageCodecInfo.GetImageDecoders()
-                                .FirstOrDefault(x => x.FormatID == System.Drawing.Imaging.ImageFormat.Jpeg.Guid);
-                            bitmap.Save(output, codec, encoderParameters);
+                            //var qualityParamId = Encoder.Quality;
+                            //var encoderParameters = new EncoderParameters(1);
+                            //encoderParameters.Param[0] = new EncoderParameter(qualityParamId, quality);
+                            //var codec = ImageCodecInfo.GetImageDecoders().FirstOrDefault(x => x.FormatID == System.Drawing.Imaging.ImageFormat.Jpeg.Guid);
+                            bitmap.Save(output, System.Drawing.Imaging.ImageFormat.Jpeg);
+                            //bitmap.Save(output, codec, encoderParameters); TODO find out why this broke
                         }
                     }
                 }

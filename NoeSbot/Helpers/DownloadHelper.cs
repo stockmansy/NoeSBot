@@ -245,8 +245,9 @@ namespace NoeSbot.Helpers
             {
                 return await GetScaledImage(url);
             }
-            catch
+            catch (Exception ex)
             {
+                LogHelper.LogWarning($"Issue happened with the DownloadBitmapImage method: {ex}", false);
                 return null;
             }
         }

@@ -16,7 +16,7 @@ namespace NoeSbot.Database.Services
     public class CustomCommandService : ICustomCommandService
     {
         private readonly DatabaseContext _context;
-        
+
         public CustomCommandService(DatabaseContext context)
         {
             _context = context;
@@ -28,7 +28,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.CustomCommandEntities.Where(x => x.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
+                var existing = await _context.CustomCommandEntities.AsAsyncEnumerable().Where(x => x.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
                 if (existing != null)
                     _context.CustomCommandEntities.Remove(existing);
 
@@ -46,7 +46,7 @@ namespace NoeSbot.Database.Services
                     Type = CustomCommand.CustomCommandType.Punish,
                     Value = JsonConvert.SerializeObject(cus)
                 });
-                
+
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -65,7 +65,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.CustomCommandEntities.Where(x => x.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
+                var existing = await _context.CustomCommandEntities.AsAsyncEnumerable().Where(x => x.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
                 if (existing != null)
                     _context.CustomCommandEntities.Remove(existing);
 
@@ -100,7 +100,7 @@ namespace NoeSbot.Database.Services
         {
             try
             {
-                var existing = await _context.CustomCommandEntities.Where(x => x.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
+                var existing = await _context.CustomCommandEntities.AsAsyncEnumerable().Where(x => x.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
                 if (existing != null)
                     _context.CustomCommandEntities.Remove(existing);
 
@@ -113,15 +113,15 @@ namespace NoeSbot.Database.Services
                 return false;
             }
         }
-        
+
         public async Task<IEnumerable<CustomCommand>> RetrieveAllCustomCommandsAsync(long guildId)
         {
             try
             {
-                var existing = await _context.CustomCommandEntities.Where(x => x.GuildId == guildId).ToListAsync();
+                var existing = await _context.CustomCommandEntities.AsAsyncEnumerable().Where(x => x.GuildId == guildId).ToListAsync();
                 if (existing == null)
                     return new List<CustomCommand>();
-                
+
                 return existing;
             }
             catch (DbUpdateException ex)

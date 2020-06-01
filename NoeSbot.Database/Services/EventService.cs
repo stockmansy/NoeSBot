@@ -30,6 +30,7 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Participants)
                                         .Include(x => x.Organisers)
+                                        .AsAsyncEnumerable()
                                         .Where(x => x.GuildId == guildId
                                                 && x.UniqueIdentifier.Equals(uniqueidentifier, StringComparison.OrdinalIgnoreCase)
                                                 && x.Active)
@@ -80,7 +81,8 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Participants)
                                         .Include(x => x.Organisers)
-                                        .Where(x => x.GuildId == guildId 
+                                        .AsAsyncEnumerable()
+                                        .Where(x => x.GuildId == guildId
                                                 && x.UniqueIdentifier.Equals(uniqueidentifier, StringComparison.OrdinalIgnoreCase)
                                                 && x.Organisers.Where(y => y.UserId == organiserId).Any()
                                                 && x.Active)
@@ -111,6 +113,7 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Participants)
                                         .Include(x => x.Organisers)
+                                        .AsAsyncEnumerable()
                                         .Where(x => x.GuildId == guildId
                                                 && x.UniqueIdentifier.Equals(uniqueidentifier, StringComparison.OrdinalIgnoreCase)
                                                 && x.Organisers.Where(y => y.UserId == organiserId).Any()
@@ -146,6 +149,7 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Participants)
                                         .Include(x => x.Organisers)
+                                        .AsAsyncEnumerable()
                                         .Where(x => x.GuildId == guildId
                                                 && x.UniqueIdentifier.Equals(uniqueidentifier, StringComparison.OrdinalIgnoreCase)
                                                 && x.Active)
@@ -180,6 +184,7 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Participants)
                                         .Include(x => x.Organisers)
+                                        .AsAsyncEnumerable()
                                         .Where(x => x.GuildId == guildId
                                                 && x.UniqueIdentifier.Equals(uniqueidentifier, StringComparison.OrdinalIgnoreCase)
                                                 && x.Active)
@@ -206,6 +211,7 @@ namespace NoeSbot.Database.Services
             {
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Organisers)
+                                        .AsAsyncEnumerable()
                                         .Where(x => x.GuildId == guildId
                                                 && x.UniqueIdentifier.Equals(uniqueidentifier, StringComparison.OrdinalIgnoreCase)
                                                 && x.Organisers.Where(y => y.UserId == organiserId).Any()
@@ -232,6 +238,7 @@ namespace NoeSbot.Database.Services
             {
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Participants)
+                                        .AsAsyncEnumerable()
                                         .Where(x => x.GuildId == guildId
                                                 && x.UniqueIdentifier.Equals(uniqueidentifier, StringComparison.OrdinalIgnoreCase)
                                                 && x.Participants.Where(y => y.UserId == participantId).Any()
@@ -259,6 +266,7 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Participants)
                                         .Include(x => x.Organisers)
+                                        .AsAsyncEnumerable()
                                         .Where(x => x.GuildId == guildId
                                                 && x.UniqueIdentifier.Equals(uniqueidentifier, StringComparison.OrdinalIgnoreCase)
                                                 && x.Organisers.Where(y => y.UserId == organiserId).Any()
@@ -291,6 +299,7 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Participants)
                                         .Include(x => x.Organisers)
+                                        .AsAsyncEnumerable()
                                         .Where(x => x.GuildId == guildId
                                                 && x.UniqueIdentifier.Equals(uniqueidentifier, StringComparison.OrdinalIgnoreCase)
                                                 && x.Participants.Where(y => y.UserId == participantId).Any()
@@ -323,6 +332,7 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Participants)
                                         .Include(x => x.Organisers)
+                                        .AsAsyncEnumerable()
                                         .ToListAsync();
                 if (existing == null)
                     return new List<EventItem>();
@@ -343,6 +353,7 @@ namespace NoeSbot.Database.Services
                 var existing = await _context.EventItemEntities
                                         .Include(x => x.Participants)
                                         .Include(x => x.Organisers)
+                                        .AsAsyncEnumerable()
                                         .Where(x => x.UniqueIdentifier.Equals(uniqueidentifier, StringComparison.OrdinalIgnoreCase) && x.GuildId == guildId)
                                         .SingleOrDefaultAsync();
                 if (existing == null)

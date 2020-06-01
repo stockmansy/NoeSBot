@@ -162,7 +162,7 @@ namespace NoeSbot.Modules
 
             if (urbanMain == null || urbanMain.List == null || !urbanMain.List.Any())
             {
-                await ReplyAsync("Could not retrieve the requested term.");
+                await ReplyAsync("Could not find an entry on urban dictionary for the requested term.");
                 return;
             }
 

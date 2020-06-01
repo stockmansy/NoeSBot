@@ -116,7 +116,7 @@ namespace NoeSbot.Modules
         [Command(Labels.Mod_Botstatus_Command)]
         [MinPermissions(AccessLevel.ServerAdmin)]
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
-        public async Task Botstatus([Remainder]string status)
+        public async Task Botstatus([Remainder] string status)
         {
             await _client.SetGameAsync(status);
             await ReplyAsync("Status changed.");
@@ -298,12 +298,19 @@ namespace NoeSbot.Modules
 
         private async Task EndNuke(ulong messageId, ulong channelId, string username)
         {
-            var msg = await Context.Channel.GetMessageAsync(messageId);
-            await msg.DeleteAsync();
+            try
+            {
+                var msg = await Context.Channel.GetMessageAsync(messageId);
+                await msg.DeleteAsync();
 
-            await Context.Channel.SendMessageAsync($"The nuke started by {username} has ended...");
+                await Context.Channel.SendMessageAsync($"The nuke started by {username} has ended...");
 
-            _modLogic.DeNukeChannel(channelId);
+                _modLogic.DeNukeChannel(channelId);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogError($"Something wrong happened while trying to end the nuke: {ex}");
+            }
         }
 
         private async Task StopNuke(ulong channelId)
@@ -320,21 +327,31 @@ namespace NoeSbot.Modules
 
         private async Task SendLogs(IEnumerable<ActivityLogVM.ActivityLogVMItem> logs)
         {
-            var splitlogs = CommonHelper.SplitList(logs.OrderByDescending(x => x.Date).ToList(), 40);
-
-            foreach (var splitList in splitlogs)
+            try
             {
-                var sb = new StringBuilder();
-                sb.AppendLine("```");
+                var splitlogs = CommonHelper.SplitList(logs.OrderByDescending(x => x.Date).ToList(), 10);
 
-                foreach (var log in splitList)
+                foreach (var splitList in splitlogs)
                 {
-                    sb.AppendLine($"{log.Log} at {log.Date.ToLocalTime().ToString("yyyy-MM-dd HH:mm")}");
+                    var sb = new StringBuilder();
+                    sb.AppendLine("```");
+
+                    foreach (var log in splitList)
+                    {
+                        sb.AppendLine($"{log.Log} at {log.Date.ToLocalTime():yyyy-MM-dd HH:mm}");
+                    }
+
+                    sb.AppendLine("```");
+
+                    await Context.Message.Author.SendMessageAsync(sb.ToString());
+
+                    await Task.Delay(500);
                 }
-
-                sb.AppendLine("```");
-
-                await Context.Message.Author.SendMessageAsync(sb.ToString());
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogError($"Couldn't properly fetch the logs: {ex}");
+                await Context.Message.Author.SendMessageAsync("Couldn't fetch the logs properly");
             }
         }
 
