@@ -10,6 +10,7 @@ namespace NoeSbot.Models
         public string Name { get; set; }
         public CustomPunishCommand PunishCommand { get; set; }
         public CustomUnPunishCommand UnPunishCommand { get; set; }
+        public CustomAliasCommand AliasCommand { get; set; }
 
         public class CustomPunishCommand
         {
@@ -21,6 +22,12 @@ namespace NoeSbot.Models
         public class CustomUnPunishCommand
         {
             public ulong UserId { get; set; }
+        }
+
+        public class CustomAliasCommand
+        {
+            public string AliasCommand { get; set; }
+            public bool RemoveMessages { get; set; }
         }
     }
 }

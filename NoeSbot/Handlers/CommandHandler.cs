@@ -150,7 +150,11 @@ namespace NoeSbot.Handlers
                 // Execute custom commmands
                 try
                 {
-                    var success = await _customCommandLogic.Process(context, _commands.Commands, context.Message.Content.Substring(argPos).Trim(), _provider);
+                    var commandFull = context.Message.Content.Substring(argPos).Trim();
+                    var hasCommandSeperator = commandFull.IndexOf(' ') > -1;
+                    var commandName = !hasCommandSeperator ? commandFull : commandFull.Substring(0, commandFull.IndexOf(' '));
+                    var commandValue = !hasCommandSeperator ? string.Empty : commandFull.Substring(commandFull.IndexOf(' ') + 1);
+                    var success = await _customCommandLogic.Process(context, _commands.Commands, commandName, commandValue, _provider);
                     if (success)
                     {
                         await AddLog(message, guild, context);

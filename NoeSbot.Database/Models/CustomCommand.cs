@@ -17,7 +17,8 @@ namespace NoeSbot.Database.Models
         public enum CustomCommandType
         {
             Punish,
-            Unpunish
+            Unpunish,
+            Alias
         }
     }
 }

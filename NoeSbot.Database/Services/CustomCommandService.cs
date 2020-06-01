@@ -22,6 +22,43 @@ namespace NoeSbot.Database.Services
             _context = context;
         }
 
+        #region Custom Alias Command
+
+        public async Task<bool> SaveCustomAliasCommandAsync(string commandName, long guildId, string aliasCommand, bool removeMessages)
+        {
+            try
+            {
+                var existing = await _context.CustomCommandEntities.AsAsyncEnumerable().Where(x => x.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase) && x.Type == CustomCommand.CustomCommandType.Alias).SingleOrDefaultAsync();
+                if (existing != null)
+                    _context.CustomCommandEntities.Remove(existing);
+
+                var cus = new CustomAliasCommand
+                {
+                    CommandName = commandName,
+                    AliasCommand = aliasCommand,
+                    RemoveResult = removeMessages
+                };
+
+                _context.CustomCommandEntities.Add(new CustomCommand
+                {
+                    GuildId = guildId,
+                    Name = commandName,
+                    Type = CustomCommand.CustomCommandType.Alias,
+                    Value = JsonConvert.SerializeObject(cus)
+                });
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                LogHelper.LogError($"Error in Save Custom Alias Command: {ex.Message}");
+                return false;
+            }
+        }
+
+        #endregion
+
         #region Custom Punish Command
 
         public async Task<bool> SaveCustomPunishCommandAsync(string commandName, long guildId, long userId, int durationInSec, string reason)
@@ -96,11 +133,11 @@ namespace NoeSbot.Database.Services
 
         #region General
 
-        public async Task<bool> RemoveCustomCommandAsync(string commandName)
+        public async Task<bool> RemoveCustomCommandAsync(string commandName, long guildId)
         {
             try
             {
-                var existing = await _context.CustomCommandEntities.AsAsyncEnumerable().Where(x => x.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase)).SingleOrDefaultAsync();
+                var existing = await _context.CustomCommandEntities.AsAsyncEnumerable().Where(x => x.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase) && x.GuildId == guildId).SingleOrDefaultAsync();
                 if (existing != null)
                     _context.CustomCommandEntities.Remove(existing);
 

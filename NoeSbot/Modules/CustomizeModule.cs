@@ -212,6 +212,35 @@ namespace NoeSbot.Modules
             RemoveCache();
         }
 
+        #region Add Custom Alias Command
+
+        [Command(Labels.Customize_AddCustomAliasCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task AddCustomAliasCommand(string customCommand,
+                                                string aliasCommand)
+        {
+            await AddCustomAliasCommand(customCommand, aliasCommand, false);
+        }
+
+        [Command(Labels.Customize_AddCustomAliasCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task AddCustomAliasCommand(string customCommand,
+                                                string aliasCommand,
+                                                bool removeMessages)
+        {
+            var success = await _customCommandService.SaveCustomAliasCommandAsync(customCommand.RemovePrefix(GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes), (long)Context.Guild.Id, aliasCommand, removeMessages);
+            if (success)
+            {
+                await ReplyAsync($"Successfully created the custom alias command");
+            }
+
+            RemoveCache();
+        }
+
+        #endregion
+
         #endregion
 
         #region Add Custom Unpunish Command
@@ -464,10 +493,28 @@ namespace NoeSbot.Modules
         [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
         public async Task RemoveCustomCommand(string customCommand)
         {
-            var success = await _customCommandService.RemoveCustomCommandAsync(customCommand);
+            var success = await _customCommandService.RemoveCustomCommandAsync(customCommand, (long)Context.Guild.Id);
             if (success)
             {
                 await ReplyAsync($"Successfully removed the custom command");
+            }
+
+            RemoveCache();
+        }
+
+        #endregion
+
+        #region Remove Custom Alias Command
+
+        [Command(Labels.Customize_RemoveCustomAliasCommand_Command)]
+        [MinPermissions(AccessLevel.ServerMod)]
+        [BotAccess(BotAccessAttribute.AccessLevel.BotsRefused)]
+        public async Task RemoveCustomAliasCommand(string customCommand)
+        {
+            var success = await _customCommandService.RemoveCustomCommandAsync(customCommand.RemovePrefix(GlobalConfig.GetGuildConfig(Context.Guild.Id).Prefixes), (long)Context.Guild.Id);
+            if (success)
+            {
+                await ReplyAsync($"Successfully removed the custom alias command");
             }
 
             RemoveCache();

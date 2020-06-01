@@ -28,7 +28,7 @@ namespace NoeSbot.Logic
             _cache = memoryCache;
         }
 
-        public async Task<bool> Process(ICommandContext context, IEnumerable<CommandInfo> commands, string customCommandName, IServiceProvider service)
+        public async Task<bool> Process(ICommandContext context, IEnumerable<CommandInfo> commands, string customCommandName, string customCommandValue, IServiceProvider service)
         {
             //TODO don't have the database model here etc...
             if (!_cache.TryGetValue(CacheEnum.CustomCommmands, out IEnumerable<CustomCommand> customCommands))
@@ -63,6 +63,19 @@ namespace NoeSbot.Logic
                                 UnPunishCommand = new CustomCommand.CustomUnPunishCommand
                                 {
                                     UserId = (ulong)unpunishInfo.UserId
+                                }
+                            });
+                            break;
+                        case Database.Models.CustomCommand.CustomCommandType.Alias:
+                            var aliasInfo = JsonConvert.DeserializeObject<Database.Models.CustomAliasCommand>(command.Value);
+                            result.Add(new CustomCommand
+                            {
+                                GuildId = context.Guild.Id,
+                                Name = command.Name,
+                                AliasCommand = new CustomCommand.CustomAliasCommand
+                                {
+                                    AliasCommand = aliasInfo.AliasCommand,
+                                    RemoveMessages = aliasInfo.RemoveResult
                                 }
                             });
                             break;
@@ -118,6 +131,22 @@ namespace NoeSbot.Logic
                         parms.Add((SocketGuildUser)user);
                         res = await command.ExecuteAsync(context, parms, command.Parameters, service);
                         return res.IsSuccess;
+                    }
+
+                    if (custom.AliasCommand != null)
+                    {
+                        await context.Channel.SendMessageAsync($"{custom.AliasCommand.AliasCommand} {customCommandValue}");
+                        try
+                        {
+                            if (custom.AliasCommand.RemoveMessages)
+                                await context.Message.DeleteAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.LogWarning($"Message was already removed: {ex}");
+                        }
+                        
+                        return true;
                     }
                 }
             }

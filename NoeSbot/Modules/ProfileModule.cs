@@ -214,7 +214,7 @@ namespace NoeSbot.Modules
             var tmpUrl = $"{_tempDir}\\Profile{user.Id}.jpg";
             var defaultAvatarUrl = @"Images\Profile\default.png";
             var tmpAvatarUrl = $"{_tempDir}\\Avatar{user.Id}.jpg";
-            const int quality = 75;
+            //const int quality = 75;
             const int rowDiff = 20;
             const int columnDiff = 240;
             var columnOneX = 130;

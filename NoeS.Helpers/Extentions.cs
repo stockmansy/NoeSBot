@@ -46,5 +46,18 @@ namespace NoeSbot.Helpers
 
             return source;
         }
+
+        public static string RemovePrefix(this string source, IEnumerable<char> prefixes)
+        {
+            var prefixLessAliasCommand = source;
+            foreach (var prefix in prefixes)
+            {
+                if (prefixLessAliasCommand.StartsWith(prefix)) { 
+                    prefixLessAliasCommand = prefixLessAliasCommand.Substring(1);
+                    break;
+                }
+            }
+            return prefixLessAliasCommand;
+        }
     }
 }
