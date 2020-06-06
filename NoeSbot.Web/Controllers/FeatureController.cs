@@ -8,10 +8,12 @@ using NoeSbot.Resources.Models;
 
 namespace NoeSbot.Web.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
-    public class FeatureController : Controller
+    public class FeatureController : ControllerBase
     {
         [HttpGet]
+        [Route("all")]
         public IEnumerable<ModuleInfoModel> GetFeatures()
         {
             var modules = Labels.GetModules();
@@ -25,30 +27,6 @@ namespace NoeSbot.Web.Controllers
             }
 
             return modules;
-        }
-
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

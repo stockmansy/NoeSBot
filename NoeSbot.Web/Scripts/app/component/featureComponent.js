@@ -14,19 +14,10 @@ var featureapp = new Vue({
     created() {
         this.refreshFeatures();
     },
-    data: {
-        message: 'Hello Vue!',
-        todos: [
-            { text: 'Learn JavaScript' },
-            { text: 'Learn Vue' },
-            { text: 'Build something awesome' }
-        ],
-        features: []
-    },
     components: { Tab, Tabs },
     methods: {
         refreshFeatures(resource) {
-            Vue.http.get('/api/Feature').then((response) => {
+            Vue.http.get('/api/feature/all').then((response) => {
                 this.features = response.data;
             }).then(() => {
                 // Hack, TODO fix/improve this

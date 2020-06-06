@@ -87,7 +87,7 @@ body {
       text-decoration: none; }
 
 #features .tabs-component .tabs-component-panels {
-  padding: 3px;
+  padding: 0 3px 3px 3px;
   float: left;
   width: 80%; }
 
@@ -107,4 +107,3 @@ body {
 
 footer {
   margin-bottom: 20px; }
-

@@ -12,12 +12,6 @@
     <div class="row">
         <div class="col-md-12">
             <div id="features">
-                @*{{ message }}
-                <ol>
-                    <li v-for="todo in todos">
-                        {{ todo.text }}
-                    </li>
-                </ol>*@
                 <tabs :options="{ useUrlFragment: false }">
                     <tab v-for="feature in features" :key="feature.name" v-bind:name="feature.name">
                         <div v-for="command in feature.commands" :key="command.name" class="command-group">
@@ -55,36 +49,7 @@
                         </div>
 
                         <hr />
-                        <p>This is all very much WIP</p>
-                        @*<table>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Command</th>
-                                    <th>Description</th>
-                                    <th>Example(s)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="command in feature.commands" :key="command.name">
-                                    <td>{{command.name}}</td>
-                                    <td>
-                                        <div class="command">{{command.command}}</div>
-                                        <div v-for="alias in command.alias">
-                                            {{alias}}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {{command.description}}
-                                        <div v-for="field in command.fields">
-                                            <div>{{field.name}}</div>
-                                            <div>{{field.value}}</div>
-                                        </div>
-                                    </td>
-                                    <td>{{command.examples}}</td>
-                                </tr>
-                            </tbody>
-                        </table>*@
+                        <p>Note: Some of these might change in the future.</p>
                     </tab>
                 </tabs>
             </div>
