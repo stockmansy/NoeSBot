@@ -1403,4 +1403,27 @@ Discord has a 2000 character limit so some entries will be paginated.{/value}
   <data name="customizemodule_removecustomaliascommand_summary" xml:space="preserve">
     <value>This removes a custom alias command</value>
   </data>
+  <data name="utilitymodule_remindme_name" xml:space="preserve">
+    <value>Remind me Command</value>
+  </data>
+  <data name="utilitymodule_remindme_summary" xml:space="preserve">
+    <value>You can set a reminder for yourself. The bot will then private message you at your set time. 
+
+You can retrieve an urban dictionary item:
+
+{fields}
+   {field}
+      {name}Parameter: {/name}
+      {value}Duration - How long from now, or when do you want the reminder.{/value}
+   {/field}
+   {field}
+      {name}Optional parameter: {/name}
+      {value}What do you want to be reminded of.{/value}
+   {/field}
+{/fields}
+
+{examples}
+   {example}{0}{1} 4d Reminder to silence stone.{/example}
+{/examples}</value>
+  </data>
 </root>

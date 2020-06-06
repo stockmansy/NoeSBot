@@ -453,6 +453,12 @@ namespace NoeSbot.Resources
         public const string Utility_RandomMember_Name = "utilitymodule_randommember_name";
         public const string Utility_RandomMember_Summary = "utilitymodule_randommember_summary";
 
+        public const string Utility_RemindMe_Command = "remindme";
+        public const string Utility_RemindMe_Alias_1 = "remme";
+        public const string Utility_RemindMe_Alias_2 = "remind";
+        public const string Utility_RemindMe_Name = "utilitymodule_remindme_name";
+        public const string Utility_RemindMe_Summary = "utilitymodule_remindme_summary";
+
         #endregion
 
         #region Event Module

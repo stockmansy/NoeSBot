@@ -1,16 +1,22 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Hangfire;
+using Hangfire.MySql;
+using Hangfire.Storage.SQLite;
 using log4net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using NoeSbot.Activators;
 using NoeSbot.Database;
 using NoeSbot.Database.Services;
 using NoeSbot.Handlers;
 using NoeSbot.Helpers;
 using NoeSbot.Logic;
+using NoeSbot.Modules;
 using System;
 using System.IO;
 using System.Reflection;
@@ -45,22 +51,27 @@ namespace NoeSbot
             _client.Log += Log;
 
             ConfigureServices(serviceCollection);
-
+            
             var serviceProvider = serviceCollection
-                .AddLogging()
-                .AddMemoryCache()
-                .BuildServiceProvider();
+                    .AddLogging()
+                    .AddMemoryCache()
+                    .BuildServiceProvider();
 
-            await InitializeConfigAndCommands(serviceProvider);
+            ConfigureHangfire(serviceProvider);
 
-            await _client.LoginAsync(TokenType.Bot, _token);
+            using (var server = new BackgroundJobServer())
+            {
+                await InitializeConfigAndCommands(serviceProvider);
 
-            LogHelper.LogInfo("Starting the bot");
-            await _client.StartAsync();
+                await _client.LoginAsync(TokenType.Bot, _token);
 
-            LogHelper.LogInfo("The bot is running");
+                LogHelper.LogInfo("Starting the bot");
+                await _client.StartAsync();
 
-            await Task.Delay(-1);
+                LogHelper.LogInfo("The bot is running");
+
+                await Task.Delay(-1);
+            }
         }
 
         public Task Log(LogMessage message)
@@ -68,6 +79,8 @@ namespace NoeSbot
             LogHelper.LogInfo(message.ToString());
             return Task.CompletedTask;
         }
+
+        #region Private
 
         private IServiceCollection InitializeServiceCollection()
         {
@@ -113,6 +126,7 @@ namespace NoeSbot
             services.AddSingleton<MediaProcessor>();
             services.AddSingleton<MessageTriggers>();
             services.AddSingleton<GlobalConfig>();
+            services.AddSingleton<UtilityModule>();
             services.AddSingleton<IPunishedService, PunishedService>();
             services.AddSingleton<IConfigurationService, ConfigurationService>();
             services.AddSingleton<IMessageTriggerService, MessageTriggerService>();
@@ -123,6 +137,30 @@ namespace NoeSbot
             services.AddSingleton<ICustomCommandService, CustomCommandService>();
             services.AddSingleton<ISerializedItemService, SerializedItemService>();
             services.AddSingleton<IActivityLogService, ActivityLogService>();
+        }
+
+        private void ConfigureHangfire(IServiceProvider serviceProvider)
+        {
+            switch (_dataBaseConfig.UseDataBaseMode)
+            {
+                case NBConfiguration.DataBaseMode.MySQL:
+                    GlobalConfiguration.Configuration.UseStorage(new MySqlStorage(_dataBaseConfig.MySQLConnectionString, new MySqlStorageOptions()
+                    {
+                        TransactionIsolationLevel = System.Transactions.IsolationLevel.ReadCommitted
+                    }));
+                    break;
+                case NBConfiguration.DataBaseMode.SQLite:
+                default:
+                    GlobalConfiguration.Configuration.UseSQLiteStorage();
+                    break;
+            }
+
+            GlobalConfiguration.Configuration.UseSerializerSettings(new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+
+            GlobalConfiguration.Configuration.UseActivator(new HangfireActivator(serviceProvider));
         }
 
         private async Task InitializeConfigAndCommands(IServiceProvider serviceProvider)
@@ -146,6 +184,8 @@ namespace NoeSbot
 
             LogHelper.Initialize(typeof(Program));
         }
+
+        #endregion
     }
 }
 

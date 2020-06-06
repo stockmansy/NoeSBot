@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace NoeSbot.Helpers
 {
@@ -35,7 +36,7 @@ namespace NoeSbot.Helpers
 
                 if (!int.TryParse(string.Join("", digits), out int time))
                     return seconds;
-                
+
                 var timestring = string.Join("", alphas).Replace(" ", "");
 
                 switch (timestring)
@@ -64,6 +65,38 @@ namespace NoeSbot.Helpers
             }
 
             return seconds;
+        }
+
+        public static (string DateString, DateTimeOffset DateTime) GetDateTimeWithinInput(string input)
+        {
+            var cleanedString = Regex.Replace(input, @"\s+", " ");
+
+            var split = cleanedString.Split(' ');
+
+            var parsedString = GetDateTimeOffsetIfValid(split, true);
+            if (parsedString.DateTime == default)
+                parsedString = GetDateTimeOffsetIfValid(split, false);
+
+            return parsedString;
+        }
+
+        public static (string DateString, DateTimeOffset DateTime) GetDateTimeOffsetIfValid(string[] splitInput, bool ltr = true)
+        {
+            var parsedString = default(DateTimeOffset);
+            var input = string.Empty;
+
+            if (splitInput != null && splitInput.Length > 0)
+            {
+                input = string.Join(' ', splitInput);
+
+                if (!DateTimeOffset.TryParse(input, out parsedString))
+                {
+                    splitInput = ltr ? splitInput.Take(splitInput.Length - 1).ToArray() : splitInput.Skip(1).ToArray();
+                    (input, parsedString) = GetDateTimeOffsetIfValid(splitInput, ltr);
+                }
+            }
+
+            return (input, parsedString);
         }
 
         public static string GetTimeString(int seconds)
@@ -190,11 +223,11 @@ namespace NoeSbot.Helpers
             DateTime? result = null;
 
             string[] formats = { "yyyy-MM-dd hh:mm", "yyyy-MM-dd", "yyyy/MM/dd hh:mm", "yyyy/MM/dd", "dd-MM-yyyy hh:mm", "dd-MM-yyyy", "dd/MM/yyyy hh:mm", "dd/MM/yyyy", "d/M/yyyy h:mm:ss tt", "d/M/yyyy h:mm tt",
-                     "dd/MM/yyyy hh:mm:ss", "d/M/yyyy h:mm:ss", 
-                     "d/M/yyyy hh:mm tt", "d/M/yyyy hh tt", 
+                     "dd/MM/yyyy hh:mm:ss", "d/M/yyyy h:mm:ss",
+                     "d/M/yyyy hh:mm tt", "d/M/yyyy hh tt",
                      "d/M/yyyy h:mm", "d/M/yyyy h:mm",
                      "dd/MM/yyyy hh:mm", "dd/M/yyyy hh:mm"};
-            
+
 
             if (DateTime.TryParseExact(datetime, formats, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime dt))
                 result = dt;

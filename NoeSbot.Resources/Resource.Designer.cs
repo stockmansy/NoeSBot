@@ -2186,6 +2186,41 @@ namespace NoeSbot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remind me Command.
+        /// </summary>
+        internal static string utilitymodule_remindme_name {
+            get {
+                return ResourceManager.GetString("utilitymodule_remindme_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can set a reminder for yourself. The bot will then private message you at your set time. 
+        ///
+        ///You can retrieve an urban dictionary item:
+        ///
+        ///{fields}
+        ///   {field}
+        ///      {name}Parameter: {/name}
+        ///      {value}Duration - How long from now, or when do you want the reminder.{/value}
+        ///   {/field}
+        ///   {field}
+        ///      {name}Optional parameter: {/name}
+        ///      {value}What do you want to be reminded of.{/value}
+        ///   {/field}
+        ///{/fields}
+        ///
+        ///{examples}
+        ///   {example}{0}{1} 4d Reminder to silence stone.{/example}
+        ///{/examp [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string utilitymodule_remindme_summary {
+            get {
+                return ResourceManager.GetString("utilitymodule_remindme_summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User Info Command.
         /// </summary>
         internal static string utilitymodule_userinfo_name {
