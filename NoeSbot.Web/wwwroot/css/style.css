@@ -61,7 +61,7 @@ body {
     font-weight: 800;
     color: #FFF; }
   #header.large {
-    padding: 120px; }
+    padding: 120px 60px; }
   #header.small {
     padding: 20px; }
 
@@ -104,6 +104,9 @@ body {
     margin-bottom: 10px; }
   #features .command-group .command-field {
     margin-bottom: 3px; }
+
+.navbar {
+  margin-bottom: 20px; }
 
 footer {
   margin-bottom: 20px; }

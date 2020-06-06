@@ -14,6 +14,9 @@ var featureapp = new Vue({
     created() {
         this.refreshFeatures();
     },
+    data: {
+        features: []
+    },
     components: { Tab, Tabs },
     methods: {
         refreshFeatures(resource) {

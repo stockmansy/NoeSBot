@@ -22,7 +22,7 @@ body {
     }
 
     &.large {
-        padding: 120px;
+        padding: 120px 60px;
     }
 
     &.small {
@@ -94,6 +94,10 @@ body {
             margin-bottom: 3px;
         }
     }
+}
+
+.navbar {
+    margin-bottom: 20px;
 }
 
 footer {
