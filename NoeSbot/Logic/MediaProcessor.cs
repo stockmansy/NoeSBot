@@ -18,7 +18,7 @@ namespace NoeSbot.Logic
             if (!context.Channel.Name.Equals(GlobalConfig.GetGuildConfig(context.Guild.Id).GeneralChannel))
                 return;
 
-            var matches = Regex.Matches(context.Message.Content, @"(www.+|http.+)([\s]|$)");
+            var matches = Regex.Matches(context.Message.Content, @"((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)");
             if (matches.Count <= 0 && !context.Message.Attachments.Any())
                 return;
 
