@@ -15,7 +15,7 @@ namespace NoeSbot.Helpers
             var db = stf.Eval(fixedInput);
             var number = (int)Math.Round(db);
 
-            return _random.Next(1, number);
+            return _random.Next(1, number + 1);
         }
 
         public static int GetDndResult(string input)
@@ -33,7 +33,7 @@ namespace NoeSbot.Helpers
                 {
                     var parsedStart = GetIntValue(splits[0]);
                     var parsedEnd = GetIntValue(splits[1]);
-                    var rnd = _random.Next(1, parsedStart);
+                    var rnd = _random.Next(1, parsedStart +1);
 
                     switch (c)
                     {
@@ -50,7 +50,7 @@ namespace NoeSbot.Helpers
                 }
             }
 
-            return _random.Next(1, GetIntValue(splits[0]));
+            return _random.Next(1, GetIntValue(splits[0]) + 1);
         }
 
         #region Private
